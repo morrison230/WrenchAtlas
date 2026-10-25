@@ -150,6 +150,9 @@ def main():
                 errors.append(f"[{tag}] 节点 {nid} 的 role 非法: {n.get('role')}")
             if n.get("confidence") and n["confidence"] not in VALID_CONF:
                 errors.append(f"[{tag}] 节点 {nid} 的 confidence 非法")
+            nsp = str(n.get("source_page") or "").split(",")[0].strip()
+            if nsp and nsp not in pages:
+                errors.append(f"[{tag}] 节点 {nid} 的 source_page 无法解析: {nsp}")
             check_applies(n, f"节点 {nid}")
             if not n.get("label"):
                 warns.append(f"[{tag}] 节点 {nid} 缺 label")
@@ -192,7 +195,17 @@ def main():
         for e in errors:
             print("   ", e)
         sys.exit(1)
-    print("\n✓ 全部通过")
+    print("\n✓ 全部通过（结构检查）")
+    print()
+    print("  说明：以上检查的是**结构合法性**——字段齐全、id 唯一、边引用完整、")
+    print("  source_page 能解析、confidence 取值合法、applies_to 命中已定义的变体。")
+    print()
+    print("  它**不能**证明判读正确：")
+    print("    · 针脚号写错了 —— 只要格式合法，这里照样通过")
+    print("    · 保险丝容量写错了 —— 同上")
+    print("    · 诊断结论写错了 —— 同上")
+    print()
+    print("  判读正确性只能对照原图逐项核对。两者是两件事，别用这个绿勾代替内容审核。")
 
 
 if __name__ == "__main__":

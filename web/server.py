@@ -331,6 +331,28 @@ def api_circuits(pack: str | None = Query(None)):
         c["source_label"] = (f'{page["title"]} p{page["page"]}（{page["file"]}）'
                              if page else raw)
         c["file"] = f.name
+
+        # 节点级来源：让「看原厂电路图」能跳到支持该节点结论的那一页，
+        # 而不是永远跳到整个系统的第一页。
+        for n in c.get("nodes", []):
+            nsp = str(n.get("source_page") or "").split(",")[0].strip()
+            if not nsp:
+                continue
+            np_ = by_id.get(nsp)
+            if np_:
+                n["source_image"] = np_["image"].split("/")[-1]
+                n["source_label"] = f'{np_["title"]} p{np_["page"]}'
+        # 系统的其他来源页（多页系统用）
+        extra = []
+        for sp in c.get("source_pages", []) or []:
+            k = str(sp).split(",")[0].strip()
+            if k and k != pid_page and k in by_id:
+                pg2 = by_id[k]
+                extra.append({"image": pg2["image"].split("/")[-1],
+                              "label": f'p{pg2["page"]} {pg2["title"]}'})
+        if extra:
+            c["source_extra"] = extra
+
         circuits.append(c)
 
     if pid not in CONF["conn"]:

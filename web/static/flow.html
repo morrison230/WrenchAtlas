@@ -251,8 +251,11 @@ function select(id, force){
         </div>
       </div>` : ''}
     ${vf ? `<div class="row" style="color:var(--teal-l)"><b>已核对：</b>${esc(vf.at)}${vf.note ? ' · ' + esc(vf.note) : ''}</div>` : ''}
+    ${n.source_label ? `<div class="row" style="font-size:12px;color:var(--dim2)">
+      <b>该环节判读依据：</b>${esc(n.source_label)}</div>` : ''}
     <div class="acts">
-      ${c.source_image ? `<a class="btn" href="${WA.withPack('/viewer?p=' + encodeURIComponent(c.source_image))}">看原厂电路图 →</a>` : ''}
+      ${(n.source_image || c.source_image) ? `<a class="btn" href="${WA.withPack('/viewer?p=' + encodeURIComponent(n.source_image || c.source_image))}">
+        ${n.source_image ? '看该环节来源页 →' : '看原厂电路图 →'}</a>` : ''}
       <button onclick="markVerify('${n.id}', ${vf ? 'false' : 'true'})">
         ${vf ? '取消核对标记' : '标记为已实车核对'}
       </button>
@@ -336,6 +339,12 @@ function show(){
       color:var(--amber-l);line-height:1.6">${box}</div>`;
   }
   if(c.topology_type) html += `<div style="margin-top:4px">拓扑类型：<b>${esc(c.topology_type)}</b></div>`;
+  if(c.source_extra && c.source_extra.length){
+    html += `<div style="margin-top:5px;font-size:12px">其他来源页：` +
+      c.source_extra.map(x => `<a href="${WA.withPack('/viewer?p=' + encodeURIComponent(x.image))}"
+        target="_blank" style="color:var(--accent);text-decoration:none">${esc(x.label)}</a>`).join(' · ') +
+      `</div>`;
+  }
   const key = encodeURIComponent(c.system || c.id || '');
   html += `<div class="rep">
     <a href="${WA.withPack('/report?sys=' + key)}" target="_blank">打印 / 存 PDF</a>
