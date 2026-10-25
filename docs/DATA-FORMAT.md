@@ -191,6 +191,63 @@ packs/<pack-id>/
 
 ---
 
+## 5.5 变体（variants）—— 同一系统的多种配置
+
+**这是最容易出人命的地方。** 同一页图上画两套系统（AT/MT、欧4/非欧4、仪表类型 I/II），
+针脚号完全不同。选错引脚去量线，会把好件换掉。
+
+### 定义
+
+```json
+{
+  "system": "meter",
+  "variants": [
+    { "id": "type-1", "label": "类型 I", "note": "单色液晶，四表步进电机" },
+    { "id": "type-2", "label": "类型 II", "note": "分段液晶 + 更多指示灯" }
+  ],
+  "variant_warning": "两种类型的仪表针脚不同。**必须先确认车上是哪一种**，否则引脚全对不上。",
+  "nodes": [
+    { "id": "fuse_mtr", "label": "JB MTR 10A", "role": "fuse" },
+    { "id": "mcu_t1", "label": "仪表 MCU（类型 I）", "applies_to": "type-1" },
+    { "id": "mcu_t2", "label": "仪表 MCU（类型 II）", "applies_to": "type-2" }
+  ]
+}
+```
+
+### 字段
+
+| 字段 | 位置 | 说明 |
+|---|---|---|
+| `variants` | 文件根 | `[{id, label, note?}]`，id 用小写连字符 |
+| `variant_warning` | 文件根 | 一句话说清「为什么必须选对」 |
+| `applies_to` | 节点 / 边 | 取值必须是某个 variant 的 id |
+
+**没有 `applies_to` 的节点 = 所有配置通用**（如保险丝、搭铁）。
+
+### 展示规则（前端契约）
+
+| 情况 | 表现 |
+|---|---|
+| 有 `variant_warning` | 页面顶部黄色警告条，**不可折叠** |
+| 节点有 `applies_to` | 节点上加徽标「仅 类型 II」 |
+| 边有 `applies_to` | 连线说明里加「仅 类型 II」 |
+| 无 `variants` | 一切照旧，不显示任何变体 UI |
+
+### 向后兼容
+
+早期数据用过自由文本的 `applies_to`（如 `"AT"` / `"MT"`，没定义 `variants`）。
+只要文件里没有 `variants` 字段，`applies_to` 就当纯标签显示，不做校验。
+
+**新数据必须定义 `variants`**，`applies_to` 只能用列表里的 id。
+
+### 校验规则（validate.py 已实现）
+
+- 有 `variants` 时，每个 `applies_to` 必须命中某个 variant id，否则报错
+- `variants` 的 id 不能重复
+- `variant_warning` 存在但没有 `variants` → 警告（说明你标了差异却没定义差异在哪）
+
+---
+
 ## verified.json
 
 **核对标记。单独存一个文件，不改动 `circuits/*.json` 原始数据。**

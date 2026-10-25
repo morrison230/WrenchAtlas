@@ -35,6 +35,8 @@
     border:1px solid var(--accent);border-radius:7px;padding:5px 11px;
     text-decoration:none;white-space:nowrap}
   .rep a:hover{background:#4a3a20}
+  .vchip{display:inline-block;font-size:11px;font-weight:600;color:var(--amber-l);
+    border:1px solid var(--amber);border-radius:4px;padding:0 6px;margin-right:6px}
   .badge{display:inline-block;font-size:11px;padding:2px 7px;border-radius:5px;
     border:1px solid var(--line);color:var(--dim2);margin-left:6px;vertical-align:1px}
   .badge.ok{border-color:var(--teal);color:var(--teal-l)}
@@ -134,6 +136,13 @@ function fit(text, maxPx, size){
   return t;
 }
 
+// 变体 id -> 显示名（type-2 -> 类型 II）。没有 variants 时原样返回。
+function vname(c, a){
+  if(!a) return '';
+  const v = (c.variants || []).find(x => x.id === a);
+  return v ? (v.label || v.id) : a;
+}
+
 function render(c){
   const {pos, H} = layout(c);
   const svg = document.getElementById('svg');
@@ -141,6 +150,7 @@ function render(c){
   svg.setAttribute('width', '100%');
   svg.setAttribute('height', H);
   svg.style.minWidth = '520px';
+
 
   let s = `<defs>
     <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -186,6 +196,17 @@ function render(c){
         font-family="system-ui,sans-serif">${esc(fit(n.sub || '', inner, 11))}</text>
       ${warn && !vf ? `<circle cx="${p.x + p.w - 11}" cy="${p.y + 11}" r="4" fill="var(--amber)"/>` : ''}
       ${vf ? `<path d="M${p.x + p.w - 17} ${p.y + 11} l3.5 3.5 l6 -7" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
+      ${n.applies_to ? (() => {
+        const lab = vname(c, n.applies_to);
+        const tw = Math.max(30, lab.length * 8.5 + 10);
+        return `<g>
+          <rect x="${p.x + p.w - tw - 6}" y="${p.y + p.h - 21}" width="${tw}" height="15" rx="4"
+            fill="rgba(240,180,40,.16)" stroke="var(--amber)" stroke-width="0.8"/>
+          <text x="${p.x + p.w - tw / 2 - 6}" y="${p.y + p.h - 10}" font-size="10"
+            fill="var(--amber-l)" text-anchor="middle"
+            font-family="system-ui,sans-serif">仅${esc(lab)}</text>
+        </g>`;
+      })() : ''}
     </g>`;
   }
   svg.innerHTML = s;
@@ -212,8 +233,10 @@ function select(id, force){
   const cfCls = vf ? 'ok' : (cf === 'read-uncertain' ? 'warn' : '');
 
   panel.style.display = 'block';
+  const vsuf = n.applies_to
+    ? `<span class="badge warn" title="只适用于该配置">仅${esc(vname(c, n.applies_to))}</span>` : '';
   panel.innerHTML = `
-    <p class="pt">${esc(n.label)}<span class="badge ${cfCls}">${cfText}</span></p>
+    <p class="pt">${esc(n.label)}${vsuf}<span class="badge ${cfCls}">${cfText}</span></p>
     <p class="ps">${esc(n.sub || '')}</p>
     ${(n.pins && n.pins.length) ? `<div class="pins">${n.pins.map(p=>`<span class="pin">${esc(p)}</span>`).join('')}</div>` : ''}
     <div class="row"><b>说明：</b>${esc(n.detail || '')}</div>
@@ -295,7 +318,23 @@ function show(){
     <span class="badge ${cf==='read-uncertain'?'warn':''}">${cfText}</span>`;
   if(unc) html += ` <span class="badge warn">${unc} 处存疑</span>`;
   if(vcount) html += ` <span class="badge ok">全局 ${vcount} 处已实车核对</span>`;
-  if(c.variant_warning) html += `<div style="color:var(--amber-l);margin-top:6px"><b>注意：</b>${esc(c.variant_warning)}</div>`;
+  if(c.variant_warning || (c.variants && c.variants.length)){
+    let box = '';
+    if(c.variant_warning)
+      box += `<div><b>注意：</b>${esc(c.variant_warning)}</div>`;
+    if(c.variants && c.variants.length){
+      box += `<div style="margin-top:5px;font-size:12px;line-height:1.7">` +
+        c.variants.map(v =>
+          `<span class="vchip">${esc(v.label || v.id)}</span>` +
+          (v.note ? `<span style="color:var(--dim2)">${esc(v.note)}</span>` : '')
+        ).join('<br>') + `</div>`;
+      box += `<div style="margin-top:4px;font-size:11.5px;color:var(--dim2)">` +
+        `带「仅…」标记的环节只适用于对应配置，另一配置下引脚不同。</div>`;
+    }
+    html += `<div style="background:rgba(240,180,40,.08);border-left:3px solid var(--amber);
+      padding:8px 11px;border-radius:0 6px 6px 0;margin-top:8px;
+      color:var(--amber-l);line-height:1.6">${box}</div>`;
+  }
   if(c.topology_type) html += `<div style="margin-top:4px">拓扑类型：<b>${esc(c.topology_type)}</b></div>`;
   const key = encodeURIComponent(c.system || c.id || '');
   html += `<div class="rep">

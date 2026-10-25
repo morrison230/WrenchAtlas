@@ -106,6 +106,37 @@ def main():
         if sp and sp not in pages:
             errors.append(f"[{tag}] source_page 无法在 pages.json 解析: {sp}")
 
+        # ---- 变体（variants）：同一系统多配置时必须定义清楚 ----
+        variants = c.get("variants") or []
+        var_ids = set()
+        if variants:
+            for v in variants:
+                vid = v.get("id")
+                if not vid:
+                    errors.append(f"[{tag}] variants 里有条目缺少 id")
+                    continue
+                if vid in var_ids:
+                    errors.append(f"[{tag}] variants id 重复: {vid}")
+                var_ids.add(vid)
+                if not v.get("label"):
+                    warns.append(f"[{tag}] variant {vid} 缺少 label")
+        elif c.get("variant_warning"):
+            warns.append(f"[{tag}] 写了 variant_warning 但没定义 variants，"
+                         f"节点无法按配置区分")
+
+        def check_applies(obj, where):
+            a = obj.get("applies_to")
+            if not a:
+                return
+            if not variants:
+                return          # 老数据用自由文本，不校验
+            vals = a if isinstance(a, list) else [a]
+            for v in vals:
+                if v not in var_ids:
+                    errors.append(
+                        f"[{tag}] {where} 的 applies_to 不是已定义的 variant: {v}"
+                        f"（可用: {', '.join(sorted(var_ids))}）")
+
         ids = set()
         for n in c.get("nodes", []):
             nid = n.get("id")
@@ -119,6 +150,7 @@ def main():
                 errors.append(f"[{tag}] 节点 {nid} 的 role 非法: {n.get('role')}")
             if n.get("confidence") and n["confidence"] not in VALID_CONF:
                 errors.append(f"[{tag}] 节点 {nid} 的 confidence 非法")
+            check_applies(n, f"节点 {nid}")
             if not n.get("label"):
                 warns.append(f"[{tag}] 节点 {nid} 缺 label")
             if not n.get("detail"):
@@ -128,6 +160,7 @@ def main():
             for side in ("from", "to"):
                 if e.get(side) not in ids:
                     errors.append(f"[{tag}] 边引用了不存在的节点: {e.get(side)}")
+            check_applies(e, f"边 {e.get('from')}→{e.get('to')}")
 
         rows = calc_layout_rows(c.get("nodes", []))
         # 前端同层超过 4 个会自动换行，所以只有超过 8 个（需换 3 行）才值得提醒
