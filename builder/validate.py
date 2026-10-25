@@ -35,9 +35,19 @@ SYM_FOUR = ["applies_if", "basis", "verify", "if_unknown"]
 # 电路图是线路图，**不含诊断文字**。所以 from_manual 里一旦出现
 # 「手册条目」这类措辞，几乎必然把项目自己的 diagnosis_hint 误标成了原厂依据
 # （2026-10-25 抽查实锤：充电系 3 条把本项目提示写成「手册诊断条目明确写」）。
-# 这里做措辞级拦截；语义级（页码能开≠那页支持这句话）仍靠人工。
+#
+# 第二轮抽查又发现同一错误的变体：改用「诊断条目」「XX 页条目」「页面条目原文」
+# 等说法绕过了上面的黑名单，本质仍是引用页面上并不存在的印刷文字。
+# 所以这里除措辞黑名单外，再加一条**结构性检查**：
+#   from_manual 里出现中文引号『』包起来的句子 → 疑似引用印刷文字。
+# 线路图页面上确实有字（元件名、线色、保险丝号），但都是短标签，
+# 不会是一整句诊断指令。这条能拦住所有改头换面的变体。
 SUSPECT_PHRASE = ["手册条目", "手册诊断条目", "手册原文", "手册明确写",
-                  "手册表述", "原厂明确写"]
+                  "手册表述", "原厂明确写", "原厂维修手册",
+                  "诊断条目", "页条目", "条目原文", "图上注明"]
+
+# 疑似「引用印刷文字」的引号。出现即告警——除非内容很短（短的是线号标签）。
+QUOTE_PAIRS = [("『", "』"), ("“", "”"), ("《", "》")]
 
 
 def calc_layout_rows(nodes):
@@ -122,6 +132,19 @@ def validate_symptoms(pack, circuit_ids, pages, errors, warns):
                         f"{tag} 的 from_manual 出现「{ph}」——电路图不含诊断文字，"
                         f"这类措辞多半是把项目 diagnosis_hint 误标成原厂依据，"
                         f"应移到 inferred 并注明来源")
+                    break
+
+            # 2c) 结构性拦截：from_manual 里带引号的长句 = 自称引用了印刷文字。
+            #     线路图上只有短标签（「HORN-HAZ 15A」这种），不会有整句诊断指令。
+            for lo, hi in QUOTE_PAIRS:
+                if lo in fm and fm.count(lo) == fm.count(hi):
+                    quoted = [q for q in fm.split(lo)[1:] if hi in q]
+                    longs = [q.split(hi)[0] for q in quoted if len(q.split(hi)[0]) > 12]
+                    if longs:
+                        warns.append(
+                            f"{tag} 的 from_manual 引用了看起来像印刷文字的长句："
+                            f"「{lo}{longs[0][:24]}…」——线路图页面没有这种整句，"
+                            f"多半来自 diagnosis_hint，应移到 inferred")
                     break
 
             # 3) 四要素完整性：不齐的按警告报，允许分批推进，但必须看得见
