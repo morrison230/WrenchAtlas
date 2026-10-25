@@ -1,0 +1,101 @@
+{
+  "id": "tail-lamp",
+  "system": "tail-lamp",
+  "name": "示宽灯、尾灯与牌照灯",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "TAIL 供电、开关控制、各灯泡分组与线色均清晰。BCM 自动灯光参与的细节未完全展开。",
+  "source_page": "sx4-2010::06-系统电路图-20-示宽、车尾和牌照灯系统::p1",
+  "variant_note": "五门车型",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "JB 保险丝 10A",
+      "sub": "TAIL · ㉕",
+      "role": "fuse",
+      "pins": ["TAIL-10A"],
+      "confidence": "read-clear",
+      "detail": "示宽灯/尾灯/牌照灯共用保险丝 10A。烧断则前后示宽灯、尾灯、牌照灯、仪表背光全灭，但大灯近远光仍正常。"
+    },
+    {
+      "id": "switch",
+      "label": "灯光开关 G144",
+      "sub": "OFF / 示宽 / 大灯 / AUTO",
+      "role": "switch",
+      "pins": ["G144.13", "G144.10", "G144.7"],
+      "confidence": "read-clear",
+      "detail": "组合开关的示宽档（第一档）。开到大灯档时示宽灯也同时亮，这是分层设计。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM 14 / L314.3",
+      "sub": "自动灯光与监控",
+      "role": "ecu",
+      "pins": ["BCM.14", "L314.3"],
+      "confidence": "read-uncertain",
+      "detail": "AUTO 档时由 BCM 根据光照传感器决定是否点亮示宽灯；同时监控灯泡状态。",
+      "uncertain": "BCM 在此回路中的具体控制与监测逻辑原图未展开"
+    },
+    {
+      "id": "lamp_plate",
+      "label": "牌照灯 O94 / O95",
+      "sub": "两个",
+      "role": "load",
+      "pins": ["O94.1", "O95.1"],
+      "confidence": "read-clear",
+      "detail": "后牌照上方的两个照明灯。与尾灯同组，一开示宽灯就亮。"
+    },
+    {
+      "id": "lamp_tail",
+      "label": "尾灯 L133 / L134",
+      "sub": "左右各一",
+      "role": "load",
+      "pins": ["L133", "L134"],
+      "confidence": "read-clear",
+      "detail": "尾灯总成内的示宽灯泡。**注意：很多车型尾灯与刹车灯共用双灯丝灯泡**，尾灯丝断时表现为「开灯不亮、踩刹车才亮」。"
+    },
+    {
+      "id": "lamp_pos",
+      "label": "前示宽灯 E161 / E162",
+      "sub": "左右各一",
+      "role": "load",
+      "pins": ["E161.1", "E162.1"],
+      "confidence": "read-clear",
+      "detail": "前大灯总成内的小灯（位置灯）。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 21/23/24 · ⑤⑦",
+      "sub": "后组 / 前组",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "后部灯组搭铁 21/23/24，前部搭铁 ⑤⑦。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "switch", "color": "红", "via": "G272.15 → G144.13", "note": ""},
+    {"from": "switch", "to": "lamp_plate", "color": "红/白", "via": "→ O94/O95", "note": ""},
+    {"from": "switch", "to": "lamp_tail", "color": "红/白", "via": "→ L133/L134", "note": ""},
+    {"from": "switch", "to": "lamp_pos", "color": "红", "via": "→ E161/E162", "note": ""},
+    {"from": "bcm", "to": "switch", "color": "—", "via": "AUTO 档控制", "note": "存疑"},
+    {"from": "lamp_plate", "to": "gnd", "color": "黑", "via": "→ 21/23/24", "note": ""},
+    {"from": "lamp_tail", "to": "gnd", "color": "黑", "via": "→ 21/23/24", "note": ""},
+    {"from": "lamp_pos", "to": "gnd", "color": "黑", "via": "→ ⑤⑦", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "示宽灯、尾灯、牌照灯、仪表背光全不亮 → TAIL 10A 保险丝，一处搞定（大灯远近光仍正常是特征）",
+    "【易误判】尾灯不亮但踩刹车会亮 → 尾灯与刹车灯共用双灯丝灯泡，**是尾灯丝断了，不是线路问题**，换灯泡",
+    "只有牌照灯不亮、尾灯正常 → O94/O95 灯泡或该支路线",
+    "只有一侧尾灯不亮 → 该侧灯泡或灯座，另一侧正常说明保险丝和开关没问题",
+    "前示宽灯不亮、后方正常 → 分路问题，查 E161/E162 一侧的线或搭铁 ⑤⑦",
+    "开到 AUTO 档示宽灯不自动亮、手动档正常 → 光照传感器或 BCM，不是灯的问题",
+    "所有灯都亮但亮度明显偏暗 → 查搭铁（后组 21/23/24、前组 ⑤⑦）与充电电压",
+    "换 LED 后示宽灯微亮或报灯泡故障 → LED 电流小，BCM 检测判为灯泡失效，属改装副作用"
+  ],
+  "notes": [
+    "「开灯不亮、踩刹车才亮」是本系统最典型的误判点，本质是双灯丝灯泡的尾灯丝断了",
+    "TAIL 10A 一个保险丝管着前后示宽、尾灯、牌照灯、仪表背光，是排查的快速入口",
+    "开大灯档时示宽灯同时亮，属分层设计不是故障"
+  ]
+}

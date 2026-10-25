@@ -1,0 +1,112 @@
+{
+  "id": "at-control",
+  "system": "at-control",
+  "name": "自动变速器控制（AT）",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-uncertain",
+  "confidence_note": "**本数据仅建立框架，未逐一精读引脚。** 该页含上下两套完整系统（疑为 CVT 与 AT 两种配置），元件密度为全册最高，TCM 连十余个电磁阀与多路传感器，逐脚核读需大量时间。实际维修建议直接上诊断仪读 TCM 故障码。",
+  "source_page": "sx4-2010::06-系统电路图-06-AT控制系统::p1",
+  "variant_warning": "**本页有上下两套系统**，可能对应不同变速箱配置（AT / CVT）。**且本车是手动还是自动尚未确认**——若是 MT，整个系统不适用。使用前必须先确认变速箱类型。",
+  "scope_note": "只覆盖电控部分的框架关系，不包含每个电磁阀的引脚、油压回路、机械阀体。",
+  "nodes": [
+    {
+      "id": "fuse_at",
+      "label": "AT 保险丝 10A",
+      "sub": "独立电源保险盒 No.1 · ⑦",
+      "role": "fuse",
+      "pins": ["AT-10A"],
+      "confidence": "read-clear",
+      "detail": "变速器控制主保险丝，位于发动机舱独立保险丝盒。烧断则 TCM 无电，变速箱进入失效保护（锁在某一档）。"
+    },
+    {
+      "id": "fuse_ig1",
+      "label": "IG1 SIG 保险丝 10A",
+      "sub": "点火开关电源",
+      "role": "fuse",
+      "pins": ["IG1-SIG-10A"],
+      "confidence": "read-clear",
+      "detail": "TCM 的点火电源，钥匙在 ON 档才有电。"
+    },
+    {
+      "id": "tcm",
+      "label": "TCM 变速器控制模块",
+      "sub": "E97 · 核心",
+      "role": "ecu",
+      "pins": ["E97"],
+      "confidence": "read-uncertain",
+      "detail": "自动变速器大脑，读取档位/车速/节气门/ATF温度/制动信号，驱动各路电磁阀决定换档时机与油压。通过 CAN 与 ECM 通信。",
+      "uncertain": "各引脚定义未逐一精读"
+    },
+    {
+      "id": "range_sensor",
+      "label": "档位传感器 C166",
+      "sub": "P/R/N/D/2/L",
+      "role": "sensor",
+      "pins": ["C166"],
+      "confidence": "read-clear",
+      "detail": "报告当前选档位置。同时供倒车灯与起动许可（P/N 档）。档位拉索或传感器调整不当会导致换档逻辑错乱、倒车灯异常。"
+    },
+    {
+      "id": "solenoids",
+      "label": "电磁阀组 C139",
+      "sub": "换档阀 / 油压阀 / TCC",
+      "role": "load",
+      "pins": ["C139"],
+      "confidence": "read-uncertain",
+      "detail": "包含换档电磁阀（A2、B2）、油压控制电磁阀、TCC 锁止电磁阀、AT 离合器液压开关等。TCM 通过电流控制油压与换档。",
+      "uncertain": "各电磁阀与 TCM 引脚的对应关系未逐脚确认"
+    },
+    {
+      "id": "sensors",
+      "label": "输入传感器组",
+      "sub": "车速 / 节气门 / ATF温度 / 制动",
+      "role": "sensor",
+      "confidence": "read-uncertain",
+      "detail": "TCM 判断换档时机的依据：车速、节气门开度、ATF 油温、制动信号。任一异常都会导致换档品质下降或锁档。",
+      "uncertain": "各传感器具体连接器与引脚未逐一精读"
+    },
+    {
+      "id": "dlc",
+      "label": "DLC 诊断接口 G212",
+      "sub": "OBD 座",
+      "role": "splice",
+      "pins": ["G212"],
+      "confidence": "read-clear",
+      "detail": "CAN 总线诊断接口。**排查变速器问题的第一站**：先读 TCM 故障码，比翻电路图快得多。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ①⑤ / ⑥⑧",
+      "sub": "TCM 与电磁阀",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "TCM 与电磁阀组的搭铁。搭铁不良会造成换档冲击、电磁阀动作异常。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_at", "to": "tcm", "color": "—", "via": "⑦ → E97", "note": "主电源"},
+    {"from": "fuse_ig1", "to": "tcm", "color": "—", "via": "→ E97", "note": "点火电源"},
+    {"from": "range_sensor", "to": "tcm", "color": "—", "via": "C166 → TCM", "note": "档位信号"},
+    {"from": "sensors", "to": "tcm", "color": "—", "via": "→ TCM", "note": "换档依据"},
+    {"from": "tcm", "to": "solenoids", "color": "—", "via": "→ C139", "note": "电流驱动"},
+    {"from": "tcm", "to": "dlc", "color": "CAN", "via": "CAN(+)/CAN(−)", "note": "诊断与整车通信"},
+    {"from": "solenoids", "to": "gnd", "color": "—", "via": "→ ⑥⑧", "note": ""},
+    {"from": "tcm", "to": "gnd", "color": "—", "via": "→ ①⑤", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "【第一步永远是读码】自动变速器问题的第一站是 DLC 读 TCM 故障码，电路图只在读码后指方向时才用",
+    "仪表档位显示不亮或乱码 → 先查 AT 10A 保险丝与 TCM 供电，再看档位传感器",
+    "【失效保护】锁在固定档、不升档、仪表故障灯亮 → TCM 已进入 limp home 模式，读码确认是哪个信号异常",
+    "换档冲击大、顿挫 → 多与油压电磁阀、ATF 油质/油量、搭铁有关，不一定是电路断线",
+    "D 档起步无力、打滑 → 机械液压问题居多，配合读码判断是否油压控制异常",
+    "倒车灯不亮伴随变速器异常 → 查档位传感器 C166，它同时管倒车灯与起动许可",
+    "完全无档位、无法移动 → 查 AT 10A 与 TCM 搭铁，也可能是机械故障",
+    "换过变速箱油或拆装阀体后出问题 → 优先怀疑电磁阀插接与油位，不是电路图能解决的"
+  ],
+  "notes": [
+    "**本系统只是框架，不能替代诊断仪。** 涉及具体电磁阀引脚、油压值、换档曲线时需要原厂诊断设备与服务数据",
+    "本页含两套系统（疑为 AT/CVT 两种配置），且本车变速箱类型未确认，使用前务必先确认",
+    "档位传感器 C166 在起动系统、倒车灯系统里也出现，是跨系统共用的关键件"
+  ]
+}

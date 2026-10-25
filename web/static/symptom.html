@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>问诊 · WrenchAtlas</title>
+<style>
+  :root{
+    --bg:#15171b; --panel:#1d2026; --panel2:#242830; --line:#2f343d;
+    --txt:#e9e7e3; --dim:#9aa0aa; --dim2:#6f7681; --accent:#e8a33d;
+    --ok:#5DCAA5; --warn:#EF9F27;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  header{position:sticky;top:0;z-index:20;background:rgba(29,32,38,.96);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+    padding:12px 14px;display:flex;align-items:center;gap:10px}
+  header a{color:var(--dim);text-decoration:none;font-size:20px;padding:4px 8px;border-radius:8px}
+  header h1{margin:0;font-size:15px;font-weight:600;flex:1}
+  header h1 em{font-style:normal;font-size:12px;color:var(--dim2);margin-left:8px;font-weight:400}
+  main{padding:16px 14px 60px;max-width:820px;margin:0 auto}
+  .lead{font-size:12.5px;color:var(--dim2);line-height:1.6;margin:0 0 16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+  .card:hover{border-color:var(--accent)}
+  .card.on{border-color:var(--accent);background:#221e16}
+  .card h3{margin:0 0 4px;font-size:14.5px;font-weight:500}
+  .card .aka{font-size:11.5px;color:var(--dim2)}
+  .q{font-size:14px;color:var(--accent);margin:14px 0 10px;font-weight:500}
+  .branch{background:var(--panel2);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;margin-bottom:8px;cursor:pointer}
+  .branch:hover{border-color:var(--accent)}
+  .branch .when{font-size:13.5px;margin:0 0 2px}
+  .branch .verdict{font-size:12px;color:var(--ok);margin:6px 0 0}
+  .detail{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:none}
+  .branch.open .detail{display:block}
+  .detail .row{font-size:13px;line-height:1.7;color:var(--dim);margin:6px 0}
+  .detail .row b{color:var(--txt);font-weight:400}
+  .jump{display:inline-block;margin:8px 8px 0 0;background:#241f14;border:1px solid var(--accent);
+    color:var(--accent);border-radius:7px;padding:6px 11px;font-size:12px;text-decoration:none}
+  .also{margin-top:14px;font-size:12px;color:var(--dim2);border-left:2px solid var(--line);padding-left:10px}
+  .empty{color:var(--dim2);text-align:center;padding:40px 0;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" data-pack>←</a>
+  <h1>症状问诊<em id="cnt"></em></h1>
+  <a href="/search" data-pack style="font-size:13px;color:var(--dim2);text-decoration:none">搜索</a>
+</header>
+<main>
+  <p class="lead">先选一个症状，再按问题分流。<b style="color:var(--txt);font-weight:400">每一步都给判断依据和要查的环节</b>，点系统名可跳到对应流图。</p>
+  <div id="list"></div>
+</main>
+
+<script src="/static/packbar.js"></script>
+<script>let DATA = [], OPEN = null, BRANCH = null;
+
+function el(html){ const d=document.createElement('div'); d.innerHTML=html; return d.firstElementChild; }
+
+function render(){
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  if(!DATA.length){ list.innerHTML = '<p class="empty">还没有症状数据</p>'; return; }
+
+  for(const s of DATA){
+    const card = el(`<div class="card ${OPEN===s.id?'on':''}" data-id="${s.id}">
+      <h3>${esc(s.label)}</h3>
+      <div class="aka">${esc((s.aka||[]).join(' · '))}</div>
+    </div>`);
+    card.onclick = () => { OPEN = (OPEN===s.id) ? null : s.id; BRANCH = null; render(); };
+
+    if(OPEN === s.id){
+      card.appendChild(el(`<p class="q">${esc(s.first_question)}</p>`));
+      s.branches.forEach((b, i) => {
+        const isOpen = BRANCH === i;
+        const bd = el(`<div class="branch ${isOpen?'open':''}">
+          <p class="when">${esc(b.when)}</p>
+          <p class="verdict">→ ${esc(b.verdict)}</p>
+          <div class="detail">
+            <div class="row"><b>要查：</b>${esc(b.check)}</div>
+            ${(b.circuit_info||[]).map(c =>
+              `<a class="jump" href="${WA.withPack('/flow?sys=' + encodeURIComponent(c.id||''))}">${esc(c.name)} →</a>`).join('')}
+          </div>
+        </div>`);
+        bd.onclick = (e) => {
+          if(e.target.tagName === 'A') return;
+          BRANCH = isOpen ? null : i;
+          render();
+        };
+        card.appendChild(bd);
+      });
+      if(s.also_check){
+        card.appendChild(el(`<p class="also">${esc(s.also_check)}</p>`));
+      }
+    }
+    list.appendChild(card);
+  }
+  document.getElementById('cnt').textContent = DATA.length + ' 类症状';
+}
+
+function esc(s){ return String(s??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+fetch(WA.withPack('/api/symptoms')).then(r => r.json()).then(d => {
+  DATA = d.symptoms || [];
+  render();
+}).catch(e => {
+  document.getElementById('list').innerHTML = '<p class="empty">加载失败：' + e.message + '</p>';
+});
+</script>
+</body>
+</html>

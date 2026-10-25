@@ -1,0 +1,86 @@
+{
+  "id": "fog-rear",
+  "system": "fog-lamp-rear",
+  "name": "后雾灯",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "单页极简电路，全图一次读完，无歧义。",
+  "source_page": "sx4-2010::06-系统电路图-27-后雾灯::p1",
+  "variant_note": "五门车型",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "JB 保险丝 10A",
+      "sub": "RR FOG · ㊱",
+      "role": "fuse",
+      "pins": ["RR-FOG-10A"],
+      "confidence": "read-clear",
+      "detail": "后雾灯专用保险丝 10A，位于车内接线盒。**前后雾灯保险丝是分开的**（前雾灯在发动机舱独立盒），查错盒子会白费时间。"
+    },
+    {
+      "id": "switch",
+      "label": "后雾灯开关 G144",
+      "sub": "OFF / ON 两位",
+      "role": "switch",
+      "pins": ["G144.3", "G144.4"],
+      "confidence": "read-clear",
+      "detail": "组合开关上的后雾灯档位。3=黄线（来自 RR FOG 10A 经 G272.10），4=输出。按法规后雾灯通常需前照灯或示宽灯已开才能点亮。"
+    },
+    {
+      "id": "splice",
+      "label": "连接器 G343 / L376",
+      "sub": "3 脚 · 分两路",
+      "role": "splice",
+      "pins": ["G343.3", "L376.3"],
+      "confidence": "read-clear",
+      "detail": "开关输出在此分两路：一路去后雾灯 L134，一路去 ECM C-2（指示灯/状态信号）。"
+    },
+    {
+      "id": "lamp",
+      "label": "后雾灯 L134",
+      "sub": "4 进 · 6 出",
+      "role": "load",
+      "pins": ["L134.4", "L134.6"],
+      "confidence": "read-clear",
+      "detail": "左后尾灯组内的后雾灯泡。4=红/白进，6=搭铁 21/23。"
+    },
+    {
+      "id": "ecm",
+      "label": "ECM C-2",
+      "sub": "状态信号 / 指示",
+      "role": "ecu",
+      "pins": ["ECM.C-2"],
+      "confidence": "read-clear",
+      "detail": "接收后雾灯开启状态，用于仪表指示灯或灯光监控。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 21 / 23",
+      "sub": "尾灯组",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "经 L390 O231 到 21/23 搭铁点。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "switch", "color": "黄", "via": "G272.10 → G144.3", "note": ""},
+    {"from": "switch", "to": "splice", "color": "红/白", "via": "G144.4 → G343", "note": ""},
+    {"from": "splice", "to": "lamp", "color": "红/白", "via": "L376.3 → L134.4", "note": ""},
+    {"from": "splice", "to": "ecm", "color": "红/白", "via": "→ ECM C-2", "note": "状态信号"},
+    {"from": "lamp", "to": "gnd", "color": "黑", "via": "L134.6 → 21/23", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "后雾灯不亮 → 顺序查：RR FOG 10A 保险丝 → 开关 G144 后雾档 → L134 灯泡 → 搭铁",
+    "前雾灯正常、后雾灯不亮 → 两套保险丝分开，查车内 JB 的 RR FOG 10A，别去发动机舱找",
+    "开关按了没反应、仪表也无后雾指示 → 查 G144 开关档位触点与 G343/L376 连接器",
+    "仪表有后雾指示但灯不亮 → 灯泡或 L134 插头/搭铁，线路已通",
+    "后雾灯常亮关不掉 → 开关触点粘连，长期如此会被后车误判为刹车",
+    "白天开不了后雾灯 → 多数车型要求先开前照灯/示宽灯，属法规设计不是故障",
+    "只有一个后雾灯亮 → **很多车型后雾灯只有左侧一个（法规允许）**，右侧可能是装饰或空缺，先确认本车配置再判断"
+  ],
+  "notes": [
+    "这是全项目最简单的电路之一：保险丝 → 开关 → 灯泡 → 搭铁，四步走完",
+    "后雾灯单侧配置在国内车型上很常见，不是故障"
+  ]
+}

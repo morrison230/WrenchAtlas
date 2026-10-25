@@ -1,0 +1,77 @@
+{
+  "id": "sunroof",
+  "system": "sunroof",
+  "name": "天窗",
+  "type": "signal-flow",
+  "confidence": "read-clear",
+  "confidence_note": "G-3 图结构简单，保险丝、开关四向、SCU、电机六路驱动全部清晰可读。",
+  "source_page": "sx4-2010::06-系统电路图-35-天窗线路图::p1",
+  "topology_type": "完整（仅配备天窗的车型）",
+  "nodes": [
+    {
+      "id": "fuse_sr",
+      "label": "J/B 20A S/R",
+      "sub": "接线盒 · 符号 S/R",
+      "role": "fuse",
+      "pins": ["JB-S/R-20A"],
+      "confidence": "read-clear",
+      "detail": "天窗专用 20A 保险丝，在接线盒内标注为 S/R（Sun Roof）。经 LTE.U 插头出。烧了天窗完全无反应。"
+    },
+    {
+      "id": "switch",
+      "label": "天窗控制开关",
+      "sub": "4=电源 · 1/6/2/5=四向 · 3=搭铁",
+      "role": "switch",
+      "pins": ["SW.4", "SW.1", "SW.6", "SW.2", "SW.5", "SW.3"],
+      "confidence": "read-clear",
+      "detail": "四向开关：1=向上、6=向下、2=向后、5=向前。4 脚 RED/YEL 是电源入，3 脚 BLK 搭铁。1/6/2/5 四路信号送 SCU。"
+    },
+    {
+      "id": "scu",
+      "label": "天窗控制盒 SCU",
+      "sub": "8=搭铁 · 7~1=电机驱动",
+      "role": "ecu",
+      "pins": ["SCU.8", "SCU.7", "SCU.6", "SCU.5", "SCU.4", "SCU.2", "SCU.1"],
+      "confidence": "read-clear",
+      "detail": "控制盒接收开关信号，输出六路驱动电机。8 脚 BLK 独立搭铁。六路含正反转与限位反馈。"
+    },
+    {
+      "id": "motor",
+      "label": "天窗电机总成",
+      "sub": "六路驱动",
+      "role": "load",
+      "pins": ["BLU/RED", "PNK", "BLK/ORG", "BLK", "RED×2"],
+      "confidence": "read-clear",
+      "detail": "电机经减速齿轮驱动天窗轨道。六根线对应正转/反转与位置反馈。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "A · 2J",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "两处搭铁：SCU 8 脚走 A 点，开关 3 脚走 2J 点。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_sr", "to": "switch", "color": "RED/YEL", "via": "LTE.U 插头 → SW.4", "note": "20A 供电"},
+    {"from": "switch", "to": "scu", "color": "RED / GRN / YEL / BLU", "via": "SW.1/6/2/5 → SCU", "note": "四向信号"},
+    {"from": "scu", "to": "motor", "color": "BLU/RED、PNK、BLK/ORG、BLK、RED", "via": "SCU.7/6/5/4/2/1（插头 III）", "note": "六路电机驱动"},
+    {"from": "scu", "to": "gnd", "color": "BLK", "via": "SCU.8 → A", "note": ""},
+    {"from": "switch", "to": "gnd", "color": "BLK", "via": "SW.3 → 2J", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "天窗完全不动 → 先查接线盒 20A S/R 保险丝（手册里标 S/R 符号，不是 D/L 也不是 P/W）",
+    "保险丝好但按开关没反应 → 天窗控制盒 SCU 或开关，二者都在顶棚内",
+    "能听到电机转但天窗不动 → **机械问题，不是电路**：轨道缺润滑、滑轨异物、拉索断裂",
+    "天窗关到一半自动退回 → **防夹功能触发**，多半是轨道阻力过大（缺润滑/变形），不是电路故障",
+    "只能单向动作（能开不能关）→ 开关该方向接点或 SCU 单路输出",
+    "开关 3 脚搭铁不良 → 开关整体失效，但 SCU 仍有电，表现为完全无反应",
+    "事故车或拆过顶棚后不动 → 优先查插头 I/II/III 是否插到位"
+  ],
+  "notes": [
+    "本系统仅配备天窗的车型才有。",
+    "开关四向标注：1 向上、6 向下、2 向后、5 向前。",
+    "SCU 与电机都在顶棚内，拆装前先确认保险丝与开关。"
+  ]
+}

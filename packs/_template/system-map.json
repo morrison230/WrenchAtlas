@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "description": "本车手册的文件夹/文件名中文标题 → 跨车型标准系统标识。换车型只改这份文件，builder 不用动。",
+  "topics": {
+  },
+  "kinds": {
+    "01-": "overview",
+    "02-": "power",
+    "03-": "ground",
+    "04-": "harness",
+    "05-": "connector",
+    "06-": "wiring"
+  }
+}

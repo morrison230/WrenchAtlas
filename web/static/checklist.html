@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>核对清单 · WrenchAtlas</title>
+<style>
+  :root{
+    --bg:#15171b; --panel:#1d2026; --panel2:#242830; --line:#2f343d;
+    --txt:#e9e7e3; --dim:#9aa0aa; --dim2:#6f7681; --accent:#e8a33d;
+    --ok:#5DCAA5; --warn:#EF9F27;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  header{position:sticky;top:0;z-index:20;background:rgba(29,32,38,.97);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px 14px}
+  .bar{display:flex;align-items:center;gap:10px}
+  .bar a{color:var(--dim);text-decoration:none;font-size:20px;padding:2px 6px}
+  .bar h1{margin:0;font-size:15px;font-weight:600;flex:1}
+  .prog{margin-top:10px}
+  .track{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}
+  .fill{height:100%;background:var(--ok);width:0;transition:width .3s}
+  .ptxt{font-size:11.5px;color:var(--dim2);margin-top:6px;display:flex;justify-content:space-between}
+  main{padding:14px 14px 70px;max-width:820px;margin:0 auto}
+  h2{font-size:13px;font-weight:500;color:var(--dim2);margin:22px 0 10px;
+    display:flex;align-items:center;gap:8px}
+  h2 span{font-size:11px;color:var(--dim2);font-weight:400}
+  .row{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;margin-bottom:8px;display:flex;gap:11px;align-items:flex-start}
+  .row.done{border-color:#2a4a3e;background:#182420}
+  .chk{flex:0 0 auto;width:20px;height:20px;border-radius:5px;border:1px solid var(--line);
+    background:var(--panel2);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    margin-top:1px}
+  .chk.on{background:#1f4a3c;border-color:var(--ok);color:var(--ok)}
+  .body{flex:1;min-width:0}
+  .body .nm{font-size:13.5px;font-weight:500;margin:0 0 3px}
+  .body .nm em{font-style:normal;font-size:11px;color:var(--dim2);margin-left:7px;font-weight:400}
+  .body .pins{font-size:11.5px;color:#85B7EB;font-family:ui-monospace,monospace;
+    word-break:break-all;margin:3px 0}
+  .body .note{font-size:12px;color:var(--dim2);line-height:1.5;margin:4px 0 0}
+  .body .note.warn{color:var(--warn)}
+  .empty{color:var(--dim2);text-align:center;padding:40px 0;font-size:13px}
+  .filters{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+  .filters::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;background:var(--panel);border:1px solid var(--line);color:var(--dim);
+    border-radius:8px;padding:7px 12px;font-size:12px;cursor:pointer}
+  .chip.on{background:#2b2418;border-color:var(--accent);color:var(--accent)}
+  .exp{display:flex;align-items:center;gap:10px;padding:10px 16px 0;flex-wrap:wrap}
+  .exp a{font-size:12px;color:var(--accent);background:var(--accent-soft);
+    border:1px solid var(--accent);border-radius:7px;padding:6px 12px;
+    text-decoration:none;white-space:nowrap}
+  .exp span{font-size:11px;color:var(--dim2)}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a href="/" data-pack>←</a>
+    <h1>实车核对清单</h1>
+    <a href="/search" data-pack style="font-size:13px;color:var(--dim2);text-decoration:none">搜索</a>
+  </div>
+  <div class="prog">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="ptxt"><span id="pcount">—</span><span>核对过的会变成绿勾，数据才算真正可信</span></div>
+  </div>
+  <div class="filters" id="filters"></div>
+  <div class="exp">
+    <a href="${WA.withPack('/api/report.txt?full=1&download=1')}">导出全量报告（txt）</a>
+    <span>含全部系统环节、排查步骤、存疑项与勾选框</span>
+  </div>
+</header>
+<main id="app"><p class="empty">加载中…</p></main>
+
+<script src="/static/packbar.js"></script>
+<script>const app = document.getElementById('app');
+let CIRCUITS = [], VER = {}, FILTER = 'todo';
+
+const esc = s => String(s ?? '').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+
+function flat(){
+  const out = [];
+  for(const c of CIRCUITS){
+    for(const n of c.nodes){
+      const v = VER[c.id] && VER[c.id][n.id];
+      // 优先级：存疑 > 跨系统 > 普通
+      let pri = 0;
+      if(n.confidence === 'read-uncertain') pri = 3;
+      else if(n.shared_connectors && n.shared_connectors.length) pri = 2;
+      else if(c.confidence === 'read-uncertain') pri = 1;
+      out.push({c, n, v, pri});
+    }
+  }
+  out.sort((a,b) => b.pri - a.pri || a.c.name.localeCompare(b.c.name));
+  return out;
+}
+
+function progress(items){
+  const done = items.filter(x => x.v).length;
+  const pct = items.length ? Math.round(done / items.length * 100) : 0;
+  document.getElementById('fill').style.width = pct + '%';
+  document.getElementById('pcount').textContent =
+    `已核对 ${done} / ${items.length} 个环节（${pct}%）`;
+}
+
+function render(){
+  const all = flat();
+  progress(all);
+  const todo = all.filter(x => !x.v);
+  const done = all.filter(x => x.v);
+  const unsure = todo.filter(x => x.pri >= 3);
+  const shared = todo.filter(x => x.pri === 2);
+  const rest = todo.filter(x => x.pri <= 1);
+
+  let html = '';
+  const sec = (title, sub, list) => {
+    if(!list.length) return '';
+    let h = `<h2>${esc(title)} <span>${sub} · ${list.length} 项</span></h2>`;
+    for(const x of list) h += rowHtml(x);
+    return h;
+  };
+
+  if(FILTER === 'todo'){
+    html += sec('优先核对 · 存疑项', '原图判读不确定，最需要实测', unsure);
+    html += sec('优先核对 · 跨系统关键件', '坏了会牵连多个系统', shared);
+    html += sec('常规项', '其余环节', rest.slice(0, 60));
+    if(rest.length > 60) html += `<p class="empty">还有 ${rest.length-60} 项，先核对上面的</p>`;
+  } else if(FILTER === 'done'){
+    html += sec('已核对', '实测确认过', done);
+  } else {
+    html += sec('全部未核对', '', todo.slice(0, 120));
+  }
+  app.innerHTML = html || '<p class="empty">这一类暂时没有内容</p>';
+
+  app.querySelectorAll('.chk').forEach(el => {
+    el.onclick = () => toggle(el.dataset.c, el.dataset.n, !el.classList.contains('on'));
+  });
+}
+
+function rowHtml(x){
+  const {c, n, v} = x;
+  const pins = (n.pins || []).map(p => esc(p)).join(' ');
+  const sh = n.shared_connectors && n.shared_connectors.length
+    ? n.shared_connectors.map(s => `${esc(s.conn)} 还出现在 ${esc(s.others.join('、'))}`).join('；')
+    : '';
+  return `<div class="row ${v ? 'done' : ''}">
+    <div class="chk ${v ? 'on' : ''}" data-c="${esc(c.id)}" data-n="${esc(n.id)}">${v ? '✓' : ''}</div>
+    <div class="body">
+      <p class="nm">${esc(n.label)}<em>${esc(c.name)}</em></p>
+      ${pins ? `<div class="pins">${pins}</div>` : ''}
+      ${n.uncertain ? `<p class="note warn">存疑：${esc(n.uncertain)}</p>` : ''}
+      ${sh ? `<p class="note">跨系统：${sh}</p>` : ''}
+      ${v ? `<p class="note" style="color:var(--ok)">已于 ${esc(v.at)} 核对</p>` : ''}
+    </div>
+  </div>`;
+}
+
+async function toggle(cid, nid, on){
+  try{
+    const r = await fetch(WA.withPack('/api/verify'), {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({circuit_id: cid, node_id: nid, verified: on, note: ''})
+    });
+    const d = await r.json();
+    if(!d.ok) return;
+    if(on){
+      const now = new Date(), p = x => String(x).padStart(2,'0');
+      VER[cid] = VER[cid] || {};
+      VER[cid][nid] = {at:`${now.getFullYear()}-${p(now.getMonth()+1)}-${p(now.getDate())} ${p(now.getHours())}:${p(now.getMinutes())}`};
+    } else if(VER[cid]) {
+      delete VER[cid][nid];
+    }
+    render();
+  }catch(e){ alert('操作失败：' + e.message); }
+}
+
+function renderFilters(){
+  const opts = [['todo','待核对'],['done','已核对'],['all','全部未核对']];
+  document.getElementById('filters').innerHTML = opts.map(([k,label]) =>
+    `<button class="chip ${FILTER===k?'on':''}" data-k="${k}">${label}</button>`).join('');
+  document.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    FILTER = b.dataset.k; renderFilters(); render();
+  });
+}
+
+Promise.all([
+  fetch(WA.withPack('/api/circuits')).then(r=>r.json()),
+  fetch(WA.withPack('/api/verified')).then(r=>r.json()).catch(()=>({marks:{}}))
+]).then(([cd, vd]) => {
+  CIRCUITS = cd.circuits || [];
+  VER = vd.marks || {};
+  renderFilters(); render();
+}).catch(e => {
+  app.innerHTML = '<p class="empty">加载失败：' + esc(e.message) + '</p>';
+});
+</script>
+</body>
+</html>

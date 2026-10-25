@@ -1,0 +1,92 @@
+{
+  "id": "interior-lamp",
+  "system": "interior-lamp",
+  "name": "室内照明",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "DOME 供电、室内灯三档开关、四门与背门门控开关、BCM 延时控制均清晰。各门控开关的具体搭铁点未逐一展开。",
+  "source_page": "sx4-2010::06-系统电路图-23-室内照明系统::p1",
+  "variant_note": "五门车型（含背门）",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "JB 保险丝 15A",
+      "sub": "DOME · 室内灯与行李舱灯共用",
+      "role": "fuse",
+      "pins": ["DOME-15A"],
+      "confidence": "read-clear",
+      "detail": "室内照明总保险丝 15A，前室内灯 K51 与行李舱灯 L132 共用。烧断则全部室内灯不亮，但门控开关与中控锁仍正常。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM 车身控制模块",
+      "sub": "22 脚 · 延时熄灯",
+      "role": "ecu",
+      "pins": ["BCM.22"],
+      "confidence": "read-clear",
+      "detail": "负责「室内灯延时熄灭」（关门后亮一会儿再灭）与开门点亮。BCM 异常会导致灯常亮或干脆不亮。"
+    },
+    {
+      "id": "lamp_front",
+      "label": "前室内灯 K51",
+      "sub": "OFF / DOOR / ON 三档",
+      "role": "load",
+      "pins": ["K51.1", "K51.3"],
+      "confidence": "read-clear",
+      "detail": "车顶前部阅读灯，三档开关：OFF=常灭、DOOR=开门亮、ON=常亮。**调到 OFF 档时开门当然不亮，这是最常见的误判。**"
+    },
+    {
+      "id": "lamp_luggage",
+      "label": "行李舱灯 L132",
+      "sub": "OFF / ON · 独立",
+      "role": "load",
+      "pins": ["L132.1"],
+      "confidence": "read-clear",
+      "detail": "行李箱内照明，有自己的开关，不受前室内灯档位影响。经二极管 L391（M2）隔离，防止反向串电。"
+    },
+    {
+      "id": "door_sw",
+      "label": "门控开关 ×4",
+      "sub": "左前 L163 · 左后 L164 · 右后 L162 · 背门 L161",
+      "role": "switch",
+      "pins": ["L163", "L164", "L162", "L161"],
+      "confidence": "read-clear",
+      "detail": "每个车门框上的按压开关，门开时闭合搭铁。单个开关失效只影响那一扇门，是定位最快的切入点。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "灯组与门控开关",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "室内灯与门控开关各自的搭铁点。门框内搭铁容易受潮锈蚀。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "lamp_front", "color": "—", "via": "L312 → K51", "note": ""},
+    {"from": "fuse", "to": "lamp_luggage", "color": "—", "via": "L314 → L132", "note": ""},
+    {"from": "fuse", "to": "bcm", "color": "—", "via": "G272.9 → BCM 22", "note": ""},
+    {"from": "bcm", "to": "lamp_front", "color": "—", "via": "→ 延时控制", "note": ""},
+    {"from": "door_sw", "to": "lamp_front", "color": "—", "via": "→ K51 DOOR 档", "note": "开门导通"},
+    {"from": "door_sw", "to": "bcm", "color": "—", "via": "→ 门状态信号", "note": "BCM 据此判断门开关"},
+    {"from": "lamp_front", "to": "gnd", "color": "—", "via": "→ 搭铁", "note": ""},
+    {"from": "lamp_luggage", "to": "gnd", "color": "—", "via": "L390 O231 → 搭铁", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "【先看档位】开门室内灯不亮 → 第一件事确认车顶灯开关在 DOOR 还是 OFF 档，在 OFF 档不亮是正常的，别急着拆",
+    "所有室内灯都不亮、手动 ON 也不亮 → 查 DOME 15A 保险丝",
+    "手动 ON 能亮、开门不亮 → 门控开关或 BCM 门状态信号，不是灯坏了",
+    "只有一扇门开门不亮 → 该门的门控开关（左前 L163 / 左后 L164 / 右后 L162 / 背门 L161），逐个试能直接定位",
+    "四个门都不触发、手动 ON 正常 → 查 BCM 22 脚与门状态线路",
+    "关门后灯不灭、一直亮 → 某个门控开关卡在闭合位（最常见是背门或后备箱开关），或 BCM 延时功能异常",
+    "只有行李舱灯不亮 → 查 L132 自身开关与二极管 L391，与车顶灯无关",
+    "灯微亮、闪烁、亮度不稳 → 门框内搭铁点受潮锈蚀，处理后座/门柱搭铁",
+    "换过 LED 室内灯后微亮不灭 → LED 漏电流导致，属改装副作用，可换回卤素或加电阻"
+  ],
+  "notes": [
+    "「开关在 OFF 档」是室内灯报修的第一大误判来源，排查前必须先确认档位",
+    "门控开关按门独立，逐个试门是最快的定位手段，不需要万用表",
+    "行李舱灯经二极管 L391 隔离，与前室内灯虽然共用保险丝但电路独立"
+  ]
+}

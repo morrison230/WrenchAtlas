@@ -1,0 +1,89 @@
+{
+  "id": "defogger",
+  "system": "defogger",
+  "name": "后除霜器",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "20A 供电、继电器、加热丝、HVAC 控制单元与 BCM 控制路径清晰。",
+  "source_page": "sx4-2010::06-系统电路图-12-后除霜器线路图::p1",
+  "variant_note": "五门车型；标注 ①手动 A/C ②自动 A/C 两种 HVAC 配置",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "RR DEF 保险丝 20A",
+      "sub": "后除霜主回路",
+      "role": "fuse",
+      "pins": ["RR-DEF-20A"],
+      "confidence": "read-clear",
+      "detail": "后除霜加热丝专用 20A 保险丝。**除霜丝是大电流负载**（十几安培），烧断保险丝往往意味着加热丝或线路有短路。"
+    },
+    {
+      "id": "relay",
+      "label": "后除霜继电器",
+      "sub": "触点 3/2 · 线圈 4/1",
+      "role": "relay",
+      "pins": ["R.3", "R.2", "R.4", "R.1"],
+      "confidence": "read-clear",
+      "detail": "3/2=触点（把 20A 送到加热丝），4/1=线圈（由 BCM 控制）。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM",
+      "sub": "G04 17",
+      "role": "ecu",
+      "pins": ["G04.17"],
+      "confidence": "read-clear",
+      "detail": "控制继电器线圈，并管理定时断电（后除霜通常十几分钟自动关，保护玻璃与电瓶）。"
+    },
+    {
+      "id": "hvac",
+      "label": "HVAC 控制单元",
+      "sub": "手动 / 自动 A/C 两种",
+      "role": "switch",
+      "pins": ["G154.7", "G20.7"],
+      "confidence": "read-clear",
+      "detail": "空调面板上的后除霜按钮。经 G154/G20 与 BCM 通信请求除霜。"
+    },
+    {
+      "id": "grid",
+      "label": "后除霜加热丝 O181 / O182",
+      "sub": "后窗玻璃上的电阻丝",
+      "role": "load",
+      "pins": ["O181.1", "O182.1"],
+      "confidence": "read-clear",
+      "detail": "印刷在后窗玻璃上的电热丝，分左右两片并联。**断一根丝只表现为局部不化霜，不会整体失效**；整体不热则是供电或继电器问题。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ㉓㉔ / ⑬",
+      "sub": "加热丝与模块",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "加热丝搭铁 ㉓㉔；BCM 搭铁 ⑬。加热丝搭铁不良会让除霜变慢。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "relay", "color": "—", "via": "→ R.3", "note": "触点电源"},
+    {"from": "relay", "to": "grid", "color": "黑", "via": "R.2 → L314.8 → O181/O182", "note": ""},
+    {"from": "grid", "to": "gnd", "color": "黑", "via": "→ ㉓㉔", "note": ""},
+    {"from": "bcm", "to": "relay", "color": "红/黑", "via": "G04.17 → 线圈", "note": "控制"},
+    {"from": "hvac", "to": "bcm", "color": "—", "via": "G154 / G20 → BCM", "note": "开关请求"},
+    {"from": "bcm", "to": "gnd", "color": "—", "via": "→ ⑬", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "后窗完全不化霜、按按钮继电器也不响 → 查 RR DEF 20A 保险丝与 HVAC 按钮信号",
+    "继电器有动作（能听到咔）但不化霜 → 加热丝断路或搭铁不良，用万用表测加热丝两端电压",
+    "【常见但非电路】只有一两根线不化霜、其余正常 → 玻璃上的印刷电阻丝被刮断，是机械损伤，需修复导电胶或换玻璃，与电路无关",
+    "后除霜工作几分钟就自动停 → 正常设计（定时保护），不是故障",
+    "除霜时收音机有杂音、后窗附近有干扰 → 加热丝或天线（后窗常集成天线）共用，属正常干扰",
+    "按按钮灯不亮、除霜不启动 → HVAC 控制面板或按钮触点",
+    "换过后窗玻璃后除霜失效 → 检查玻璃上的接插件是否插好、加热丝引线是否接通",
+    "【与其他系统联动】后窗除霜是电量大户，若除霜时怠速明显抖动或灯光变暗 → 转充电系统查发电量"
+  ],
+  "notes": [
+    "「局部不化霜」是玻璃上的加热丝断了，属机械损伤，不归电路排查",
+    "「完全不化霜」才查 20A、继电器、搭铁",
+    "后除霜是车内大电流负载之一，能作为充电系统的负载测试手段"
+  ]
+}

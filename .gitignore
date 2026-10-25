@@ -1,0 +1,50 @@
+# ---- 版权红线：原厂手册及衍生图永不入库 ----
+raw/
+*.pdf
+packs/*/pages/
+packs/*/thumbs/
+!packs/_template/pages/.gitkeep
+
+# 全文 OCR 索引同样不入库 —— 它是原厂手册的文字复制，不是结构化事实。
+# 各人用自己的手册本地生成：builder/ocr.py + builder/ocr_quality.py
+# 里面还含 _sources.json（本机绝对路径），更不该外传。
+packs/*/data/ocr/
+
+# 临时渲染与实验产物
+_smoke/
+_samples/
+_probe_*/
+reports/
+*.png
+*.jpg
+*.jpeg
+!docs/**/*.png
+!docs/**/*.svg
+
+# 依赖与构建
+node_modules/
+.next/
+out/
+dist/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 环境与密钥（严禁硬编码或提交）
+.env
+.env.*
+!.env.example
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 本地数据库与索引缓存
+*.db
+*.sqlite
+*.sqlite3
+.cache/

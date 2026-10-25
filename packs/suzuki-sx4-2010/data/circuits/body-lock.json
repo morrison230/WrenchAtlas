@@ -1,0 +1,110 @@
+{
+  "id": "body-lock",
+  "system": "body-electrical",
+  "name": "车身电器与中控锁",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-uncertain",
+  "confidence_note": "门锁主链路（DOME 15A → 钥匙开关 G144 → 门锁开关 → 电机）与各门开关清晰。BCM 的 CAN 引脚组与部分门锁支路未逐脚精读。",
+  "source_page": "sx4-2010::06-系统电路图-08-车体电器控制系统::p1",
+  "scope_note": "本页含 BCM 中央控制总图与中控锁两大部分。此处聚焦中控锁与门开关，BCM 的整车 CAN 分支不纳入。",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "JB 保险丝 15A",
+      "sub": "DOME · ㉗",
+      "role": "fuse",
+      "pins": ["DOME-15A"],
+      "confidence": "read-clear",
+      "detail": "常电，经 G271.5（红/白）同时供 BCM 与门锁系统。烧断则中控锁、室内灯、遥控全部失效——三者同时不工作时先查它。"
+    },
+    {
+      "id": "key_sw",
+      "label": "钥匙开关 G144",
+      "sub": "LOCK / 机械锁",
+      "role": "switch",
+      "pins": ["G144.4"],
+      "confidence": "read-clear",
+      "detail": "机械钥匙插入并转动时触发的开关，用于「用钥匙锁车」这条路径。与遥控器是两套独立输入。"
+    },
+    {
+      "id": "lock_sw",
+      "label": "中控锁开关 / 门锁开关",
+      "sub": "各门独立 + 主开关",
+      "role": "switch",
+      "pins": ["G04.15"],
+      "confidence": "read-clear",
+      "detail": "车内中控按钮与各车门的机械锁开关。任一门被手动锁/开都会给 BCM 信号。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM 车身控制模块",
+      "sub": "44/4/15/16/37/38 等",
+      "role": "ecu",
+      "pins": ["BCM.15", "BCM.16", "BCM.37"],
+      "confidence": "read-uncertain",
+      "detail": "接收各开关与遥控输入，驱动四门锁电机，同时管理室内灯、防盗指示灯、雨刮间歇等。通过 CAN 与 ECM/TCM/仪表通信。",
+      "uncertain": "BCM 各引脚功能与 CAN 分支未逐一精读"
+    },
+    {
+      "id": "actuator",
+      "label": "门锁电机 E37",
+      "sub": "电源锁 · 5/4 脚",
+      "role": "load",
+      "pins": ["E37.5", "E37.4"],
+      "confidence": "read-clear",
+      "detail": "各车门的锁执行电机。BCM 通过换向控制锁/开。电机卡滞或连杆脱落是「单个门锁不动」的常见原因。"
+    },
+    {
+      "id": "door_sw",
+      "label": "各门开关",
+      "sub": "前门 / 后门",
+      "role": "switch",
+      "pins": ["E04.10", "E04.9"],
+      "confidence": "read-clear",
+      "detail": "门开关（门框按压开关），既用于室内灯也用于 BCM 判断门开关状态、自动落锁逻辑。"
+    },
+    {
+      "id": "dlc",
+      "label": "DLC 诊断接口",
+      "sub": "16/6/14 CAN",
+      "role": "splice",
+      "pins": ["DLC.16", "DLC.6", "DLC.14"],
+      "confidence": "read-clear",
+      "detail": "整车诊断座。BCM 故障码需要在这里读。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ①④⑤ / ②⑧",
+      "sub": "BCM 与门锁",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "门锁电机与 BCM 的搭铁点。门框内搭铁容易受潮。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "bcm", "color": "红/白", "via": "G271.5 → BCM", "note": "常电"},
+    {"from": "key_sw", "to": "bcm", "color": "—", "via": "G144.4 → 门锁开关 → G04.15", "note": "钥匙锁定信号"},
+    {"from": "lock_sw", "to": "bcm", "color": "—", "via": "→ BCM", "note": ""},
+    {"from": "door_sw", "to": "bcm", "color": "—", "via": "→ BCM", "note": "门开关状态"},
+    {"from": "bcm", "to": "actuator", "color": "黄/橙", "via": "E04.10 / 9 → E37", "note": "换向驱动锁/开"},
+    {"from": "actuator", "to": "gnd", "color": "—", "via": "→ ①④⑤", "note": ""},
+    {"from": "bcm", "to": "dlc", "color": "CAN", "via": "→ DLC 6/14", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "中控锁、室内灯、遥控同时全部失效 → 先查 DOME 15A，这三者共用常电",
+    "遥控锁不了车、但用钥匙能锁 → 遥控器电池或匹配问题，不是门锁电路",
+    "钥匙能锁、中控按钮不能锁 → 中控开关或 BCM 输入，不是电机",
+    "只有一个门锁不动、其他正常 → 该门电机 E37 或机械连杆脱落，与电路无关居多",
+    "门锁反复跳、锁上又自动弹开 → 某个门开关误报「门没关好」，或锁块内位置开关故障",
+    "锁车后室内灯不灭 → 门开关（E04.10/9）误报门未关，与室内灯系统联动",
+    "行驶中自动落锁不工作 → BCM 设置项或车速信号，不一定是故障",
+    "断电换过蓄电池后中控异常 → 部分车型需重新同步，先确认保险丝与搭铁再怀疑模块",
+    "【最易混淆】遥控有效距离变短 → 钥匙电池将尽，不是天线问题；先换电池再查"
+  ],
+  "notes": [
+    "DOME 保险丝同时管中控锁、室内灯、遥控，三者同灭是重要线索",
+    "「单个门锁不动」优先判机械（连杆/锁块卡滞），电路是次要嫌疑",
+    "本页 BCM 的 CAN 分支与整车通信未纳入，此处只覆盖门锁与门开关"
+  ]
+}

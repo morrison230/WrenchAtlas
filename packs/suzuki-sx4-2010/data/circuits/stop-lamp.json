@@ -1,0 +1,119 @@
+{
+  "id": "stop-lamp",
+  "system": "stop-lamp",
+  "name": "制动灯",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "单页小电路，全图一次读完，连接器与线色无歧义。",
+  "source_page": "sx4-2010::06-系统电路图-25-制动灯::p1",
+  "variant_note": "本图标「四门」车型",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "JB 保险丝 15A",
+      "sub": "STOP",
+      "role": "fuse",
+      "pins": ["STOP-15A"],
+      "confidence": "read-clear",
+      "detail": "制动灯专用保险丝 15A。烧断则三个制动灯全不亮，但刹车本身正常——这是判断「刹车灯不亮」最省事的一步。"
+    },
+    {
+      "id": "switch",
+      "label": "制动灯开关 E181",
+      "sub": "踏板联动 · 2→1",
+      "role": "switch",
+      "pins": ["E181.2", "E181.1"],
+      "confidence": "read-clear",
+      "detail": "装在刹车踏板臂上的机械开关，踩下接通。2=绿线（来自 STOP 15A），1=输出。开关调整过紧会导致刹车灯常亮、过松会导致不亮。"
+    },
+    {
+      "id": "splice",
+      "label": "接线盒 E325 / L315",
+      "sub": "三路分电",
+      "role": "splice",
+      "pins": ["E325.1", "L315.2"],
+      "confidence": "read-clear",
+      "detail": "制动开关信号在此分成多路：绿/白 → ECM、绿/红 → ABS 控制模块、绿/白 → 三个制动灯。"
+    },
+    {
+      "id": "lamp_r",
+      "label": "右制动灯 L133",
+      "sub": "4 进 · 6 出",
+      "role": "load",
+      "pins": ["L133.4", "L133.6"],
+      "confidence": "read-clear",
+      "detail": "尾灯总成内的制动灯泡（R 侧）。4=绿/白进，6=搭铁。"
+    },
+    {
+      "id": "lamp_l",
+      "label": "左制动灯 L134",
+      "sub": "4 进 · 6 出",
+      "role": "load",
+      "pins": ["L134.4", "L134.6"],
+      "confidence": "read-clear",
+      "detail": "尾灯总成内的制动灯泡（L 侧）。"
+    },
+    {
+      "id": "lamp_high",
+      "label": "高位制动灯 L139",
+      "sub": "1 进 · 2 出",
+      "role": "load",
+      "pins": ["L139.1", "L139.2"],
+      "confidence": "read-clear",
+      "detail": "后窗上沿的高位灯（第三刹车灯）。1=绿/白进，2=搭铁，搭铁点 17/18。"
+    },
+    {
+      "id": "ecm",
+      "label": "ECM A-5",
+      "sub": "制动信号输入",
+      "role": "ecu",
+      "pins": ["ECM.A-5"],
+      "confidence": "read-clear",
+      "detail": "ECM 需要制动信号用于：松开油门断油控制、自动挡换挡逻辑、定速巡航解除。此线断会导致油耗异常或换挡逻辑异常，但刹车灯仍亮。"
+    },
+    {
+      "id": "abs",
+      "label": "ABS 控制模块 F-2",
+      "sub": "制动信号输入",
+      "role": "ecu",
+      "pins": ["ABS.F-2"],
+      "confidence": "read-clear",
+      "detail": "ABS 模块也需要制动信号。此线断时 ABS 灯可能点亮。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 20/21/17/18",
+      "sub": "各灯独立搭铁",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "左右制动灯分别搭铁 20、21；高位灯搭铁 17、18。搭铁点锈蚀会导致单个灯变暗或不亮。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "switch", "color": "绿", "via": "E323.2 → E181.2", "note": ""},
+    {"from": "switch", "to": "splice", "color": "绿", "via": "E181.1 → E325.1", "note": ""},
+    {"from": "splice", "to": "lamp_l", "color": "绿/白", "via": "L315.2 → L134.4", "note": ""},
+    {"from": "splice", "to": "lamp_r", "color": "绿/白", "via": "→ L133.4", "note": ""},
+    {"from": "splice", "to": "lamp_high", "color": "绿/白", "via": "→ L139.1", "note": ""},
+    {"from": "splice", "to": "ecm", "color": "绿/白", "via": "→ ECM A-5", "note": "信号，不参与点亮"},
+    {"from": "splice", "to": "abs", "color": "绿/红", "via": "→ ABS F-2", "note": "信号，不参与点亮"},
+    {"from": "lamp_l", "to": "gnd", "color": "绿/黑", "via": "L134.6 → 21", "note": ""},
+    {"from": "lamp_r", "to": "gnd", "color": "绿/黑", "via": "L133.6 → 20", "note": ""},
+    {"from": "lamp_high", "to": "gnd", "color": "绿/黑", "via": "L139.2 → 17/18", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "三个制动灯全不亮 → 先查 STOP 15A 保险丝，再查制动灯开关 E181（最常见是开关顶不到位或触点烧蚀）",
+    "只有一侧不亮、其余正常 → 该侧灯泡烧了或灯座接触不良，不是线路问题",
+    "左右都亮、高位灯不亮 → 高位灯灯泡或 L139 插头，与主回路无关",
+    "刹车灯常亮不停 → 制动灯开关 E181 调整过紧或卡滞，长期如此会耗电并使 ECM 误判制动状态",
+    "踩刹车时 ABS 灯亮 → 查 ABS F-2 信号线（绿/红），这条是信号线不是灯线",
+    "刹车灯亮但油耗偏高、松油门不降速 → 查 ECM A-5 制动信号线（绿/白），ECM 认为你一直踩着刹车",
+    "灯泡换新的很快又烧 → 查发电机电压是否过高（>15V），转充电系统",
+    "只换 LED 灯泡后出现刹车灯微亮或闪烁 → 回路电阻变化导致，属改装副作用"
+  ],
+  "notes": [
+    "制动灯开关同时向 ECM 和 ABS 供信号，所以「灯亮不亮」和「信号通不通」是两回事，要分开判断",
+    "四个搭铁点（20/21/17/18）各自独立，便于定位单灯故障"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": "navi",
+  "system": "navi",
+  "name": "导航音响（GPS）",
+  "type": "signal-flow",
+  "confidence": "read-clear",
+  "confidence_note": "G-4 图与 C-1（33-音响系统）高度重复，仅补充导航天线相关部分。",
+  "source_page": "sx4-2010::06-系统电路图-36-导航音响系统::p1",
+  "topology_type": "导航版补充（主体电路见 audio 系统）",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "DOME 15A + ACC2 15A",
+      "sub": "双电源 · 与基本音响相同",
+      "role": "fuse",
+      "pins": ["JB-5", "JB-20"],
+      "confidence": "read-clear",
+      "detail": "导航主机同样是常电 + ACC 双电源供电，与基本音响一致。"
+    },
+    {
+      "id": "head",
+      "label": "导航音响主机 G312",
+      "sub": "带导航/彩屏",
+      "role": "ecu",
+      "pins": ["G312"],
+      "confidence": "read-clear",
+      "detail": "高级型主机，集成导航、音响、显示。经 G307/G308 中间连接器接电源与信号。"
+    },
+    {
+      "id": "gps_ant",
+      "label": "GPS 天线与置顶音响天线",
+      "sub": "车顶 · 经天线放大器",
+      "role": "sensor",
+      "pins": ["置顶音响天线", "天线放大器"],
+      "confidence": "read-clear",
+      "detail": "车顶天线组件，同时承担 GPS 接收与音响收音。经天线放大器送入主机。**这是导航版相对基本音响多出来的部分。**"
+    },
+    {
+      "id": "spk",
+      "label": "扬声器组",
+      "sub": "J146 后左 · J152 等",
+      "role": "load",
+      "pins": ["J146", "J152"],
+      "confidence": "read-clear",
+      "detail": "四门扬声器接线与基本音响相同，见 audio 系统。"
+    },
+    {
+      "id": "mic",
+      "label": "麦克风 G325",
+      "sub": "免提",
+      "role": "sensor",
+      "pins": ["G325"],
+      "confidence": "read-clear",
+      "detail": "顶棚麦克风，供免提通话与语音指令。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "车身",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "主机与天线放大器搭铁。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "head", "color": "白、灰", "via": "G271 → G302/G307/G308", "note": "双电源"},
+    {"from": "gps_ant", "to": "head", "color": "同轴", "via": "天线放大器 → 主机", "note": "GPS 与收音信号"},
+    {"from": "mic", "to": "head", "color": "多色", "via": "G325", "note": "免提"},
+    {"from": "head", "to": "spk", "color": "多色", "via": "四路", "note": "同 audio"},
+    {"from": "head", "to": "gnd", "color": "黑", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "导航定位慢/漂移 → GPS 天线或天线放大器供电，先确认车顶天线插头是否到位",
+    "收音差 + 导航也不准 → 同一个天线组件故障（两者共用），不是两个独立问题",
+    "天线放大器不供电 → 表现为「只能收强台」，与基本音响同样的判据",
+    "导航主机不点亮 → 与基本音响一样查 DOME 15A + ACC2 15A 两个保险丝",
+    "换过前风挡或车顶内饰后信号变差 → 天线走线被压或插头脱落"
+  ],
+  "notes": [
+    "**本页与 33-音响系统（C-1）内容高度重复**：同一张图被两个章节收录，扫描尺寸差 6 像素。",
+    "导航版相对基本音响多出的是车顶 GPS/音响天线组件与天线放大器。",
+    "扬声器、麦克风、主机的接线细节以 audio 系统为准，本文不重复。"
+  ]
+}

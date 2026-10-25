@@ -1,0 +1,100 @@
+{
+  "id": "eps",
+  "system": "eps",
+  "name": "电动助力转向系统",
+  "type": "signal-flow",
+  "safety_critical": true,
+  "confidence": "read-clear",
+  "confidence_note": "F-4 图两个图区：上半为 60A 主电源与电机，下半为模块、扭矩传感器与逻辑电源。模块内部控制未展开。",
+  "source_page": "sx4-2010::06-系统电路图-32-电动助力转向系统::p1",
+  "topology_type": "功能级",
+  "safety_warning": "EPS 失效后机械转向仍然有效，但方向盘会明显变重，低速大角度转向需用更大力量。助力突然消失时不要慌张猛打方向。拆装转向柱或扭矩传感器后必须做零点标定。",
+  "nodes": [
+    {
+      "id": "fuse_ps",
+      "label": "JB 60A PS",
+      "sub": "EPS 主电源",
+      "role": "fuse",
+      "pins": ["JB-PS-60A"],
+      "confidence": "read-clear",
+      "detail": "60A 大电流保险丝，专供 EPS 电机。**这个保险丝很多人不知道它存在** —— 助力完全消失时先看它。"
+    },
+    {
+      "id": "fuse_dome",
+      "label": "JB DOME 15A",
+      "sub": "逻辑电源",
+      "role": "fuse",
+      "pins": ["JB-5"],
+      "confidence": "read-clear",
+      "detail": "控制模块的逻辑电源。它断了模块不工作，助力也不会有，但 60A 是好的 —— 容易误判成电机坏。"
+    },
+    {
+      "id": "module",
+      "label": "EPS 控制模块",
+      "sub": "含驱动与自诊断",
+      "role": "ecu",
+      "pins": ["E352"],
+      "confidence": "read-clear",
+      "detail": "根据扭矩传感器信号计算助力大小，驱动电机。故障码存在这里，EPS 灯也由它点亮。"
+    },
+    {
+      "id": "torque_sensor",
+      "label": "扭矩传感器",
+      "sub": "转向柱上 · 双路冗余",
+      "role": "sensor",
+      "pins": ["G369"],
+      "confidence": "read-clear",
+      "detail": "检测驾驶员的转向力矩与方向。通常双路冗余（主/副信号），两路不一致会直接判故障并停止助力。"
+    },
+    {
+      "id": "motor",
+      "label": "EPS 电机",
+      "sub": "转向柱助力",
+      "role": "load",
+      "pins": ["G28"],
+      "confidence": "read-clear",
+      "detail": "直流电机经减速机构给转向柱加力。走 60A 大电流回路。"
+    },
+    {
+      "id": "meter",
+      "label": "组合仪表（EPS 灯）",
+      "sub": "经 CAN 收状态",
+      "role": "load",
+      "pins": ["CAN"],
+      "confidence": "read-clear",
+      "detail": "EPS 灯由模块通过 CAN 通知仪表。灯亮表示助力已降级或停止。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "多点 · 含大电流地",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "电机大电流搭铁与模块信号地分开。搭铁不良会导致助力时有时无。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_ps", "to": "motor", "color": "粗线", "via": "E327 → G28", "note": "60A 主回路"},
+    {"from": "fuse_dome", "to": "module", "color": "白", "via": "G271 → G308 → E352", "note": "逻辑电源"},
+    {"from": "torque_sensor", "to": "module", "color": "多色", "via": "G369 → E352", "note": "双路冗余信号"},
+    {"from": "module", "to": "motor", "color": "三相/粗线", "via": "驱动输出", "note": "助力驱动"},
+    {"from": "module", "to": "meter", "color": "CAN", "via": "CAN 总线", "note": "EPS 灯"},
+    {"from": "motor", "to": "gnd", "color": "黑", "via": "大电流搭铁", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "助力完全消失 + EPS 灯亮 → 先查 JB 60A PS 大电流保险丝（不是 15A 那个）",
+    "60A 好但没助力 → 查 DOME 15A 逻辑电源，模块没电也不会助力，别直接判电机坏",
+    "助力时有时无、颠簸路上变化 → 搭铁不良或扭矩传感器插接松动",
+    "直线行驶方向自己偏 → 扭矩传感器零点漂移，需做零点标定",
+    "助力大小不随车速变化 → 车速信号（CAN）异常，模块拿不到车速",
+    "拆装转向柱/换过扭矩传感器后灯常亮 → **必须做零点标定**，否则模块认为信号不可信",
+    "方向盘突然变重 → 系统进入失效保护，机械转向仍在。此时打方向要用力，不要猛打",
+    "EPS 灯闪烁（不是常亮）→ 通常是信号类故障（传感器/CAN），常亮多为硬件或电源"
+  ],
+  "notes": [
+    "EPS 有 60A 主电源与 15A 逻辑电源两条，任何一条断都导致无助力，诊断必须分开确认。",
+    "扭矩传感器为双路冗余，两路信号不一致时模块会主动停止助力（失效保护）。",
+    "机械转向在任何情况下都有效，EPS 只是加力。",
+    "拆装转向柱相关件后必须零点标定。"
+  ]
+}

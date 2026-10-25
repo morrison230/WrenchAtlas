@@ -1,0 +1,1715 @@
+{
+ "schema_version": "0.1",
+ "pages": [
+  {
+   "id": "sx4-2010::01-概述::p1",
+   "doc_id": "sx4-2010",
+   "file": "01-概述.pdf",
+   "page": 1,
+   "kind": "overview",
+   "system": "overview",
+   "title": "概述",
+   "image": "pages/01-概述__p001.png",
+   "thumb": "thumbs/01-概述__p001.jpg",
+   "size": [
+    4560,
+    6169
+   ]
+  },
+  {
+   "id": "sx4-2010::01-概述::p2",
+   "doc_id": "sx4-2010",
+   "file": "01-概述.pdf",
+   "page": 2,
+   "kind": "overview",
+   "system": "overview",
+   "title": "概述",
+   "image": "pages/01-概述__p002.png",
+   "thumb": "thumbs/01-概述__p002.jpg",
+   "size": [
+    4560,
+    7907
+   ]
+  },
+  {
+   "id": "sx4-2010::01-概述::p3",
+   "doc_id": "sx4-2010",
+   "file": "01-概述.pdf",
+   "page": 3,
+   "kind": "overview",
+   "system": "overview",
+   "title": "概述",
+   "image": "pages/01-概述__p003.png",
+   "thumb": "thumbs/01-概述__p003.jpg",
+   "size": [
+    4560,
+    3613
+   ]
+  },
+  {
+   "id": "sx4-2010::01-概述::p4",
+   "doc_id": "sx4-2010",
+   "file": "01-概述.pdf",
+   "page": 4,
+   "kind": "overview",
+   "system": "overview",
+   "title": "概述",
+   "image": "pages/01-概述__p004.png",
+   "thumb": "thumbs/01-概述__p004.jpg",
+   "size": [
+    4560,
+    7438
+   ]
+  },
+  {
+   "id": "sx4-2010::01-概述::p5",
+   "doc_id": "sx4-2010",
+   "file": "01-概述.pdf",
+   "page": 5,
+   "kind": "overview",
+   "system": "overview",
+   "title": "概述",
+   "image": "pages/01-概述__p005.png",
+   "thumb": "thumbs/01-概述__p005.jpg",
+   "size": [
+    4560,
+    3544
+   ]
+  },
+  {
+   "id": "sx4-2010::01-概述::p6",
+   "doc_id": "sx4-2010",
+   "file": "01-概述.pdf",
+   "page": 6,
+   "kind": "overview",
+   "system": "overview",
+   "title": "概述",
+   "image": "pages/01-概述__p006.png",
+   "thumb": "thumbs/01-概述__p006.jpg",
+   "size": [
+    4560,
+    3979
+   ]
+  },
+  {
+   "id": "sx4-2010::01-概述::p7",
+   "doc_id": "sx4-2010",
+   "file": "01-概述.pdf",
+   "page": 7,
+   "kind": "overview",
+   "system": "overview",
+   "title": "概述",
+   "image": "pages/01-概述__p007.png",
+   "thumb": "thumbs/01-概述__p007.jpg",
+   "size": [
+    4560,
+    5935
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p1",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 1,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p001.png",
+   "thumb": "thumbs/02-电源供电__p001.jpg",
+   "size": [
+    4560,
+    6894
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p2",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 2,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p002.png",
+   "thumb": "thumbs/02-电源供电__p002.jpg",
+   "size": [
+    4560,
+    4397
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p3",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 3,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p003.png",
+   "thumb": "thumbs/02-电源供电__p003.jpg",
+   "size": [
+    4560,
+    6397
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p4",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 4,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p004.png",
+   "thumb": "thumbs/02-电源供电__p004.jpg",
+   "size": [
+    4560,
+    7922
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p5",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 5,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p005.png",
+   "thumb": "thumbs/02-电源供电__p005.jpg",
+   "size": [
+    4560,
+    7925
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p6",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 6,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p006.png",
+   "thumb": "thumbs/02-电源供电__p006.jpg",
+   "size": [
+    4560,
+    3216
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p7",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 7,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p007.png",
+   "thumb": "thumbs/02-电源供电__p007.jpg",
+   "size": [
+    4560,
+    4050
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p8",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 8,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p008.png",
+   "thumb": "thumbs/02-电源供电__p008.jpg",
+   "size": [
+    4560,
+    4894
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p9",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 9,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p009.png",
+   "thumb": "thumbs/02-电源供电__p009.jpg",
+   "size": [
+    4560,
+    5535
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p10",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 10,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p010.png",
+   "thumb": "thumbs/02-电源供电__p010.jpg",
+   "size": [
+    4560,
+    7510
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p11",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 11,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p011.png",
+   "thumb": "thumbs/02-电源供电__p011.jpg",
+   "size": [
+    4560,
+    7482
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p12",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 12,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p012.png",
+   "thumb": "thumbs/02-电源供电__p012.jpg",
+   "size": [
+    4560,
+    3750
+   ]
+  },
+  {
+   "id": "sx4-2010::02-电源供电::p13",
+   "doc_id": "sx4-2010",
+   "file": "02-电源供电.pdf",
+   "page": 13,
+   "kind": "power",
+   "system": "power-supply",
+   "title": "电源供电",
+   "image": "pages/02-电源供电__p013.png",
+   "thumb": "thumbs/02-电源供电__p013.jpg",
+   "size": [
+    4560,
+    2782
+   ]
+  },
+  {
+   "id": "sx4-2010::03-接地点::p1",
+   "doc_id": "sx4-2010",
+   "file": "03-接地点.pdf",
+   "page": 1,
+   "kind": "ground",
+   "system": "ground-points",
+   "title": "接地点",
+   "image": "pages/03-接地点__p001.png",
+   "thumb": "thumbs/03-接地点__p001.jpg",
+   "size": [
+    4560,
+    3897
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p1",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 1,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p001.png",
+   "thumb": "thumbs/04-线束布置__p001.jpg",
+   "size": [
+    4560,
+    2994
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p2",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 2,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p002.png",
+   "thumb": "thumbs/04-线束布置__p002.jpg",
+   "size": [
+    4560,
+    4925
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p3",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 3,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p003.png",
+   "thumb": "thumbs/04-线束布置__p003.jpg",
+   "size": [
+    4560,
+    5507
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p4",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 4,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p004.png",
+   "thumb": "thumbs/04-线束布置__p004.jpg",
+   "size": [
+    4560,
+    6294
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p5",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 5,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p005.png",
+   "thumb": "thumbs/04-线束布置__p005.jpg",
+   "size": [
+    4560,
+    3722
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p6",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 6,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p006.png",
+   "thumb": "thumbs/04-线束布置__p006.jpg",
+   "size": [
+    4560,
+    4835
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p7",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 7,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p007.png",
+   "thumb": "thumbs/04-线束布置__p007.jpg",
+   "size": [
+    4560,
+    3563
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p8",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 8,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p008.png",
+   "thumb": "thumbs/04-线束布置__p008.jpg",
+   "size": [
+    4560,
+    3604
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p9",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 9,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p009.png",
+   "thumb": "thumbs/04-线束布置__p009.jpg",
+   "size": [
+    4560,
+    3800
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p10",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 10,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p010.png",
+   "thumb": "thumbs/04-线束布置__p010.jpg",
+   "size": [
+    4560,
+    6835
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p11",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 11,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p011.png",
+   "thumb": "thumbs/04-线束布置__p011.jpg",
+   "size": [
+    4560,
+    6857
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p12",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 12,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p012.png",
+   "thumb": "thumbs/04-线束布置__p012.jpg",
+   "size": [
+    4560,
+    4582
+   ]
+  },
+  {
+   "id": "sx4-2010::04-线束布置::p13",
+   "doc_id": "sx4-2010",
+   "file": "04-线束布置.pdf",
+   "page": 13,
+   "kind": "harness",
+   "system": "harness-layout",
+   "title": "线束布置",
+   "image": "pages/04-线束布置__p013.png",
+   "thumb": "thumbs/04-线束布置__p013.jpg",
+   "size": [
+    4560,
+    4010
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p1",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 1,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p001.png",
+   "thumb": "thumbs/05-连接器布置图__p001.jpg",
+   "size": [
+    4560,
+    2888
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p2",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 2,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p002.png",
+   "thumb": "thumbs/05-连接器布置图__p002.jpg",
+   "size": [
+    4560,
+    6175
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p3",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 3,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p003.png",
+   "thumb": "thumbs/05-连接器布置图__p003.jpg",
+   "size": [
+    4560,
+    6182
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p4",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 4,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p004.png",
+   "thumb": "thumbs/05-连接器布置图__p004.jpg",
+   "size": [
+    4560,
+    5860
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p5",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 5,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p005.png",
+   "thumb": "thumbs/05-连接器布置图__p005.jpg",
+   "size": [
+    4560,
+    7085
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p6",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 6,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p006.png",
+   "thumb": "thumbs/05-连接器布置图__p006.jpg",
+   "size": [
+    4560,
+    5144
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p7",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 7,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p007.png",
+   "thumb": "thumbs/05-连接器布置图__p007.jpg",
+   "size": [
+    4560,
+    7091
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p8",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 8,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p008.png",
+   "thumb": "thumbs/05-连接器布置图__p008.jpg",
+   "size": [
+    4560,
+    7122
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p9",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 9,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p009.png",
+   "thumb": "thumbs/05-连接器布置图__p009.jpg",
+   "size": [
+    4560,
+    3544
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p10",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 10,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p010.png",
+   "thumb": "thumbs/05-连接器布置图__p010.jpg",
+   "size": [
+    4560,
+    7107
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p11",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 11,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p011.png",
+   "thumb": "thumbs/05-连接器布置图__p011.jpg",
+   "size": [
+    4560,
+    7082
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p12",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 12,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p012.png",
+   "thumb": "thumbs/05-连接器布置图__p012.jpg",
+   "size": [
+    4560,
+    7122
+   ]
+  },
+  {
+   "id": "sx4-2010::05-连接器布置图::p13",
+   "doc_id": "sx4-2010",
+   "file": "05-连接器布置图.pdf",
+   "page": 13,
+   "kind": "connector",
+   "system": "connector-layout",
+   "title": "连接器布置图",
+   "image": "pages/05-连接器布置图__p013.png",
+   "thumb": "thumbs/05-连接器布置图__p013.jpg",
+   "size": [
+    4560,
+    4347
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-01-起动系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/01-起动系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "starting",
+   "title": "起动系统",
+   "image": "pages/06-系统电路图__01-起动系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__01-起动系统__p001.jpg",
+   "size": [
+    4560,
+    3813
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-02-充电系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/02-充电系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "charging",
+   "title": "充电系统",
+   "image": "pages/06-系统电路图__02-充电系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__02-充电系统__p001.jpg",
+   "size": [
+    4560,
+    3925
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-03-点火系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/03-点火系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "ignition",
+   "title": "点火系统",
+   "image": "pages/06-系统电路图__03-点火系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__03-点火系统__p001.jpg",
+   "size": [
+    4560,
+    3866
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-04-冷却系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/04-冷却系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "cooling",
+   "title": "冷却系统",
+   "image": "pages/06-系统电路图__04-冷却系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__04-冷却系统__p001.jpg",
+   "size": [
+    4560,
+    3825
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-05-发动机和空调控制系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/05-发动机和空调控制系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "engine-ecm",
+   "title": "发动机和空调控制系统",
+   "image": "pages/06-系统电路图__05-发动机和空调控制系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__05-发动机和空调控制系统__p001.jpg",
+   "size": [
+    4560,
+    6935
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-05-发动机和空调控制系统::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/05-发动机和空调控制系统.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "engine-ecm",
+   "title": "发动机和空调控制系统",
+   "image": "pages/06-系统电路图__05-发动机和空调控制系统__p002.png",
+   "thumb": "thumbs/06-系统电路图__05-发动机和空调控制系统__p002.jpg",
+   "size": [
+    4560,
+    6410
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-05-发动机和空调控制系统::p3",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/05-发动机和空调控制系统.pdf",
+   "page": 3,
+   "kind": "wiring",
+   "system": "engine-ecm",
+   "title": "发动机和空调控制系统",
+   "image": "pages/06-系统电路图__05-发动机和空调控制系统__p003.png",
+   "thumb": "thumbs/06-系统电路图__05-发动机和空调控制系统__p003.jpg",
+   "size": [
+    4560,
+    7029
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-05-发动机和空调控制系统::p4",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/05-发动机和空调控制系统.pdf",
+   "page": 4,
+   "kind": "wiring",
+   "system": "engine-ecm",
+   "title": "发动机和空调控制系统",
+   "image": "pages/06-系统电路图__05-发动机和空调控制系统__p004.png",
+   "thumb": "thumbs/06-系统电路图__05-发动机和空调控制系统__p004.jpg",
+   "size": [
+    4560,
+    6385
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-05-发动机和空调控制系统::p5",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/05-发动机和空调控制系统.pdf",
+   "page": 5,
+   "kind": "wiring",
+   "system": "engine-ecm",
+   "title": "发动机和空调控制系统",
+   "image": "pages/06-系统电路图__05-发动机和空调控制系统__p005.png",
+   "thumb": "thumbs/06-系统电路图__05-发动机和空调控制系统__p005.jpg",
+   "size": [
+    4560,
+    7060
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-05-发动机和空调控制系统::p6",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/05-发动机和空调控制系统.pdf",
+   "page": 6,
+   "kind": "wiring",
+   "system": "engine-ecm",
+   "title": "发动机和空调控制系统",
+   "image": "pages/06-系统电路图__05-发动机和空调控制系统__p006.png",
+   "thumb": "thumbs/06-系统电路图__05-发动机和空调控制系统__p006.jpg",
+   "size": [
+    4560,
+    6429
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-06-AT控制系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/06-AT控制系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "at-control",
+   "title": "AT控制系统",
+   "image": "pages/06-系统电路图__06-AT控制系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__06-AT控制系统__p001.jpg",
+   "size": [
+    4560,
+    7119
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-07-发动机电子芯片防盗系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/07-发动机电子芯片防盗系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "immobilizer",
+   "title": "发动机电子芯片防盗系统",
+   "image": "pages/06-系统电路图__07-发动机电子芯片防盗系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__07-发动机电子芯片防盗系统__p001.jpg",
+   "size": [
+    4560,
+    3585
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-08-车体电器控制系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/08-车体电器控制系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "body-electrical",
+   "title": "车体电器控制系统",
+   "image": "pages/06-系统电路图__08-车体电器控制系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__08-车体电器控制系统__p001.jpg",
+   "size": [
+    4560,
+    6616
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-08-车体电器控制系统::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/08-车体电器控制系统.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "body-electrical",
+   "title": "车体电器控制系统",
+   "image": "pages/06-系统电路图__08-车体电器控制系统__p002.png",
+   "thumb": "thumbs/06-系统电路图__08-车体电器控制系统__p002.jpg",
+   "size": [
+    4560,
+    6707
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-09-CAN线路图::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/09-CAN线路图.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "can",
+   "title": "CAN线路图",
+   "image": "pages/06-系统电路图__09-CAN线路图__p001.png",
+   "thumb": "thumbs/06-系统电路图__09-CAN线路图__p001.jpg",
+   "size": [
+    4560,
+    3132
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-10-挡风玻璃雨刮器和清洗器::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/10-挡风玻璃雨刮器和清洗器.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "wiper-front",
+   "title": "挡风玻璃雨刮器和清洗器",
+   "image": "pages/06-系统电路图__10-挡风玻璃雨刮器和清洗器__p001.png",
+   "thumb": "thumbs/06-系统电路图__10-挡风玻璃雨刮器和清洗器__p001.jpg",
+   "size": [
+    4560,
+    3613
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-11-后雨刮器和清洗器::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/11-后雨刮器和清洗器.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "wiper-rear",
+   "title": "后雨刮器和清洗器",
+   "image": "pages/06-系统电路图__11-后雨刮器和清洗器__p001.png",
+   "thumb": "thumbs/06-系统电路图__11-后雨刮器和清洗器__p001.jpg",
+   "size": [
+    4560,
+    3869
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-12-后除霜器线路图::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/12-后除霜器线路图.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "defogger",
+   "title": "后除霜器线路图",
+   "image": "pages/06-系统电路图__12-后除霜器线路图__p001.png",
+   "thumb": "thumbs/06-系统电路图__12-后除霜器线路图__p001.jpg",
+   "size": [
+    4560,
+    3835
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-12-后除霜器线路图::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/12-后除霜器线路图.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "defogger",
+   "title": "后除霜器线路图",
+   "image": "pages/06-系统电路图__12-后除霜器线路图__p002.png",
+   "thumb": "thumbs/06-系统电路图__12-后除霜器线路图__p002.jpg",
+   "size": [
+    4560,
+    3475
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-13-电动后视镜::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/13-电动后视镜.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "mirror",
+   "title": "电动后视镜",
+   "image": "pages/06-系统电路图__13-电动后视镜__p001.png",
+   "thumb": "thumbs/06-系统电路图__13-电动后视镜__p001.jpg",
+   "size": [
+    4560,
+    6791
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-14-电动门锁::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/14-电动门锁.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "door-lock",
+   "title": "电动门锁",
+   "image": "pages/06-系统电路图__14-电动门锁__p001.png",
+   "thumb": "thumbs/06-系统电路图__14-电动门锁__p001.jpg",
+   "size": [
+    4560,
+    6447
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-15-电动后视镜::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/15-电动后视镜.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "mirror",
+   "title": "电动后视镜",
+   "image": "pages/06-系统电路图__15-电动后视镜__p001.png",
+   "thumb": "thumbs/06-系统电路图__15-电动后视镜__p001.jpg",
+   "size": [
+    4560,
+    4004
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-16-喇叭线路::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/16-喇叭线路.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "horn",
+   "title": "喇叭线路",
+   "image": "pages/06-系统电路图__16-喇叭线路__p001.png",
+   "thumb": "thumbs/06-系统电路图__16-喇叭线路__p001.jpg",
+   "size": [
+    4560,
+    3872
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-17-无钥匙启动系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/17-无钥匙启动系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "keyless",
+   "title": "无钥匙启动系统",
+   "image": "pages/06-系统电路图__17-无钥匙启动系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__17-无钥匙启动系统__p001.jpg",
+   "size": [
+    4560,
+    3466
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-18-组合仪表::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/18-组合仪表.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "meter",
+   "title": "组合仪表",
+   "image": "pages/06-系统电路图__18-组合仪表__p001.png",
+   "thumb": "thumbs/06-系统电路图__18-组合仪表__p001.jpg",
+   "size": [
+    4560,
+    3816
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-18-组合仪表::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/18-组合仪表.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "meter",
+   "title": "组合仪表",
+   "image": "pages/06-系统电路图__18-组合仪表__p002.png",
+   "thumb": "thumbs/06-系统电路图__18-组合仪表__p002.jpg",
+   "size": [
+    4560,
+    5725
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-18-组合仪表::p3",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/18-组合仪表.pdf",
+   "page": 3,
+   "kind": "wiring",
+   "system": "meter",
+   "title": "组合仪表",
+   "image": "pages/06-系统电路图__18-组合仪表__p003.png",
+   "thumb": "thumbs/06-系统电路图__18-组合仪表__p003.jpg",
+   "size": [
+    4560,
+    5694
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-18-组合仪表::p4",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/18-组合仪表.pdf",
+   "page": 4,
+   "kind": "wiring",
+   "system": "meter",
+   "title": "组合仪表",
+   "image": "pages/06-系统电路图__18-组合仪表__p004.png",
+   "thumb": "thumbs/06-系统电路图__18-组合仪表__p004.jpg",
+   "size": [
+    4560,
+    3557
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-18-组合仪表::p5",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/18-组合仪表.pdf",
+   "page": 5,
+   "kind": "wiring",
+   "system": "meter",
+   "title": "组合仪表",
+   "image": "pages/06-系统电路图__18-组合仪表__p005.png",
+   "thumb": "thumbs/06-系统电路图__18-组合仪表__p005.jpg",
+   "size": [
+    4560,
+    6744
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-19-前照灯系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/19-前照灯系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "headlamp",
+   "title": "前照灯系统",
+   "image": "pages/06-系统电路图__19-前照灯系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__19-前照灯系统__p001.jpg",
+   "size": [
+    4560,
+    7910
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-19-前照灯系统::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/19-前照灯系统.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "headlamp",
+   "title": "前照灯系统",
+   "image": "pages/06-系统电路图__19-前照灯系统__p002.png",
+   "thumb": "thumbs/06-系统电路图__19-前照灯系统__p002.jpg",
+   "size": [
+    4560,
+    4485
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-20-示宽、车尾和牌照灯系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/20-示宽、车尾和牌照灯系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "tail-lamp",
+   "title": "示宽、车尾和牌照灯系统",
+   "image": "pages/06-系统电路图__20-示宽、车尾和牌照灯系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__20-示宽、车尾和牌照灯系统__p001.jpg",
+   "size": [
+    4560,
+    3391
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-20-示宽、车尾和牌照灯系统::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/20-示宽、车尾和牌照灯系统.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "tail-lamp",
+   "title": "示宽、车尾和牌照灯系统",
+   "image": "pages/06-系统电路图__20-示宽、车尾和牌照灯系统__p002.png",
+   "thumb": "thumbs/06-系统电路图__20-示宽、车尾和牌照灯系统__p002.jpg",
+   "size": [
+    4560,
+    3372
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-21-前雾灯::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/21-前雾灯.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "fog-lamp-front",
+   "title": "前雾灯",
+   "image": "pages/06-系统电路图__21-前雾灯__p001.png",
+   "thumb": "thumbs/06-系统电路图__21-前雾灯__p001.jpg",
+   "size": [
+    4560,
+    3800
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-22-照明灯::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/22-照明灯.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "illumination",
+   "title": "照明灯",
+   "image": "pages/06-系统电路图__22-照明灯__p001.png",
+   "thumb": "thumbs/06-系统电路图__22-照明灯__p001.jpg",
+   "size": [
+    4560,
+    3779
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-23-室内照明系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/23-室内照明系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "interior-lamp",
+   "title": "室内照明系统",
+   "image": "pages/06-系统电路图__23-室内照明系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__23-室内照明系统__p001.jpg",
+   "size": [
+    4560,
+    3357
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-23-室内照明系统::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/23-室内照明系统.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "interior-lamp",
+   "title": "室内照明系统",
+   "image": "pages/06-系统电路图__23-室内照明系统__p002.png",
+   "thumb": "thumbs/06-系统电路图__23-室内照明系统__p002.jpg",
+   "size": [
+    4560,
+    3357
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-24-转向信号灯和危险警告灯::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/24-转向信号灯和危险警告灯.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "turn-signal",
+   "title": "转向信号灯和危险警告灯",
+   "image": "pages/06-系统电路图__24-转向信号灯和危险警告灯__p001.png",
+   "thumb": "thumbs/06-系统电路图__24-转向信号灯和危险警告灯__p001.jpg",
+   "size": [
+    4560,
+    6975
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-24-转向信号灯和危险警告灯::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/24-转向信号灯和危险警告灯.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "turn-signal",
+   "title": "转向信号灯和危险警告灯",
+   "image": "pages/06-系统电路图__24-转向信号灯和危险警告灯__p002.png",
+   "thumb": "thumbs/06-系统电路图__24-转向信号灯和危险警告灯__p002.jpg",
+   "size": [
+    4560,
+    6888
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-25-制动灯::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/25-制动灯.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "stop-lamp",
+   "title": "制动灯",
+   "image": "pages/06-系统电路图__25-制动灯__p001.png",
+   "thumb": "thumbs/06-系统电路图__25-制动灯__p001.jpg",
+   "size": [
+    4560,
+    3907
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-25-制动灯::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/25-制动灯.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "stop-lamp",
+   "title": "制动灯",
+   "image": "pages/06-系统电路图__25-制动灯__p002.png",
+   "thumb": "thumbs/06-系统电路图__25-制动灯__p002.jpg",
+   "size": [
+    4560,
+    3963
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-26-倒车灯::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/26-倒车灯.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "backup-lamp",
+   "title": "倒车灯",
+   "image": "pages/06-系统电路图__26-倒车灯__p001.png",
+   "thumb": "thumbs/06-系统电路图__26-倒车灯__p001.jpg",
+   "size": [
+    4560,
+    3916
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-26-倒车灯::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/26-倒车灯.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "backup-lamp",
+   "title": "倒车灯",
+   "image": "pages/06-系统电路图__26-倒车灯__p002.png",
+   "thumb": "thumbs/06-系统电路图__26-倒车灯__p002.jpg",
+   "size": [
+    4560,
+    3866
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-27-后雾灯::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/27-后雾灯.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "fog-lamp-rear",
+   "title": "后雾灯",
+   "image": "pages/06-系统电路图__27-后雾灯__p001.png",
+   "thumb": "thumbs/06-系统电路图__27-后雾灯__p001.jpg",
+   "size": [
+    4560,
+    3654
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-27-后雾灯::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/27-后雾灯.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "fog-lamp-rear",
+   "title": "后雾灯",
+   "image": "pages/06-系统电路图__27-后雾灯__p002.png",
+   "thumb": "thumbs/06-系统电路图__27-后雾灯__p002.jpg",
+   "size": [
+    4560,
+    3700
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-28-加热和暖风::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/28-加热和暖风.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "heater",
+   "title": "加热和暖风",
+   "image": "pages/06-系统电路图__28-加热和暖风__p001.png",
+   "thumb": "thumbs/06-系统电路图__28-加热和暖风__p001.jpg",
+   "size": [
+    4560,
+    7413
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-29-自动AC系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/29-自动AC系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "ac-auto",
+   "title": "自动AC系统",
+   "image": "pages/06-系统电路图__29-自动AC系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__29-自动AC系统__p001.jpg",
+   "size": [
+    4560,
+    7213
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-30-安全气囊::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/30-安全气囊.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "airbag",
+   "title": "安全气囊",
+   "image": "pages/06-系统电路图__30-安全气囊__p001.png",
+   "thumb": "thumbs/06-系统电路图__30-安全气囊__p001.jpg",
+   "size": [
+    4560,
+    3347
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-30-安全气囊::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/30-安全气囊.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "airbag",
+   "title": "安全气囊",
+   "image": "pages/06-系统电路图__30-安全气囊__p002.png",
+   "thumb": "thumbs/06-系统电路图__30-安全气囊__p002.jpg",
+   "size": [
+    4560,
+    6679
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-30-安全气囊::p3",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/30-安全气囊.pdf",
+   "page": 3,
+   "kind": "wiring",
+   "system": "airbag",
+   "title": "安全气囊",
+   "image": "pages/06-系统电路图__30-安全气囊__p003.png",
+   "thumb": "thumbs/06-系统电路图__30-安全气囊__p003.jpg",
+   "size": [
+    4560,
+    3254
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-31-防抱死制动系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/31-防抱死制动系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "abs",
+   "title": "防抱死制动系统",
+   "image": "pages/06-系统电路图__31-防抱死制动系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__31-防抱死制动系统__p001.jpg",
+   "size": [
+    4560,
+    7213
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-32-电动助力转向系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/32-电动助力转向系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "eps",
+   "title": "电动助力转向系统",
+   "image": "pages/06-系统电路图__32-电动助力转向系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__32-电动助力转向系统__p001.jpg",
+   "size": [
+    4560,
+    6707
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-33-音响系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/33-音响系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "audio",
+   "title": "音响系统",
+   "image": "pages/06-系统电路图__33-音响系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__33-音响系统__p001.jpg",
+   "size": [
+    4560,
+    6610
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-34-多信息显示器::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/34-多信息显示器.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "mid",
+   "title": "多信息显示器",
+   "image": "pages/06-系统电路图__34-多信息显示器__p001.png",
+   "thumb": "thumbs/06-系统电路图__34-多信息显示器__p001.jpg",
+   "size": [
+    4560,
+    3791
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-35-天窗线路图::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/35-天窗线路图.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "sunroof",
+   "title": "天窗线路图",
+   "image": "pages/06-系统电路图__35-天窗线路图__p001.png",
+   "thumb": "thumbs/06-系统电路图__35-天窗线路图__p001.jpg",
+   "size": [
+    4560,
+    2560
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-36-导航音响系统::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/36-导航音响系统.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "navi",
+   "title": "导航音响系统",
+   "image": "pages/06-系统电路图__36-导航音响系统__p001.png",
+   "thumb": "thumbs/06-系统电路图__36-导航音响系统__p001.jpg",
+   "size": [
+    4560,
+    6604
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p1",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 1,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p001.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p001.jpg",
+   "size": [
+    4560,
+    4144
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p2",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 2,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p002.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p002.jpg",
+   "size": [
+    4560,
+    5472
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p3",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 3,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p003.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p003.jpg",
+   "size": [
+    4560,
+    5900
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p4",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 4,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p004.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p004.jpg",
+   "size": [
+    4560,
+    3350
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p5",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 5,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p005.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p005.jpg",
+   "size": [
+    4560,
+    2888
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p6",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 6,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p006.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p006.jpg",
+   "size": [
+    4560,
+    6735
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p7",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 7,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p007.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p007.jpg",
+   "size": [
+    4560,
+    2888
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p8",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 8,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p008.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p008.jpg",
+   "size": [
+    4560,
+    3216
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p9",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 9,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p009.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p009.jpg",
+   "size": [
+    4560,
+    3216
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p10",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 10,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p010.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p010.jpg",
+   "size": [
+    4560,
+    2888
+   ]
+  },
+  {
+   "id": "sx4-2010::06-系统电路图-37-连接器::p11",
+   "doc_id": "sx4-2010",
+   "file": "06-系统电路图/37-连接器.pdf",
+   "page": 11,
+   "kind": "wiring",
+   "system": "connector-list",
+   "title": "连接器",
+   "image": "pages/06-系统电路图__37-连接器__p011.png",
+   "thumb": "thumbs/06-系统电路图__37-连接器__p011.jpg",
+   "size": [
+    4560,
+    2888
+   ]
+  }
+ ]
+}

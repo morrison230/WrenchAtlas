@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WrenchAtlas · 铃木 SX4</title>
+<style>
+  :root{
+    --bg:#15171b; --panel:#1d2026; --panel2:#242830;
+    --line:#2f343d; --txt:#e9e7e3; --dim:#9aa0aa; --dim2:#6f7681;
+    --accent:#e8a33d; --accent-soft:#3a2e1c;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  header{position:sticky;top:0;z-index:10;background:rgba(21,23,27,.94);
+    backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:14px 16px 10px}
+  .top{display:flex;align-items:center;gap:8px}
+  h1{margin:0;font-size:16px;font-weight:600;letter-spacing:.2px;flex:1;min-width:0}
+  h1 span{color:var(--dim2);font-weight:400;font-size:13px;margin-left:8px}
+  a.nav{flex:0 0 auto;background:var(--accent-soft);border:1px solid var(--accent);
+    color:var(--accent);border-radius:8px;padding:8px 11px;font-size:12.5px;
+    text-decoration:none;white-space:nowrap}
+  a.nav:hover{background:#4a3a20}
+  @media(max-width:560px){
+    h1{font-size:14px}
+    h1 span{display:none}
+    a.nav{padding:7px 8px;font-size:11.5px}
+  }
+  @media(max-width:400px){
+    a.nav{padding:6px 7px;font-size:11px}
+  }
+  .sub{margin:6px 0 0;font-size:12px;color:var(--dim2)}
+  .tools{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  input[type=search]{flex:1 1 180px;min-width:0;background:var(--panel);
+    border:1px solid var(--line);border-radius:9px;padding:10px 12px;
+    color:var(--txt);font-size:14px;outline:none}
+  input[type=search]:focus{border-color:var(--accent)}
+  .chip{background:var(--panel);border:1px solid var(--line);color:var(--dim);
+    border-radius:9px;padding:9px 13px;font-size:13px;cursor:pointer;white-space:nowrap}
+  .chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  main{padding:16px 16px 60px;max-width:1500px;margin:0 auto}
+  .group{margin-bottom:26px}
+  .ghead{display:flex;align-items:baseline;gap:9px;margin:0 0 10px;padding-bottom:7px;
+    border-bottom:1px solid var(--line)}
+  .ghead h2{margin:0;font-size:14px;font-weight:500;color:var(--txt)}
+  .ghead em{font-style:normal;font-size:12px;color:var(--dim2)}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  @media(max-width:640px){.grid{grid-template-columns:repeat(2,1fr);gap:10px}}
+  a.card{display:block;background:var(--panel);border:1px solid var(--line);
+    border-radius:11px;overflow:hidden;text-decoration:none;color:inherit;
+    transition:border-color .15s,transform .15s}
+  a.card:hover{border-color:var(--accent);transform:translateY(-1px)}
+  a.card:active{transform:scale(.985)}
+  .thumb{aspect-ratio:4/3;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+  .meta{padding:8px 10px 10px}
+  .meta b{display:block;font-size:12.5px;font-weight:500;line-height:1.35;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .meta i{font-style:normal;font-size:11px;color:var(--dim2)}
+  .empty{text-align:center;color:var(--dim2);padding:60px 0;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <h1>WrenchAtlas<span id="cartitle">载入中…</span></h1>
+    <a class="nav" data-pack href="/search">搜索</a>
+    <a class="nav" data-pack href="/symptom">问诊</a>
+    <a class="nav" data-pack href="/flow">流图</a>
+    <a class="nav" data-pack href="/checklist">核对</a>
+  </div>
+  <div id="packbar" style="display:none;margin:8px 0 2px"></div>
+  <p class="sub" id="subline">增强版电路图 · 点开任意一页可点线路高亮</p>
+  <div class="tools">
+    <input type="search" id="q" placeholder="搜索系统名，如 雨刮 / 充电 / 气囊">
+  </div>
+  <div class="tools" id="kinds"></div>
+</header>
+<main id="app"><p class="empty">加载中…</p></main>
+
+<script src="/static/packbar.js"></script>
+<script>
+const KIND_CN = {wiring:"线路图", connector:"连接器", harness:"线束", power:"电源",
+                 ground:"接地点", overview:"概述", manual:"正文"};
+let ALL = [], KIND = "all", Q = "";
+
+function render(){
+  const app = document.getElementById("app");
+  const list = ALL.filter(p =>
+    (KIND === "all" || p.kind === KIND) &&
+    (!Q || p.title.includes(Q) || (KIND_CN[p.kind]||"").includes(Q) || String(p.page).includes(Q))
+  );
+  if(!list.length){ app.innerHTML = '<p class="empty">没有匹配的页</p>'; return; }
+
+  const groups = new Map();
+  for(const p of list){
+    if(!groups.has(p.title)) groups.set(p.title, []);
+    groups.get(p.title).push(p);
+  }
+  let html = "";
+  for(const [title, pages] of groups){
+    html += `<section class="group"><div class="ghead"><h2>${title}</h2>
+      <em>${pages.length} 页 · ${KIND_CN[pages[0].kind]||pages[0].kind}</em></div><div class="grid">`;
+    for(const p of pages){
+      const file = p.image.split("/").pop();
+      html += `<a class="card" href="${WA.withPack("/viewer?p=" + encodeURIComponent(file))}">
+        <div class="thumb"><img loading="lazy" src="/media/${p.thumb}" alt="${title}"></div>
+        <div class="meta"><b>p${p.page} ${title}</b><i>${p.size[0]}×${p.size[1]}</i></div>
+      </a>`;
+    }
+    html += "</div></section>";
+  }
+  app.innerHTML = html;
+}
+
+function renderKinds(){
+  const counts = {};
+  for(const p of ALL) counts[p.kind] = (counts[p.kind]||0)+1;
+  const box = document.getElementById("kinds");
+  const items = [["all", `全部 ${ALL.length}`]]
+    .concat(Object.entries(counts).sort((a,b)=>b[1]-a[1])
+      .map(([k,v]) => [k, `${KIND_CN[k]||k} ${v}`]));
+  box.innerHTML = items.map(([k,label]) =>
+    `<button class="chip ${k===KIND?'on':''}" data-k="${k}">${label}</button>`).join("");
+  box.querySelectorAll(".chip").forEach(b => b.onclick = () => {
+    KIND = b.dataset.k; renderKinds(); render();
+  });
+}
+
+document.getElementById("q").addEventListener("input", e => { Q = e.target.value.trim(); render(); });
+
+fetch(WA.withPack("/api/pages")).then(r => r.json()).then(d => {
+  ALL = d.pages || [];
+  const m = d.pack || {};
+  const title = [m.make_cn || m.make, m.model_cn || m.model,
+                 m.year, m.engine].filter(Boolean).join(" ");
+  document.getElementById("cartitle").textContent = title || d.pack_id || "";
+  document.getElementById("subline").textContent =
+    `${(m.manuals || []).length} 套手册 · ${ALL.length} 页增强图 · 点开任意一页可点线路高亮`;
+  renderKinds(); render();
+}).catch(e => {
+  document.getElementById("app").innerHTML = '<p class="empty">服务未启动：' + e + '</p>';
+});
+</script>
+</body>
+</html>

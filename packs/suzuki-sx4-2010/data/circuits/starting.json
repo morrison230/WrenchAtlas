@@ -1,0 +1,198 @@
+{
+  "id": "starting",
+  "system": "starting",
+  "name": "起动系统",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "原图 300dpi 增强后可清晰判读，连接器编号与线色均无歧义。未经实车核对（老莫不拆车）。",
+  "source_page": "sx4-2010::06-系统电路图-01-起动系统::p1",
+  "engine_coverage": "图上明确标注 ③ M16A ④ M18A，本拓扑对 M18A 适用",
+  "nodes": [
+    {
+      "id": "batt",
+      "label": "蓄电池",
+      "sub": "C282 · ①②接线柱",
+      "role": "source",
+      "confidence": "read-clear",
+      "detail": "正极经两根粗线到 ①② 接线柱，再到起动机主电源。负极搭铁。"
+    },
+    {
+      "id": "fuse_st",
+      "label": "熔丝盒 ST 30A",
+      "sub": "独立线路盒熔丝盒 No.1",
+      "role": "fuse",
+      "pins": [
+        "ST-30A"
+      ],
+      "confidence": "read-clear",
+      "detail": "起动机主回路保险丝，30A。红线直达继电器触点输入 E225.4。这是大电流路径的唯一保护。"
+    },
+    {
+      "id": "ign_st",
+      "label": "点火开关 ST 档",
+      "sub": "G147.2 · 黑白线",
+      "role": "switch",
+      "pins": [
+        "G147.2"
+      ],
+      "confidence": "read-clear",
+      "detail": "钥匙拧到 ST（起动）档才接通。开关内部接点：LOCK/ACC/ON/ST 四档，接点编号 +B1 +B2 ACC IG1 IG2 ST。"
+    },
+    {
+      "id": "fuse_10a",
+      "label": "JB ST SIG 10A",
+      "sub": "G273.4 → E325.10",
+      "role": "fuse",
+      "pins": [
+        "G273.4",
+        "E325.10"
+      ],
+      "confidence": "read-clear",
+      "detail": "起动信号回路保险丝 10A，在接线盒内。烧了则继电器线圈无电、完全无反应。"
+    },
+    {
+      "id": "relay",
+      "label": "起动机继电器 E225",
+      "sub": "线圈 2/1 · 触点 4/3",
+      "role": "relay",
+      "pins": [
+        "E225.2",
+        "E225.4",
+        "E225.3",
+        "E225.1"
+      ],
+      "confidence": "read-clear",
+      "detail": "2=红白(线圈入)、1=白(线圈出→ECM)、4=红(触点入,30A)、3=黄绿(触点出→起动机)。"
+    },
+    {
+      "id": "ecm",
+      "label": "ECM",
+      "sub": "A-5 · 控制线圈搭铁",
+      "role": "ecu",
+      "pins": [
+        "ECM.A-5"
+      ],
+      "confidence": "read-uncertain",
+      "detail": "继电器线圈经白线接 ECM A-5，推测由 ECM 控制线圈搭铁（防盗/起动许可逻辑）。具体控制条件未在原图注明。",
+      "uncertain": "ECM 是主动控制线圈搭铁还是仅作监测，原图未明确标注"
+    },
+    {
+      "id": "at_sw",
+      "label": "AT 档位传感器 C166",
+      "sub": "仅自动挡 · P/N 通",
+      "role": "switch",
+      "pins": [
+        "C166.8",
+        "C166.9"
+      ],
+      "confidence": "read-clear",
+      "detail": "自动挡车型串在起动信号回路里，只有 P 或 N 档才接通。位置：E371 C343 之后。",
+      "applies_to": "AT"
+    },
+    {
+      "id": "starter",
+      "label": "起动机总成",
+      "sub": "C196.1 主电源 · C195.1 信号",
+      "role": "load",
+      "pins": [
+        "C196.1",
+        "C195.1"
+      ],
+      "confidence": "read-clear",
+      "detail": "内含串激电机 + 电磁开关（吸引线圈/保持线圈）。C196.1 白线为主电源，C195.1 黄绿为起动信号。电磁开关闭合后电机才得电。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "起动机壳体 + 车身",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "起动机底部粗黑线搭铁。搭铁不良会导致起动无力、只听到哒哒声不转。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "batt",
+      "to": "fuse_st",
+      "color": "红",
+      "note": "常电"
+    },
+    {
+      "from": "fuse_st",
+      "to": "relay",
+      "color": "红",
+      "via": "E225.4",
+      "note": "触点输入，30A"
+    },
+    {
+      "from": "batt",
+      "to": "starter",
+      "color": "粗黑",
+      "via": "①②接线柱 → C196.1",
+      "note": "主电源，不经保险丝"
+    },
+    {
+      "from": "ign_st",
+      "to": "fuse_10a",
+      "color": "黑/白",
+      "via": "G147.2 → G273.4",
+      "note": "ST 档才通"
+    },
+    {
+      "from": "fuse_10a",
+      "to": "relay",
+      "color": "红/白",
+      "via": "E325.10 → E225.2",
+      "note": "线圈供电"
+    },
+    {
+      "from": "relay",
+      "to": "ecm",
+      "color": "白",
+      "via": "E225.1 → ECM A-5",
+      "note": "线圈回路，受 ECM 控制"
+    },
+    {
+      "from": "relay",
+      "to": "starter",
+      "color": "黄绿",
+      "via": "E225.3 → C195.1",
+      "note": "MT 直通"
+    },
+    {
+      "from": "relay",
+      "to": "at_sw",
+      "color": "黄绿/黄",
+      "via": "E225.3 → E371 C343 → C166",
+      "note": "仅 AT，经档位传感器",
+      "applies_to": "AT"
+    },
+    {
+      "from": "at_sw",
+      "to": "starter",
+      "color": "黄",
+      "via": "C166 → C195.1",
+      "note": "仅 AT",
+      "applies_to": "AT"
+    },
+    {
+      "from": "starter",
+      "to": "gnd",
+      "color": "粗黑",
+      "note": ""
+    }
+  ],
+  "diagnosis_hint": [
+    "拧钥匙完全没反应、也听不到继电器『哒』声 → 控制回路断：先查 JB ST SIG 10A 保险丝，再查点火开关 ST 接点、继电器线圈",
+    "听到『哒』一声但不转 → 控制回路正常，问题在主回路：继电器触点、起动机电磁开关、30A 保险丝、蓄电池到起动机的大电流线",
+    "连续『哒哒哒』声音越来越弱 → 蓄电池电量不足，不是起动机坏",
+    "自动挡：D 档或 R 档拧钥匙没反应是正常的，只有 P/N 档才能起动。先挂 P 档再判断",
+    "起动机能转但不着火 → 已离开本系统，转去查点火/供油（03-点火系统、05-发动机控制）",
+    "热车不好起动、冷车正常 → 重点查起动机电磁开关与搭铁，而非蓄电池"
+  ],
+  "notes": [
+    "MT/AT 差异在继电器触点输出之后：MT 黄绿线直通起动机；AT 要经过 C166 档位传感器",
+    "ECM 参与线圈搭铁控制，若 ECM 判定不允许起动（如防盗未解除），继电器不会吸合"
+  ]
+}

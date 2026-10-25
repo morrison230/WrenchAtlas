@@ -1,0 +1,99 @@
+{
+  "id": "fog-front",
+  "system": "fog-lamp-front",
+  "name": "前雾灯",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "主回路（20A → 继电器 → 左右雾灯 → 搭铁）与继电器引脚清晰。组合开关 G151 内部多接点结构复杂，只取控制关系。",
+  "source_page": "sx4-2010::06-系统电路图-21-前雾灯::p1",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "FR FOG 保险丝 20A",
+      "sub": "独立线路盒熔丝盒 No.1 · ⑭",
+      "role": "fuse",
+      "pins": ["FR-FOG-20A"],
+      "confidence": "read-clear",
+      "detail": "前雾灯专用保险丝 20A，位于发动机舱独立保险丝盒。烧断则左右雾灯全不亮。"
+    },
+    {
+      "id": "relay",
+      "label": "前雾灯继电器 E234",
+      "sub": "触点 3/1 · 线圈 4",
+      "role": "relay",
+      "pins": ["E234.3", "E234.1", "E234.4"],
+      "confidence": "read-clear",
+      "detail": "3=白/绿（触点输入，来自 20A）、1=黑（触点输出 → 左右雾灯）、4=绿/黑（线圈，由开关控制）。"
+    },
+    {
+      "id": "switch",
+      "label": "前雾灯开关 G151",
+      "sub": "组合开关 · 含灯光控制",
+      "role": "switch",
+      "pins": ["G151.7", "G151.4", "G151.6"],
+      "confidence": "read-uncertain",
+      "detail": "方向盘左侧灯光组合开关内的雾灯档位。7/4/6 分别接红/红、红/黑、红/白。开关内部接点较多（IG、LOAD、E、Ⅱ、Ⅲ），此处只取雾灯控制关系。",
+      "uncertain": "组合开关内部各接点与档位的完整对应关系未逐格判读"
+    },
+    {
+      "id": "ecu",
+      "label": "ECU / BCM A-4",
+      "sub": "开关许可與指示",
+      "role": "ecu",
+      "pins": ["A-4"],
+      "confidence": "read-uncertain",
+      "detail": "经 G306 连接开关回路，推测用于雾灯开启许可（如必须开示宽灯才允许开雾灯）或仪表指示灯驱动。",
+      "uncertain": "具体控制逻辑原图未注明"
+    },
+    {
+      "id": "lamp_l",
+      "label": "左前雾灯 E164",
+      "sub": "1 进 · 2 出",
+      "role": "load",
+      "pins": ["E164.1", "E164.2"],
+      "confidence": "read-clear",
+      "detail": "左侧前雾灯总成。1=绿/黑进，2=黑搭铁 ⑦。"
+    },
+    {
+      "id": "lamp_r",
+      "label": "右前雾灯 E163",
+      "sub": "1 进 · 2 出",
+      "role": "load",
+      "pins": ["E163.1", "E163.2"],
+      "confidence": "read-clear",
+      "detail": "右侧前雾灯总成。1=进，2=搭铁 ⑨。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ⑦ / ⑨",
+      "sub": "左右独立",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "左右雾灯各自搭铁。单侧搭铁锈蚀会导致该侧变暗或不亮。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "relay", "color": "白/绿", "via": "→ E234.3", "note": "触点电源"},
+    {"from": "relay", "to": "lamp_l", "color": "绿/黑", "via": "E234.1 → E164.1", "note": ""},
+    {"from": "relay", "to": "lamp_r", "color": "绿/黑", "via": "E234.1 → E163.1", "note": ""},
+    {"from": "switch", "to": "relay", "color": "绿/黑", "via": "G151 → E234.4", "note": "控制线圈"},
+    {"from": "ecu", "to": "switch", "color": "红", "via": "A-4 → G306 → G151", "note": "许可/指示，存疑"},
+    {"from": "lamp_l", "to": "gnd", "color": "黑", "via": "E164.2 → ⑦", "note": ""},
+    {"from": "lamp_r", "to": "gnd", "color": "黑", "via": "E163.2 → ⑨", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "左右前雾灯都不亮、后雾灯也不亮 → 注意前后雾灯保险丝是分开的，先确认是哪一个，别混",
+    "左右都不亮但后雾灯正常 → 查独立保险丝盒的 FR FOG 20A，再查继电器 E234",
+    "只有一侧不亮 → 该侧灯泡或搭铁（E164 对应 ⑦、E163 对应 ⑨）",
+    "开雾灯仪表无指示灯、灯也不亮 → 查组合开关 G151 的雾灯档位与继电器线圈线路",
+    "雾灯开关有反应但灯不亮、能听到继电器声 → 查 E234 触点与左右灯线（绿/黑）",
+    "雾灯不能单独开启、必须开示宽灯才行 → 这是原厂设计逻辑（雾灯需示宽灯前提），不是故障",
+    "雾灯进水起雾、时亮时不亮 → 灯罩密封老化，先处理进水再查电路",
+    "换过 LED 雾灯后报故障或闪烁 → 功率变化导致检测异常，属改装副作用"
+  ],
+  "notes": [
+    "前雾灯由独立保险丝盒（发动机舱）供电，与车内 JB 的灯类保险丝不是一套，查错盒子会白费时间",
+    "雾灯开启通常以「示宽灯已开」为前提，这是设计逻辑不是故障"
+  ]
+}

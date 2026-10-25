@@ -1,0 +1,5 @@
+{
+  "schema_version": "0.1",
+  "description": "症状问诊树。通用骨架见 skill/symptoms-shared.json，这里只填本车专属的分支与 systems 引用。",
+  "symptoms": []
+}

@@ -1,0 +1,96 @@
+{
+  "id": "horn",
+  "system": "horn",
+  "name": "喇叭",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "主回路（15A → 继电器 → 喇叭 → 搭铁）与方向盘按钮路径清晰。按钮信号进入 J/B 后的内部走向未在图中展开。",
+  "source_page": "sx4-2010::06-系统电路图-16-喇叭线路::p1",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "JB 保险丝 15A",
+      "sub": "HORN-HAZ · 喇叭与危险警告灯共用",
+      "role": "fuse",
+      "pins": ["HORN-HAZ-15A"],
+      "confidence": "read-clear",
+      "detail": "15A 保险丝，标注 HORN-HAZ，**喇叭与危险警告灯共用**。烧断则喇叭和双闪同时失效——这是很实用的一个交叉验证点。"
+    },
+    {
+      "id": "relay",
+      "label": "喇叭继电器",
+      "sub": "触点 3/1 · 线圈 4/2",
+      "role": "relay",
+      "pins": ["R.3", "R.1", "R.4", "R.2"],
+      "confidence": "read-clear",
+      "detail": "3=触点输入（来自 15A），1=触点输出（→ E325.3 去喇叭）；4/2 为线圈，由 BCM 控制。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM 车身控制模块",
+      "sub": "20 脚 · 控继电器",
+      "role": "ecu",
+      "pins": ["BCM.20"],
+      "confidence": "read-clear",
+      "detail": "BCM 通过 20 脚控制喇叭继电器线圈。现代车喇叭不再是按钮直接通断，而是按钮给 BCM 信号、BCM 驱动继电器。"
+    },
+    {
+      "id": "horn",
+      "label": "喇叭 E281",
+      "sub": "2 进 · 1 出",
+      "role": "load",
+      "pins": ["E281.2", "E281.1"],
+      "confidence": "read-clear",
+      "detail": "喇叭本体（H 图标）。2=黑线（来自 E325.3），1=搭铁 ②。"
+    },
+    {
+      "id": "button",
+      "label": "方向盘喇叭按钮 S61",
+      "sub": "含螺旋电缆",
+      "role": "switch",
+      "pins": ["S61.1"],
+      "confidence": "read-clear",
+      "detail": "方向盘中央的按压开关。**信号要穿过方向盘螺旋电缆（游丝）**，这是喇叭故障率最高的机械件之一。"
+    },
+    {
+      "id": "coil_conn",
+      "label": "连接线圈 G346 / S171",
+      "sub": "螺旋电缆转接点",
+      "role": "splice",
+      "pins": ["G346", "S171"],
+      "confidence": "read-clear",
+      "detail": "方向盘随动部分的线束转接点。反复转动方向盘会让这里磨损。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ②",
+      "sub": "喇叭与按钮共用",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "喇叭搭铁 ②。搭铁不良会让喇叭声音变小、沙哑甚至不响。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "relay", "color": "—", "via": "→ 继电器 3", "note": "触点电源"},
+    {"from": "relay", "to": "horn", "color": "黑", "via": "继电器 1 → E325.3 → E281.2", "note": "触点输出"},
+    {"from": "horn", "to": "gnd", "color": "—", "via": "E281.1 → ②", "note": ""},
+    {"from": "bcm", "to": "relay", "color": "白", "via": "BCM 20 → 继电器 4", "note": "控制线圈"},
+    {"from": "button", "to": "coil_conn", "color": "—", "via": "S61.1 → G346/S171", "note": "按钮信号"},
+    {"from": "coil_conn", "to": "bcm", "color": "蓝", "via": "G272.3 → J/B → BCM", "note": "进入接线盒后的内部走向未展开"}
+  ],
+  "diagnosis_hint": [
+    "喇叭不响，同时危险警告灯（双闪）也不闪 → 查 HORN-HAZ 15A 保险丝，两者共用，一步定位",
+    "双闪正常、喇叭不响 → 保险丝没问题，往下查继电器、喇叭本体、按钮",
+    "按喇叭时听到继电器「咔」但不响 → 触点或喇叭本体/搭铁，不是按钮问题",
+    "按喇叭毫无反应也无继电器声 → 查方向盘按钮与螺旋电缆（游丝），这是最高发故障点",
+    "打方向时喇叭时响时不响、或转动特定角度才响 → 典型螺旋电缆内部断线，需更换游丝",
+    "喇叭声音沙哑、变小 → 喇叭进水或搭铁不良，先查搭铁 ② 再换喇叭",
+    "改过方向盘（换多功能方向盘）后喇叭失效 → 游丝或按钮接线问题",
+    "喇叭持续响不停 → 按钮卡死或继电器触点粘连，先拔继电器止响"
+  ],
+  "notes": [
+    "HORN-HAZ 是「喇叭 + 危险警告灯」共用保险丝，这个交叉验证能把两步并成一步",
+    "现代车喇叭走 BCM 中转，按钮不再直接给喇叭供电，排查时要分段：按钮→BCM→继电器→喇叭"
+  ]
+}

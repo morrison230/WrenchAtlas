@@ -1,0 +1,98 @@
+{
+  "id": "cooling",
+  "system": "cooling",
+  "name": "冷却系统（散热风扇）",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "单页竖排电路，两级继电器与风扇电机路径完整清晰。E222 线圈另一端（绿线）的具体去向未在图中闭环。",
+  "source_page": "sx4-2010::06-系统电路图-04-冷却系统::p1",
+  "topology_type": "two-stage-relay",
+  "nodes": [
+    {
+      "id": "fuse_fi",
+      "label": "FI 保险丝 15A",
+      "sub": "独立电源保险盒 No.1 · ①",
+      "role": "fuse",
+      "pins": ["FI-15A"],
+      "confidence": "read-clear",
+      "detail": "控制回路电源 15A，给主继电器 E221 的线圈和触点供电。烧断则两个继电器都不动作，风扇不转。"
+    },
+    {
+      "id": "fuse_rdtr",
+      "label": "RDTR 保险丝 30A",
+      "sub": "独立电源保险盒 No.1 · ⑩",
+      "role": "fuse",
+      "pins": ["RDTR-30A"],
+      "confidence": "read-clear",
+      "detail": "散热风扇主回路电源 30A，直接送到 E222 触点。这是大电流路径，风扇不转时是关键检查点。"
+    },
+    {
+      "id": "relay_main",
+      "label": "主继电器 E221",
+      "sub": "线圈 1/2 · 触点 3/4",
+      "role": "relay",
+      "pins": ["E221.1", "E221.2", "E221.3", "E221.4"],
+      "confidence": "read-clear",
+      "detail": "1=麦/黄（线圈+，来自 FI 15A）、2=棕/白（线圈− → ECM A-5 控搭铁）、3/4 为触点，把 FI 15A 送到 E222 的线圈（2 脚）。**实际是给下一个继电器供电的「前级开关」。**"
+    },
+    {
+      "id": "relay_fan",
+      "label": "风扇继电器 E222",
+      "sub": "线圈 2/1 · 触点 3/4",
+      "role": "relay",
+      "pins": ["E222.2", "E222.1", "E222.3", "E222.4"],
+      "confidence": "read-clear",
+      "detail": "2=线圈+（来自 E221.4）、1=线圈−（绿线，去向未闭环）、3=触点输入（RDTR 30A 红/黑）、4=触点输出（3/红 → 风扇电机）。"
+    },
+    {
+      "id": "motor",
+      "label": "冷却风扇电机 E63",
+      "sub": "2 进 · 1 出",
+      "role": "load",
+      "pins": ["E63.2", "E63.1"],
+      "confidence": "read-clear",
+      "detail": "散热器风扇电机（M 图标）。2=3/红（来自 E222.4），1=搭铁 ③。"
+    },
+    {
+      "id": "ecm",
+      "label": "ECM A-5",
+      "sub": "控制主继电器搭铁",
+      "role": "ecu",
+      "pins": ["ECM.A-5"],
+      "confidence": "read-clear",
+      "detail": "ECM 通过控制 E221 线圈搭铁（棕/白线）来决定风扇是否运转。触发条件通常是水温、空调开启、空调高压。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ③",
+      "sub": "风扇电机",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "风扇电机搭铁点 ③。搭铁不良会导致风扇转速低甚至不转。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_fi", "to": "relay_main", "color": "麦/黄", "via": "① → E221.1", "note": "线圈电源"},
+    {"from": "ecm", "to": "relay_main", "color": "棕/白", "via": "A-5 → E221.2", "note": "控搭铁"},
+    {"from": "relay_main", "to": "relay_fan", "color": "3/红", "via": "E221.4 → E222.2", "note": "前级给后级线圈供电"},
+    {"from": "fuse_rdtr", "to": "relay_fan", "color": "红/黑", "via": "⑩ → E222.3", "note": "触点电源，30A 大电流"},
+    {"from": "relay_fan", "to": "motor", "color": "3/红", "via": "E222.4 → E63.2", "note": ""},
+    {"from": "motor", "to": "gnd", "color": "黑", "via": "E63.1 → ③", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "水温高、风扇完全不转 → 先查 RDTR 30A（大电流保险丝），再查 E222 继电器与 E63 电机",
+    "【重要】风扇是两级继电器串联：ECM → E221 → E222 → 风扇。**任意一级不动作，风扇都不转**，排查时要逐级验证而不是只看风扇继电器",
+    "开空调风扇也不转 → 两套触发条件（水温/空调）都不工作，更可能是前级 E221 或 ECM 控制问题",
+    "风扇常转不停、熄火也不停 → 继电器触点粘连（多为 E222）或 ECM 输出卡死，先拔继电器止转",
+    "空调制冷差、高压侧烫手、风扇不转 → 风扇不转会导致冷凝器散热不足、高压保护，转空调系统一并查",
+    "风扇转但水温仍高 → 已离开电路范畴：查水泵、节温器、冷却液量、水箱堵塞",
+    "风扇只在开空调时转、水温高时不转 → 水温传感器或 ECM 控温逻辑，不是风扇电路",
+    "风扇转速明显偏低、噪音大 → 先查搭铁 ③ 与电机轴承，其次电压"
+  ],
+  "notes": [
+    "**两级继电器串联是本系统的核心结构**：E221（主继电器）给 E222（风扇继电器）的线圈供电，所以前级坏了后级也不会动",
+    "RDTR 30A 是独立电源保险盒里的大电流保险丝，和车内 JB 的 15A 不是一套",
+    "风扇不转导致的空调不制冷，容易误判成制冷剂问题，要交叉看空调高压"
+  ]
+}

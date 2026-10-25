@@ -1,0 +1,86 @@
+{
+  "id": "mirror",
+  "system": "mirror",
+  "name": "电动后视镜",
+  "type": "signal-flow",
+  "confidence": "read-clear",
+  "confidence_note": "保险丝、开关、两侧电机、中间连接器的走向清晰。开关内部各方向接点未逐一展开。",
+  "source_page": "sx4-2010::06-系统电路图-15-电动后视镜::p1",
+  "topology_type": "纯后视镜（ACC 供电）。另有带门锁的综合版本见 13-电动后视镜(B-4)",
+  "nodes": [
+    {
+      "id": "fuse_acc",
+      "label": "JB ACC 15A",
+      "sub": "接线盒 · 经 L315 出",
+      "role": "fuse",
+      "pins": ["JB-ACC15A"],
+      "confidence": "read-clear",
+      "detail": "15A ACC 保险丝。**注意这是 ACC 供电，不是常电** —— 钥匙必须在 ACC 或 ON 档后视镜才有电。"
+    },
+    {
+      "id": "jc21",
+      "label": "接线盒连接器 J21",
+      "sub": "J/C · 13=电源入 / 6=出",
+      "role": "splice",
+      "pins": ["J21.13", "J21.6"],
+      "confidence": "read-clear",
+      "detail": "保险丝到开关之间的接线盒连接器。L319 / L379 线经此转接。"
+    },
+    {
+      "id": "switch",
+      "label": "驾驶员侧后视镜开关",
+      "sub": "方向选择 + 左右切换",
+      "role": "switch",
+      "pins": ["J215", "L379", "L360", "J216"],
+      "confidence": "read-clear",
+      "detail": "集成在驾驶员侧门饰板上。含左右选择开关与上下/左右四向调节接点。经 J215/L379、L360/L379、J216 三组中间连接器分线到两侧电机。"
+    },
+    {
+      "id": "mirror_l",
+      "label": "左后视镜电机 J64",
+      "sub": "双电机 · 上下 + 左右",
+      "role": "load",
+      "pins": ["J64", "J228"],
+      "confidence": "read-clear",
+      "detail": "镜片内两只直流电机，一只管上下、一只管左右。图中标注 M 为电机符号。"
+    },
+    {
+      "id": "mirror_r",
+      "label": "右后视镜电机 J63",
+      "sub": "双电机 · 上下 + 左右",
+      "role": "load",
+      "pins": ["J63", "J229"],
+      "confidence": "read-clear",
+      "detail": "结构与左侧对称。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "G314 / G315",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "开关与电机回路共用搭铁，经 G314 / G315 两个搭铁点。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_acc", "to": "jc21", "color": "蓝", "via": "L315.13 → L319 / L379", "note": "ACC 电源"},
+    {"from": "jc21", "to": "switch", "color": "蓝/白", "via": "J21.6", "note": "供电入开关"},
+    {"from": "switch", "to": "mirror_l", "color": "绿、红、棕、黄", "via": "J215/L379 → L360/L379 → J216", "note": "四向调节"},
+    {"from": "switch", "to": "mirror_r", "color": "绿、红、棕、黄", "via": "J215/L379 → L360/L379 → J216 → J227", "note": "四向调节"},
+    {"from": "switch", "to": "gnd", "color": "黑", "via": "G314", "note": ""},
+    {"from": "mirror_l", "to": "gnd", "color": "黑", "via": "G315", "note": "经 G315 J/C"}
+  ],
+  "diagnosis_hint": [
+    "后视镜完全不动 → **先确认钥匙在 ACC 或 ON 档**。这是 ACC 供电，OFF 档不动是正常现象，不是故障",
+    "钥匙在 ACC 也不动 → 查 JB ACC 15A 保险丝，再看 J21 接线盒连接器",
+    "只有一侧不调 → 该侧电机或线束（左 J64/J228，右 J63/J229），开关坏的可能性低",
+    "上下能动、左右不动（或反过来）→ 该方向电机坏，不是整个后视镜坏",
+    "手动按镜面能晃动 → 镜片卡扣或电机齿轮磨损，不是电路问题",
+    "两侧都不动但保险丝好的 → 开关总成或 J21 到开关这段线"
+  ],
+  "notes": [
+    "本系统为 ACC 供电的纯后视镜版本。另有 13-电动后视镜(B-4) 是把后视镜与门锁做在一起的版本，电源为 30A 常电 P/W，两者接线不同。",
+    "开关内部四向接点为换向接线（正反转实现双向），未逐一展开。",
+    "后视镜加热（除霜）不在本页，属独立回路。"
+  ]
+}

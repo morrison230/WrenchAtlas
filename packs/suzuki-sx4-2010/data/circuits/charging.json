@@ -1,0 +1,149 @@
+{
+  "id": "charging",
+  "system": "charging",
+  "name": "充电系统",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "主回路（80A、B+、搭铁）判读无疑义；部分细线线色在 300dpi 下略模糊，已单独标注 uncertain。",
+  "source_page": "sx4-2010::06-系统电路图-02-充电系统::p1",
+  "nodes": [
+    {
+      "id": "batt",
+      "label": "蓄电池 / 全车负载",
+      "sub": "发电机输出的去向",
+      "role": "source",
+      "confidence": "read-clear",
+      "detail": "充电电流方向与起动相反：发电机 → 主保险丝 → 蓄电池与全车。"
+    },
+    {
+      "id": "fuse_main",
+      "label": "主保险丝 43 · 80A",
+      "sub": "主保险丝盒 · C283.1",
+      "role": "fuse",
+      "pins": [
+        "C283.1"
+      ],
+      "confidence": "read-clear",
+      "detail": "发电机 B+ 到蓄电池之间的唯一大电流保护。烧断则完全不充电，且全车靠电瓶撑。"
+    },
+    {
+      "id": "ign_ig",
+      "label": "点火开关 IG",
+      "sub": "JB 20 · 15A IG COIL",
+      "role": "switch",
+      "pins": [
+        "E325.5"
+      ],
+      "confidence": "read-clear",
+      "detail": "IG 档供电，经接线盒内 15A（标注 IG COIL）保险丝，作为发电机的励磁/初始励磁电源。钥匙不在 IG 档时发电机不自励磁。"
+    },
+    {
+      "id": "splice",
+      "label": "C312 压接点",
+      "sub": "接点分支",
+      "role": "splice",
+      "pins": [
+        "C312"
+      ],
+      "confidence": "read-uncertain",
+      "detail": "压接分支点，位于 E371 C343(20→9) 与发电机 C194.2 之间。此处接触不良会造成充电指示灯异常。线色在图中偏模糊。",
+      "uncertain": "C312 究竟是压接点还是连接器、与点火系统的 C312 是否同一处，原图未明确"
+    },
+    {
+      "id": "alt",
+      "label": "发电机",
+      "sub": "B+ / IG / FR / L",
+      "role": "load",
+      "pins": [
+        "C192.1",
+        "C194.2",
+        "C194.1",
+        "C194.3"
+      ],
+      "confidence": "read-clear",
+      "detail": "内置三相定子、整流器（6 只二极管）、IC 调节器。C192.1=B+ 输出（粗黑，80A）；C194.2=IG 励磁；C194.1/C194.3 为到 ECM 的信号线。"
+    },
+    {
+      "id": "ecm",
+      "label": "ECM",
+      "sub": "A-5 · 充电信号",
+      "role": "ecu",
+      "pins": [
+        "ECM.A-5"
+      ],
+      "confidence": "read-uncertain",
+      "detail": "发电机两路信号线接 ECM A-5，推测用于充电指示与发电量控制。具体信号定义原图未注明。",
+      "uncertain": "两路信号线 C194.1 / C194.3 的具体定义原图未注明，此处为功能推测"
+    },
+    {
+      "id": "gnd",
+      "label": "发电机壳体搭铁",
+      "sub": "机壳接地",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "发电机底部粗黑线搭铁。搭铁不良会造成充电电压偏低、充电指示灯闪。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "alt",
+      "to": "fuse_main",
+      "color": "粗黑",
+      "via": "C192.1 → C283.1",
+      "note": "B+ 输出，80A 主回路"
+    },
+    {
+      "from": "fuse_main",
+      "to": "batt",
+      "color": "粗黑",
+      "note": "充电电流最终去向"
+    },
+    {
+      "from": "ign_ig",
+      "to": "splice",
+      "color": "灰/白(存疑)",
+      "via": "E325.5 → E371 C343 20→9",
+      "note": "励磁供电"
+    },
+    {
+      "from": "splice",
+      "to": "alt",
+      "color": "黑/白(存疑)",
+      "via": "C194.2",
+      "note": "IG 端子励磁"
+    },
+    {
+      "from": "alt",
+      "to": "ecm",
+      "color": "白/蓝",
+      "via": "C194.1",
+      "note": "信号"
+    },
+    {
+      "from": "alt",
+      "to": "ecm",
+      "color": "白/蓝(存疑)",
+      "via": "C194.3",
+      "note": "信号"
+    },
+    {
+      "from": "alt",
+      "to": "gnd",
+      "color": "粗黑",
+      "note": "壳体搭铁"
+    }
+  ],
+  "diagnosis_hint": [
+    "完全不充电、电瓶灯亮 → 先查 80A 主保险丝（43），再查发电机 B+ 粗线与皮带是否打滑/断裂",
+    "电瓶灯不亮也不充电 → 查 15A IG COIL 保险丝与励磁回路（C312 压接点常是接触不良点）",
+    "充电电压偏高（>15V）或偏低（<13V）→ 优先怀疑 IC 调节器，其次发电机壳体搭铁",
+    "冷车正常、热车不充电 → 发电机内部调节器热衰减，需更换总成",
+    "怠速时电瓶灯微亮、加油门变暗 → 皮带松或发电机输出不足，属正常范围边缘，先测电压再判断",
+    "换新电瓶很快又没电 → 若充电系统正常，需查漏电（静态电流），不属本系统"
+  ],
+  "notes": [
+    "充电电流方向与起动系统相反：起动时蓄电池→起动机，充电时发电机→蓄电池",
+    "M18A 车型充电系统与图中一致（该页未单独区分排量）"
+  ]
+}

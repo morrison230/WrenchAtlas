@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>搜索 · WrenchAtlas</title>
+<style>
+  :root{
+    --bg:#15171b; --panel:#1d2026; --panel2:#242830; --line:#2f343d;
+    --txt:#e9e7e3; --dim:#9aa0aa; --dim2:#6f7681; --accent:#e8a33d;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  header{position:sticky;top:0;z-index:20;background:rgba(29,32,38,.97);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:12px 14px}
+  .bar{display:flex;align-items:center;gap:10px}
+  .bar a{color:var(--dim);text-decoration:none;font-size:20px;padding:2px 6px}
+  input{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:9px;
+    padding:10px 13px;color:var(--txt);font-size:14px;outline:none}
+  input:focus{border-color:var(--accent)}
+  .tips{font-size:11.5px;color:var(--dim2);margin:8px 0 0;line-height:1.6}
+  .tips b{color:var(--dim);font-weight:400}
+  main{padding:16px 14px 60px;max-width:820px;margin:0 auto}
+  h2{font-size:12.5px;font-weight:500;color:var(--dim2);margin:22px 0 10px;
+    letter-spacing:.5px}
+  h2:first-child{margin-top:4px}
+  .item{background:var(--panel);border:1px solid var(--line);border-radius:11px;
+    padding:13px 15px;margin-bottom:9px;text-decoration:none;color:inherit;display:block}
+  .item:hover{border-color:var(--accent)}
+  .item .t{font-size:14px;font-weight:500;margin:0 0 5px}
+  .item .t em{font-style:normal;font-size:11px;color:var(--dim2);margin-left:7px;font-weight:400}
+  .qbadge{display:inline-block;font-size:10.5px;color:var(--amber-l);
+    border:1px solid var(--amber);border-radius:4px;padding:0 5px;margin-left:6px;
+    vertical-align:1px}
+  .dtag{display:inline-block;font-size:10px;color:var(--teal-l);
+    border:1px solid var(--teal);border-radius:4px;padding:0 5px;margin-right:6px;
+    vertical-align:1px}
+  .hit{font-size:12.5px;color:var(--dim);line-height:1.65;margin:4px 0;
+    padding-left:10px;border-left:2px solid var(--line)}
+  .hit b{color:var(--accent);font-weight:400}
+  .kind{display:inline-block;font-size:10.5px;color:var(--dim2);
+    border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-right:6px}
+  .empty{color:var(--dim2);text-align:center;padding:50px 0;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a href="/" data-pack>←</a>
+    <input id="q" placeholder="搜连接器号 / 故障码 / 症状 / 系统名，如 E323、P0301、雨刮" autocomplete="off">
+  </div>
+  <p class="tips">可搜：<b>连接器号</b> E323 · <b>故障码</b> P0301 · <b>症状</b> 打不着 · <b>系统</b> 雨刮 · <b>诊断提示</b> 里的任何词</p>
+</header>
+<main id="app"><p class="empty">输入关键词开始搜</p></main>
+
+<script src="/static/packbar.js"></script>
+<script>const app = document.getElementById('app');
+const input = document.getElementById('q');
+let timer = null, seq = 0;
+
+function esc(s){ return String(s??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+function mark(text, q){
+  const i = String(text).toLowerCase().indexOf(q.toLowerCase());
+  if(i < 0) return esc(text);
+  return esc(text.slice(0,i)) + '<b>' + esc(text.slice(i, i+q.length)) + '</b>' + esc(text.slice(i+q.length));
+}
+
+function render(d){
+  const q = d.query;
+  if(!d.total){
+    app.innerHTML = `<p class="empty">「${esc(q)}」没有找到。<br>` +
+      `已覆盖 ${d.manual_pages || 0} 页手册全文；结构化的诊断流图只有已录入的系统。<br><br>` +
+      `建议：<b>用更短的词</b>（试「气门」而不是「气门间隙」）。<br>` +
+      `手册 OCR 对数字识别不可靠，<b>搜具体数值（如 0.15）基本搜不到</b>。</p>`;
+    return;
+  }
+  let html = '';
+
+  if(d.circuits.length){
+    html += '<h2>诊断流图 · ' + d.circuits.length + ' 个系统</h2>';
+    for(const c of d.circuits){
+      html += `<a class="item" href="${WA.withPack('/flow?sys=' + encodeURIComponent(c.system))}">
+        <p class="t">${esc(c.name)}<em>${c.hits.length}/${c.total} 处命中</em></p>`;
+      for(const h of c.hits){
+        html += `<div class="hit"><span class="kind">${esc(h.kind)}</span>${mark(h.text, q)}</div>`;
+      }
+      html += '</a>';
+    }
+  }
+
+  if(d.symptoms.length){
+    html += '<h2>症状问诊 · ' + d.symptoms.length + ' 条</h2>';
+    for(const s of d.symptoms){
+      html += `<a class="item" href="${WA.withPack('/symptom')}">
+        <p class="t">${mark(s.label, q)}<em>${esc((s.aka||[]).join(' · '))}</em></p>
+      </a>`;
+    }
+  }
+
+  if(d.manual && d.manual.length){
+    html += `<h2>手册全文 · ${d.manual.length} 页命中` +
+            `<em style="font-weight:400;font-size:12px;color:var(--dim2);margin-left:8px">` +
+            `全文库 ${d.manual_pages || 0} 页</em></h2>`;
+    const GQ = {
+      good:   ['', ''],
+      sparse: ['图页', '字少，多半是插图'],
+      fair:   ['文字一般', '请核对原页'],
+      poor:   ['文字差', '直接看原页']
+    };
+    for(const m of d.manual){
+      const url = WA.withPack('/api/manualpage?file=' + encodeURIComponent(m.file) +
+                              '&page=' + m.page + '&dpi=200');
+      const qg = GQ[m.grade];
+      const badge = qg && qg[0]
+        ? `<span class="qbadge" title="${esc(qg[1])}">${esc(qg[0])}</span>` : '';
+      const dt = m.doc_title || '';
+      const tag = (dt.includes('电路图') && !dt.includes('维修手册')) ? '电路图'
+                : dt.includes('维修手册') ? '维修手册' : '';
+      const tagHtml = tag ? `<span class="dtag">${tag}</span>` : '';
+      html += `<a class="item" href="${url}" target="_blank">
+        <p class="t">${tagHtml}${esc(m.file||'')}<em>第 ${m.page} 页 · 命中 ${m.score} 次</em>${badge}</p>
+        <div class="hit" style="line-height:1.65">${mark(m.snippet, q)}</div>
+      </a>`;
+    }
+    html += `<p class="empty" style="padding:10px 0 0;font-size:12px">` +
+            `点任意一条可打开原页。全文由 OCR 生成，<b>只用于定位页码</b>；` +
+            `规格数字（扭矩/间隙）必须看原页核对。</p>`;
+  }
+
+  if(d.pages.length){
+    html += '<h2>原厂手册页 · ' + d.pages.length + ' 页</h2>';
+    for(const p of d.pages){
+      html += `<a class="item" href="${WA.withPack('/viewer?p=' + encodeURIComponent(p.image))}">
+        <p class="t">${mark(p.title, q)}<em>p${p.page}</em></p>
+      </a>`;
+    }
+  }
+  app.innerHTML = html;
+}
+
+async function go(){
+  const q = input.value.trim();
+  if(!q){ app.innerHTML = '<p class="empty">输入关键词开始搜</p>'; return; }
+  const my = ++seq;
+  try{
+    const d = await (await fetch(WA.withPack('/api/search?q=' + encodeURIComponent(q)))).json();
+    if(my === seq) render(d);
+  }catch(e){
+    if(my === seq) app.innerHTML = '<p class="empty">搜索失败：' + esc(e.message) + '</p>';
+  }
+}
+
+input.addEventListener('input', () => {
+  clearTimeout(timer);
+  timer = setTimeout(go, 260);
+});
+input.addEventListener('keydown', e => { if(e.key === 'Enter'){ clearTimeout(timer); go(); } });
+
+const init = new URLSearchParams(location.search).get('q');
+if(init){ input.value = init; go(); }
+input.focus();
+</script>
+</body>
+</html>

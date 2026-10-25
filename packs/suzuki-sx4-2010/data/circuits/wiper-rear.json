@@ -1,0 +1,110 @@
+{
+  "id": "wiper-rear",
+  "system": "wiper-rear",
+  "name": "后雨刮与喷洗器",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "双保险丝（WIP 30A / RR WIP 15A）、继电器、电机 E63、开关 G141 五档真值表、喷洗泵 O21 均清晰可读。",
+  "source_page": "sx4-2010::06-系统电路图-11-后雨刮器和清洗器::p1",
+  "topology_type": "relay-motor-switch",
+  "nodes": [
+    {
+      "id": "fuse_wip",
+      "label": "WIP 保险丝 30A",
+      "sub": "㉖ · 后雨刮主回路",
+      "role": "fuse",
+      "pins": ["WIP-30A"],
+      "confidence": "read-clear",
+      "detail": "后雨刮电机主回路 30A 保险丝。**注意：前雨刮也是 30A WIP，但那是另一个位置**，别混。"
+    },
+    {
+      "id": "fuse_rrwip",
+      "label": "RR WIP 保险丝 15A",
+      "sub": "⑲ · 控制回路",
+      "role": "fuse",
+      "pins": ["RR-WIP-15A"],
+      "confidence": "read-clear",
+      "detail": "后雨刮控制回路 15A 保险丝。与 30A 分工不同：这个是给继电器线圈与 BCM 逻辑供电的。"
+    },
+    {
+      "id": "relay",
+      "label": "后雨刮继电器",
+      "sub": "4/3 触点 · 2/1 线圈",
+      "role": "relay",
+      "pins": ["R.4", "R.3", "R.2", "R.1"],
+      "confidence": "read-clear",
+      "detail": "4=触点输入（来自 WIP 30A）、3=触点输出（→ E63 电机）、2/1 为线圈，由 BCM 控制。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM",
+      "sub": "G04 21/22 · Drive circuit",
+      "role": "ecu",
+      "pins": ["G04.21", "G04.22"],
+      "confidence": "read-clear",
+      "detail": "BCM 内含驱动电路与 CPU，负责后雨刮的间歇（INT）控制与继电器驱动。**后雨刮的「间歇」功能是 BCM 算的，不是机械开关做的。**"
+    },
+    {
+      "id": "motor",
+      "label": "后雨刮电机 E63",
+      "sub": "2 进 · 1/3 回位",
+      "role": "load",
+      "pins": ["E63.2", "E63.1", "E63.3"],
+      "confidence": "read-clear",
+      "detail": "后风窗雨刮电机。2=黄/黑（来自继电器），1=蓝，3=黄/黑（回位/搭铁回路）。内含回位开关。"
+    },
+    {
+      "id": "switch",
+      "label": "后雨刮开关 G141",
+      "sub": "五档 · WASH/OFF/INT/ON/ON+WASH",
+      "role": "switch",
+      "pins": ["G141.1", "G141.2", "G141.3"],
+      "confidence": "read-clear",
+      "detail": "组合开关末端旋钮。内部真值表：WASH 档接通 P+INT+1+R+EW；OFF 档只通 WR；INT 档通 INT+EW；ON 档通 1+R+EW；ON+WASH 全通。P=喷水泵、INT=间歇、1+R=连续。"
+    },
+    {
+      "id": "washer",
+      "label": "后喷洗电机 O21",
+      "sub": "2/4/1/3 脚",
+      "role": "load",
+      "pins": ["O21.2", "O21.4", "O21.1", "O21.3"],
+      "confidence": "read-clear",
+      "detail": "后风窗喷水泵。与后雨刮共用一个开关旋钮（WASH 位），但是独立电机。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ⑰⑱ / ㉓㉔ / ⑲",
+      "sub": "分组",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "电机与喷洗泵各自的搭铁点。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_wip", "to": "relay", "color": "—", "via": "㉖ → R.4", "note": "触点电源"},
+    {"from": "relay", "to": "motor", "color": "黄/黑", "via": "R.3 → E63.2", "note": ""},
+    {"from": "fuse_rrwip", "to": "bcm", "color": "—", "via": "⑲ → G272.20 → G334 E382.2", "note": "控制电源"},
+    {"from": "bcm", "to": "relay", "color": "—", "via": "G04 21/22 → 线圈", "note": "驱动"},
+    {"from": "switch", "to": "bcm", "color": "—", "via": "G141 → BCM", "note": "档位输入"},
+    {"from": "switch", "to": "motor", "color": "—", "via": "G141 → E63.1/3", "note": "档位切换"},
+    {"from": "switch", "to": "washer", "color": "—", "via": "G141 → O21", "note": "WASH 档"},
+    {"from": "motor", "to": "gnd", "color": "黑", "via": "→ ⑰⑱", "note": ""},
+    {"from": "washer", "to": "gnd", "color": "黑", "via": "→ ㉓㉔", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "后雨刮不动、后喷水也不喷 → 两个保险丝分别查：WIP 30A 管电机、RR WIP 15A 管控制，不要只查一个",
+    "后雨刮不动、后喷水正常 → 控制回路有电，查继电器、电机 E63 与开关 G141",
+    "后雨刮只有 INT 档不工作、ON 档正常 → BCM 的间歇控制功能异常，不是电机问题",
+    "后雨刮停不到位、停在半空 → E63 的回位回路（1/3 脚）或搭铁，与前雨刮同样的机理",
+    "后喷水不喷但有电机声 → 管路堵塞、喷嘴堵或液位不足，不是电路",
+    "后喷水完全无声 → O21 喷洗电机或开关 WASH 档触点",
+    "后雨刮自动乱刮、间歇节奏错乱 → 开关档位触点氧化或 BCM 档位信号异常",
+    "【易混淆】前雨刮正常、后雨刮全失效 → 两者保险丝位置不同（前 WIP 30A 与后 WIP 30A/RR WIP 15A），别以为共用"
+  ],
+  "notes": [
+    "后雨刮有**两个**保险丝（30A 主回路 + 15A 控制回路），这是与前雨刮最大的结构差异",
+    "「间歇」是 BCM 用软件算的，所以 INT 档单独失效指向 BCM 而不是开关或电机",
+    "后雨刮与后喷洗共用开关旋钮但独立电机，判断时要分开"
+  ]
+}

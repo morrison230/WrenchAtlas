@@ -1,0 +1,85 @@
+{
+  "id": "illumination",
+  "system": "illumination",
+  "name": "照明灯（仪表与开关背光）",
+  "type": "signal-flow",
+  "confidence": "read-clear",
+  "confidence_note": "TAIL 10A、G272 插头引脚、G144 组合开关进出、BCM A14 感知线清晰可读。下游各路照明支路未逐一展开。",
+  "source_page": "sx4-2010::06-系统电路图-22-照明灯::p1",
+  "topology_type": "功能级（下游多路照明支路未逐条列出）",
+  "nodes": [
+    {
+      "id": "fuse_tail",
+      "label": "JB ㉙ TAIL 10A",
+      "sub": "接线盒 No.29",
+      "role": "fuse",
+      "pins": ["JB-29"],
+      "confidence": "read-clear",
+      "detail": "TAIL 10A 保险丝。**同时给三处供电**：组合开关的小灯输入、BCM 的小灯状态感知、以及各照明负载本身。"
+    },
+    {
+      "id": "jc272",
+      "label": "插头 G272",
+      "sub": "15=白/红 → 开关 · 7=红/黄 → BCM 与照明",
+      "role": "splice",
+      "pins": ["G272.15", "G272.7"],
+      "confidence": "read-clear",
+      "detail": "TAIL 电源分两路：15 脚白/红去组合开关 G144.13，7 脚红/黄同时去 BCM A14 和照明负载。"
+    },
+    {
+      "id": "switch",
+      "label": "灯光组合开关 G144",
+      "sub": "13=输入 · 10=照明输出",
+      "role": "switch",
+      "pins": ["G144.13", "G144.10"],
+      "confidence": "read-clear",
+      "detail": "小灯（TAIL）档闭合后，把 13 脚输入送到 10 脚输出。G144 是横跨多个灯光系统的公共件。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM",
+      "sub": "A14 · 感知小灯开关状态",
+      "role": "ecu",
+      "pins": ["A14"],
+      "confidence": "read-clear",
+      "detail": "BCM 通过 A14（红/黄）感知小灯是否打开，用于自动大灯、迎宾灯、遥控开锁亮灯等逻辑。这条线断了会出现「灯亮着但车不知道」。"
+    },
+    {
+      "id": "loads",
+      "label": "各照明负载",
+      "sub": "仪表 · 空调面板 · 开关背光 · 点烟器环",
+      "role": "load",
+      "confidence": "read-clear",
+      "detail": "多路并联的背光负载，图中按 4WD / 配置差异分了几组。单个灯泡/LED 失效只影响那一处。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "车身",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "照明负载共用搭铁。搭铁不良会导致背光偏暗或闪烁。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_tail", "to": "jc272", "color": "灰", "via": "JB 侧连接器", "note": "10A 供电"},
+    {"from": "jc272", "to": "switch", "color": "白/红", "via": "G272.15 → G144.13", "note": "开关输入"},
+    {"from": "jc272", "to": "bcm", "color": "红/黄", "via": "G272.7 → BCM A14", "note": "状态感知"},
+    {"from": "jc272", "to": "loads", "color": "红/黄", "via": "G272.7 分支", "note": "部分负载常供"},
+    {"from": "switch", "to": "loads", "color": "红/黄", "via": "G144.10", "note": "开关输出到背光"},
+    {"from": "loads", "to": "gnd", "color": "黑", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "所有背光都不亮 → 查 JB ㉙ TAIL 10A。这个保险丝同时供开关、BCM 和负载三处",
+    "背光不亮但车外示宽灯/尾灯正常 → G144.10 输出这路或下游线束，别急着换保险丝",
+    "只有某一个开关不亮 → 那一处的灯泡/LED 或支路，与主回路无关",
+    "背光偏暗、忽明忽暗 → 搭铁不良或调光电位器，不是灯泡老化",
+    "背光正常但自动大灯/迎宾灯逻辑异常 → BCM A14 那条红/黄线（BCM 感知不到小灯状态）",
+    "换了 LED 后某些灯不亮 → LED 极性接反或功率不足导致检测异常"
+  ],
+  "notes": [
+    "本系统是**车内照明**（仪表与开关背光）。车外的示宽灯/尾灯/牌照灯属 tail-lamp 系统。",
+    "G144 组合开关同时被 5 个灯光系统引用，它出问题会多个系统一起异常。",
+    "BCM 通过 A14 感知小灯状态，这条线断了会出现「灯亮着但车不知道」的怪现象。"
+  ]
+}

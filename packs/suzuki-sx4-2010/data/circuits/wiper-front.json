@@ -1,0 +1,83 @@
+{
+  "id": "wiper-front",
+  "system": "wiper-front",
+  "name": "前雨刮与清洗器",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "verify_note": "拓扑由 2010 版电路图 p1 人工判读，未经实车核对（不拆车）。开关真值表个别格子判读存疑，已在下文标注。",
+  "source_page": "sx4-2010::06-系统电路图-10-挡风玻璃雨刮器和清洗器::p1",
+  "nodes": [
+    {
+      "id": "batt",
+      "label": "蓄电池",
+      "sub": "常电 12V",
+      "role": "source",
+      "detail": "全车电源，另有 02-电源供电 页可查具体回路"
+    },
+    {
+      "id": "fuse",
+      "label": "JB 保险丝 30A",
+      "sub": "WIP · 接线盒内",
+      "role": "fuse",
+      "pins": ["JB-30A-WIP"],
+      "detail": "接线盒 JB 内 30A 保险丝，标注 WIP（雨刮）。保险丝断则雨刮与清洗泵同时失效——这是最快的初筛点。"
+    },
+    {
+      "id": "switch",
+      "label": "雨刮开关总成",
+      "sub": "含 INT 间歇单元",
+      "role": "switch",
+      "pins": ["G141.8", "E323.9(旁)"],
+      "detail": "虚线框整体，内含档位开关 + INT 间歇控制单元。电源经黄/黄绿线进入 G141.8。档位 MIST/OFF/INT/LO/HI 对应 +B/+2/+1/+S/INT1/INT2/B1 接点闭合。",
+      "positions": [
+        {"pos": "MIST", "closes": ["+B", "+1"], "note": "点动"},
+        {"pos": "OFF", "closes": ["+1", "+S", "INT1", "B1"], "note": "停"},
+        {"pos": "INT", "closes": ["+1", "+S", "INT1", "INT2"], "note": "间歇"},
+        {"pos": "LO", "closes": ["+B", "+1"], "note": "低速"},
+        {"pos": "HI", "closes": ["+B", "+2"], "note": "高速"}
+      ]
+    },
+    {
+      "id": "motor",
+      "label": "雨刮电机 E64",
+      "sub": "HI / LO 双速 + 回位",
+      "role": "load",
+      "pins": ["E64.5", "E64.3", "E64.1", "E64.2"],
+      "detail": "四脚：5=蓝黄(LO 低速)、3=蓝红(HI 高速)、1=蓝白(回位)、2=黄(电源)。内含离心开关与回位开关，可自动复位到停止位。",
+      "uncertain": "E64.2 黄线的具体来源未完全确认"
+    },
+    {
+      "id": "washer",
+      "label": "清洗泵 E62",
+      "sub": "两脚直流泵",
+      "role": "load",
+      "pins": ["E62.2", "E62.1"],
+      "detail": "2=黄线(电源，来自 E323.9)、1=蓝橙(搭铁，经 E382.5)。两脚简单直流泵。",
+      "uncertain": "E62 在图中图标与 E64 相似，确认它是清洗泵而非第二电机"
+    },
+    {
+      "id": "ground",
+      "label": "搭铁 G334",
+      "sub": "E382 多针汇合",
+      "role": "ground",
+      "pins": ["E382.4", "E382.11", "E382.18", "E382.5"],
+      "detail": "4=蓝红、11=蓝黄、18=蓝白、5=蓝橙，多路汇合到 G334 车身搭铁点。搭铁不良会导致雨刮慢、无力、复位异常。"
+    }
+  ],
+  "edges": [
+    {"from": "batt", "to": "fuse", "note": "常电"},
+    {"from": "fuse", "to": "switch", "color": "黄绿", "via": "G271.1", "note": "保险丝后分出，供开关总成"},
+    {"from": "fuse", "to": "washer", "color": "黄", "via": "E323.9 → E62.2", "note": "旁路，供清洗泵"},
+    {"from": "switch", "to": "motor", "color": "蓝黄/蓝红", "via": "E64.5(LO) / E64.3(HI)", "note": "档位决定走低速还是高速"},
+    {"from": "motor", "to": "ground", "color": "蓝红/蓝黄/蓝白", "via": "E382.4/11/18", "note": ""},
+    {"from": "washer", "to": "ground", "color": "蓝橙", "via": "E382.5", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "雨刮和清洗泵全不工作 → 先查 JB 30A WIP 保险丝",
+    "只有雨刮不动、清洗泵正常 → 保险丝没问题，查开关总成与 E64",
+    "低速能动高速不动 → 查 E64.3 蓝红线与开关 HI 档位接点(+B/+2)",
+    "雨刮停不到位、反复摆 → 查回位回路 E64.1 蓝白线与 G334 搭铁",
+    "动作慢、无力 → 优先怀疑 G334 搭铁不良，而非电机坏"
+  ]
+}

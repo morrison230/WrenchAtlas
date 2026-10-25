@@ -1,0 +1,107 @@
+{
+  "id": "meter",
+  "system": "meter",
+  "name": "组合仪表",
+  "type": "signal-flow",
+  "confidence": "read-clear",
+  "confidence_note": "类型 I（p1）逐块放大判读，连接器与保险丝编号无歧义。类型 II（p2）及 p3–p5 未展开。",
+  "source_page": "sx4-2010::06-系统电路图-18-组合仪表::p1",
+  "topology_type": "本页覆盖类型 I；类型 II 在 p2，另有 p3–p5 未展开",
+  "nodes": [
+    {
+      "id": "fuse_mtr",
+      "label": "JB MTR 10A",
+      "sub": "接线盒 No.22",
+      "role": "fuse",
+      "pins": ["JB-22"],
+      "confidence": "read-clear",
+      "detail": "仪表主电源 10A。走红线到 G271.6，再进仪表 G241.31。这是仪表的常电，断了仪表全黑。"
+    },
+    {
+      "id": "fuse_dome",
+      "label": "JB DOME 15A",
+      "sub": "接线盒 No.37",
+      "role": "fuse",
+      "pins": ["JB-37"],
+      "confidence": "read-clear",
+      "detail": "室内灯/仪表背光电源 15A。走白线到 G271.5 → G308.B → 仪表 G241.32。"
+    },
+    {
+      "id": "jb",
+      "label": "接线盒 G271",
+      "sub": "JB 输出 · 6=仪表 / 5=背光",
+      "role": "splice",
+      "pins": ["G271.6", "G271.5"],
+      "confidence": "read-clear",
+      "detail": "接线盒内的合流点。6 脚供仪表主电，5 脚供背光与记忆电。"
+    },
+    {
+      "id": "jc308",
+      "label": "中间连接器 G308",
+      "sub": "J/C · 仪表台左下",
+      "role": "splice",
+      "pins": ["G308.B(5)", "G308.B(8)"],
+      "confidence": "read-clear",
+      "detail": "DOME 15A 到仪表之间的中间连接器。触点氧化会导致背光闪烁。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM",
+      "sub": "经 CAN 送车速与警告信号",
+      "role": "ecu",
+      "pins": ["CAN Low", "CAN High"],
+      "confidence": "read-clear",
+      "detail": "BCM 通过 CAN 总线把车速、门开、灯状态等信息送给仪表。仪表不是靠独立车速传感器。"
+    },
+    {
+      "id": "meter",
+      "label": "组合仪表 G241",
+      "sub": "31=主电 / 32=背光 / 10+7=CAN / 16=搭铁",
+      "role": "load",
+      "pins": ["G241.31", "G241.32", "G241.10", "G241.7", "G241.16"],
+      "confidence": "read-clear",
+      "detail": "内部含 CAN 收发器（Low/High）、Micro-controller、LCD、Stepper motor and LED output driver、Voltage regulator。四只指针表（SPEED/TACHO/TEMP/FUEL）由步进电机驱动，三组照明（Dial/Display/Pointer）由 ILL 回路供电。"
+    },
+    {
+      "id": "jc309",
+      "label": "中间连接器 G309",
+      "sub": "J/C · 搭铁侧",
+      "role": "splice",
+      "pins": ["G309.B"],
+      "confidence": "read-clear",
+      "detail": "仪表 G241.16 到搭铁之间的中间连接器。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "车身",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "仪表搭铁。搭铁不良会导致指针抖动、读数漂移——这类故障最容易被误判成传感器坏。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_mtr", "to": "jb", "color": "红", "via": "G271.6", "note": "仪表常电"},
+    {"from": "jb", "to": "meter", "color": "红", "via": "G241.31", "note": "主电源入表"},
+    {"from": "fuse_dome", "to": "jb", "color": "白", "via": "G271.5", "note": "背光/记忆电源"},
+    {"from": "jb", "to": "jc308", "color": "白/红", "via": "G308.B(5)→(8)", "note": "经中间连接器"},
+    {"from": "jc308", "to": "meter", "color": "白/红", "via": "G241.32", "note": "背光与记忆电入表"},
+    {"from": "bcm", "to": "meter", "color": "CAN 双绞", "via": "G241.10(Low) / G241.7(High)", "note": "车速与整车状态"},
+    {"from": "meter", "to": "jc309", "color": "黑", "via": "G241.16", "note": ""},
+    {"from": "jc309", "to": "gnd", "color": "黑", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "仪表全黑——指针不动且背光不亮 → 先查 JB MTR 10A，再看 G271.6 到 G241.31 这段红线",
+    "背光不亮但指针正常 → DOME 15A 或 G308 中间连接器，不是仪表坏",
+    "指针全部不动但背光正常 → CAN 通信问题，查 G241.10 / G241.7 双绞线，别急着换仪表",
+    "单独一个表不动（如只有油表）→ 查对应传感器与步进电机，不是整个仪表坏",
+    "里程表不走、车速表正常 → 仪表内部数据处理，与车速传感器无关",
+    "指针抖动或读数漂移 → 优先查 G309 搭铁，这类故障最容易被误判成传感器坏",
+    "所有警告灯都不亮 → 先看仪表主电源与搭铁，灯泡全烧的概率极低"
+  ],
+  "notes": [
+    "本页只覆盖类型 I。类型 II 在 p2（一页画了两套），p3–p5 另有机型差异与指示灯定义，均未展开。",
+    "仪表照明分三组：Dial（表盘）、Display（液晶）、Pointer（指针），共用 ILL 回路。",
+    "SPEED / TACHO / TEMP / FUEL 四表均由步进电机驱动，不是传统线圈式。"
+  ]
+}

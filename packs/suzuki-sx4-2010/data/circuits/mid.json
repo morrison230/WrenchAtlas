@@ -1,0 +1,116 @@
+{
+  "id": "mid",
+  "system": "mid",
+  "name": "多信息显示器与附属插座",
+  "type": "signal-flow",
+  "confidence": "read-clear",
+  "confidence_note": "G-2 图三个保险丝与各负载走向清晰。多信息显示器内部功能未展开。",
+  "source_page": "sx4-2010::06-系统电路图-34-多信息显示器::p1",
+  "topology_type": "功能级",
+  "nodes": [
+    {
+      "id": "fuse_acc",
+      "label": "JB ㉘ ACC 15A",
+      "sub": "接线盒 No.28",
+      "role": "fuse",
+      "pins": ["JB-28"],
+      "confidence": "read-clear",
+      "detail": "ACC 电源，经 G272.6 供 ACC 插座与点烟器。"
+    },
+    {
+      "id": "fuse_acc2",
+      "label": "JB ㉚ ACC2 15A",
+      "sub": "接线盒 No.30",
+      "role": "fuse",
+      "pins": ["JB-30"],
+      "confidence": "read-clear",
+      "detail": "第二路 ACC 电源，经 G271.11 供附属电源插座。与 ㉘ 是两条独立回路。"
+    },
+    {
+      "id": "fuse_dome",
+      "label": "JB ⑤ DOME 15A",
+      "sub": "接线盒 No.5",
+      "role": "fuse",
+      "pins": ["JB-5"],
+      "confidence": "read-clear",
+      "detail": "常电，经 G271.5 供多信息显示器。**显示器是常电供电，熄火后仍保持记忆。**"
+    },
+    {
+      "id": "mid",
+      "label": "多信息显示器 G250",
+      "sub": "常电 · 显示油耗/续航/温度",
+      "role": "load",
+      "pins": ["G250"],
+      "confidence": "read-clear",
+      "detail": "仪表台中部的信息屏，显示瞬时油耗、平均油耗、续航、车外温度等。经 G307/G308 中间连接器。"
+    },
+    {
+      "id": "socket_acc",
+      "label": "ACC 插座 G251",
+      "sub": "附件电源",
+      "role": "load",
+      "pins": ["G251"],
+      "confidence": "read-clear",
+      "detail": "ACC 供电的附件插座，钥匙在 ACC 或 ON 才有电。"
+    },
+    {
+      "id": "socket_aux",
+      "label": "附属电源插座 G39",
+      "sub": "点烟器样式 12V",
+      "role": "load",
+      "pins": ["G39"],
+      "confidence": "read-clear",
+      "detail": "由 ACC2 15A 供电，与 ACC 插座是两条独立回路 —— 一个没电不代表另一个也没电。"
+    },
+    {
+      "id": "cigar",
+      "label": "点烟器 G131",
+      "sub": "ACC 供电",
+      "role": "load",
+      "pins": ["G131"],
+      "confidence": "read-clear",
+      "detail": "点烟器本体，走 ACC 回路。"
+    },
+    {
+      "id": "mic",
+      "label": "麦克风",
+      "sub": "免提/音响用",
+      "role": "sensor",
+      "pins": ["MAP"],
+      "confidence": "read-clear",
+      "detail": "顶棚麦克风，供免提通话。经 G281 连接到音响系统。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "车身",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "各负载独立搭铁点。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_acc", "to": "socket_acc", "color": "灰", "via": "G272.6 → G251", "note": "ACC 回路"},
+    {"from": "fuse_acc", "to": "cigar", "color": "灰", "via": "G272.6 分支 → G131", "note": "点烟器"},
+    {"from": "fuse_acc2", "to": "socket_aux", "color": "蓝", "via": "G271.11 → G39", "note": "独立第二路"},
+    {"from": "fuse_dome", "to": "mid", "color": "白", "via": "G271.5 → G307/G308 → G250", "note": "常电，保记忆"},
+    {"from": "mic", "to": "mid", "color": "多色", "via": "G281 → G305", "note": "麦克风信号"},
+    {"from": "mid", "to": "gnd", "color": "黑", "note": ""},
+    {"from": "socket_acc", "to": "gnd", "color": "黑", "note": ""},
+    {"from": "socket_aux", "to": "gnd", "color": "黑", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "多信息显示器熄火后归零/丢记忆 → 查 JB ⑤ DOME 15A（显示器是常电，丢常电就丢记忆）",
+    "显示器完全不亮 → 同样是 DOME 15A，再看 G307/G308 中间连接器",
+    "ACC 插座没电但附属插座有电 → 这是两条独立回路，查 ㉘ ACC 15A 或 G251 本身",
+    "附属插座没电但 ACC 插座正常 → 查 ㉚ ACC2 15A",
+    "点烟器不加热但插座能充电 → 点烟器本体电热丝，不是保险丝",
+    "两个插座都没电且钥匙在 ACC → 分别查 ㉘ 和 ㉚，它们不共用保险丝",
+    "免提对方听不到 → 顶棚麦克风或 G281 连接"
+  ],
+  "notes": [
+    "多信息显示器是常电供电（DOME 15A），这与它的记忆功能有关。",
+    "ACC 插座（㉘）与附属插座（㉚）是两条完全独立的回路，诊断时要分开。",
+    "麦克风属音响/免提系统，本页只是因为它与显示器共用线束才画在一起。"
+  ]
+}

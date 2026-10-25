@@ -1,0 +1,139 @@
+{
+  "id": "turn-signal",
+  "system": "turn-signal",
+  "name": "转向信号灯与危险警告灯",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "主回路、开关、灯泡分组均清晰。闪光器具体位置（集成在开关内还是独立）未完全确认。",
+  "source_page": "sx4-2010::06-系统电路图-24-转向信号灯和危险警告灯::p1",
+  "variant_note": "四门车型",
+  "nodes": [
+    {
+      "id": "fuse_turn",
+      "label": "JB 保险丝 10A",
+      "sub": "TURN · 转向灯专用",
+      "role": "fuse",
+      "pins": ["TURN-10A"],
+      "confidence": "read-clear",
+      "detail": "转向灯与危险警告灯的主保险丝 10A。"
+    },
+    {
+      "id": "fuse_haz",
+      "label": "JB 保险丝 10A",
+      "sub": "HORN-HAZ · **与喇叭共用**",
+      "role": "fuse",
+      "pins": ["HORN-HAZ-10A"],
+      "confidence": "read-clear",
+      "detail": "标注 HORN-HAZ，**喇叭与危险警告灯共用**。按喇叭不响 + 双闪不亮同时出现，基本可锁定这个保险丝。"
+    },
+    {
+      "id": "fuse_meter",
+      "label": "JB 保险丝 10A",
+      "sub": "METER · 仪表指示",
+      "role": "fuse",
+      "pins": ["METER-10A"],
+      "confidence": "read-clear",
+      "detail": "仪表指示灯供电。转向灯在仪表上的箭头指示失效，可能只是这个保险丝或指示灯泡问题。"
+    },
+    {
+      "id": "switch",
+      "label": "转向灯开关 G144",
+      "sub": "组合开关 · 左/右/中",
+      "role": "switch",
+      "pins": ["G144.21", "G144.24", "G144.20"],
+      "confidence": "read-clear",
+      "detail": "方向盘左侧拨杆。左拨=左转、右拨=右转、中位=关。内部含接点矩阵，长期使用后触点氧化是常见故障。"
+    },
+    {
+      "id": "hazard_sw",
+      "label": "危险警告（双闪）开关",
+      "sub": "G279 R1",
+      "role": "switch",
+      "pins": ["G279.R1"],
+      "confidence": "read-clear",
+      "detail": "中控台双闪按钮。按下后绕过转向开关，直接让四个转向灯同时闪。"
+    },
+    {
+      "id": "flasher",
+      "label": "闪光器",
+      "sub": "产生闪烁节奏",
+      "role": "ecu",
+      "confidence": "read-uncertain",
+      "detail": "负责把直流变成「亮-灭」节奏。现代车多集成在 BCM 或组合开关内，部分车型为独立继电器。",
+      "uncertain": "本车闪光器是集成式还是独立件，图中未明确标注"
+    },
+    {
+      "id": "lamp_front",
+      "label": "前转向灯 E160（左/右）",
+      "sub": "各 2 脚",
+      "role": "load",
+      "pins": ["E160.2", "E160.1"],
+      "confidence": "read-clear",
+      "detail": "前保险杠两侧转向灯，左右各一个 E160。"
+    },
+    {
+      "id": "lamp_side",
+      "label": "侧转向灯 E166（左/右）",
+      "sub": "翼子板侧",
+      "role": "load",
+      "pins": ["E166.2", "E166.1"],
+      "confidence": "read-clear",
+      "detail": "前翼子板上的侧转向灯。"
+    },
+    {
+      "id": "lamp_rear",
+      "label": "后转向灯 L133/L134",
+      "sub": "尾灯总成内",
+      "role": "load",
+      "confidence": "read-clear",
+      "detail": "尾灯组内的转向灯泡，左右各一。"
+    },
+    {
+      "id": "meter",
+      "label": "仪表转向指示灯",
+      "sub": "G271 6 → ECM ③/⑤",
+      "role": "load",
+      "pins": ["G271.6"],
+      "confidence": "read-clear",
+      "detail": "仪表上的左右箭头指示灯，与外部转向灯同步闪烁。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ②④ / ②⑧",
+      "sub": "前后分组",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "前后转向灯各自搭铁。单侧搭铁不良会造成该侧变暗或闪得不对称。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_turn", "to": "switch", "color": "—", "via": "→ G144", "note": "转向回路电源"},
+    {"from": "fuse_haz", "to": "hazard_sw", "color": "—", "via": "→ G279", "note": "双闪回路电源"},
+    {"from": "switch", "to": "flasher", "color": "—", "via": "→ 闪光控制", "note": ""},
+    {"from": "hazard_sw", "to": "flasher", "color": "—", "via": "→ 闪光控制", "note": "绕过转向开关"},
+    {"from": "flasher", "to": "lamp_front", "color": "—", "via": "→ E160 左/右", "note": ""},
+    {"from": "flasher", "to": "lamp_side", "color": "—", "via": "→ E166 左/右", "note": ""},
+    {"from": "flasher", "to": "lamp_rear", "color": "—", "via": "→ L133/L134", "note": ""},
+    {"from": "fuse_meter", "to": "meter", "color": "—", "via": "→ G271.6 → ECM", "note": "仪表指示"},
+    {"from": "lamp_front", "to": "gnd", "color": "黑", "via": "→ ②⑧", "note": ""},
+    {"from": "lamp_rear", "to": "gnd", "color": "黑", "via": "→ ②④", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "【交叉验证】按喇叭不响 + 双闪不亮同时出现 → 几乎可以确定是 HORN-HAZ 保险丝，一步到位",
+    "转向灯不闪，但双闪正常 → 问题在转向开关 G144，不在保险丝和灯泡",
+    "双闪也不闪、喇叭正常 → 查 TURN 10A 保险丝与闪光器",
+    "【最实用】闪烁频率明显变快（哒哒哒很急）→ 有一个转向灯泡烧了。转向灯是靠负载电流决定闪速的，少一个灯泡就会变快。换灯泡即好，别查电路",
+    "闪烁频率变慢或不闪、灯泡都亮 → 闪光器老化，或换了大功率/LED 灯泡导致负载不匹配",
+    "只有一侧不闪 → 该侧转向开关触点或线路，另一侧正常说明保险丝和闪光器没问题",
+    "某一个灯不亮其他都闪 → 就是那个灯泡（或该灯搭铁）",
+    "外部转向灯正常、仪表箭头不亮 → 查 METER 10A 与仪表指示灯泡/线路",
+    "双闪能开但关不掉 → 双闪开关 G279 卡滞",
+    "换 LED 转向灯后快闪或不闪 → LED 电流太小，闪光器判定为「灯泡坏」，需加负载电阻或换 LED 专用闪光器"
+  ],
+  "notes": [
+    "**HORN-HAZ 保险丝是喇叭与双闪共用**，这是跨系统交叉验证的典范，两个症状一起出现时能一步定位",
+    "闪烁快慢由负载电流决定，所以「闪得快 = 有灯泡坏」是原理推导的结果，不是玄学",
+    "本车转向灯按「前 E160 + 侧 E166 + 后 L133/L134」三处分布"
+  ]
+}

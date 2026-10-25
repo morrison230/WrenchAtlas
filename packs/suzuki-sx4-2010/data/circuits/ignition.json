@@ -1,0 +1,98 @@
+{
+  "id": "ignition",
+  "system": "ignition",
+  "name": "点火系统",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "连接器、线圈引脚、搭铁路径均放大精读无歧义。但 ECM 控制脚存在非欧4/欧4 两套接法，须按实车排放标准选取。",
+  "source_page": "sx4-2010::06-系统电路图-03-点火系统::p1",
+  "variant_warning": "本图右上角标注 ①非欧4 ②欧4。ECM 引脚有两套：Ⓐ=非欧4，Ⓑ=欧4。2010 长安 SX4 1.8 大概率为国四/欧四，但务必以实车排放标识核对，**选错引脚会量错线**。",
+  "topology_type": "wasted-spark（废火花）",
+  "nodes": [
+    {
+      "id": "fuse",
+      "label": "JB 保险丝 15A",
+      "sub": "IG COIL · E325.5",
+      "role": "fuse",
+      "pins": ["E325.5"],
+      "confidence": "read-clear",
+      "detail": "点火线圈初级电源保险丝。烧断则完全不点火、不着车。"
+    },
+    {
+      "id": "splice",
+      "label": "C312 压接点",
+      "sub": "E371 C343(20) 之后",
+      "role": "splice",
+      "pins": ["C312"],
+      "confidence": "read-clear",
+      "detail": "电源分配点，向两个点火线圈的 3 脚供电。与充电系统的 C312 同名，需注意是同一压接点还是不同位置（存疑）。"
+    },
+    {
+      "id": "coil1",
+      "label": "点火线圈 #1 · C101",
+      "sub": "管 1 缸 + 4 缸",
+      "role": "load",
+      "pins": ["C101.1", "C101.3", "C101.2"],
+      "confidence": "read-clear",
+      "detail": "1=控制（绿线→ECM）、3=电源（黑/白）、2=搭铁。次级同时供两个火花塞，两缸一组的废火花点火。"
+    },
+    {
+      "id": "coil2",
+      "label": "点火线圈 #2 · C102",
+      "sub": "管 2 缸 + 3 缸",
+      "role": "load",
+      "pins": ["C102.1", "C102.3", "C102.2"],
+      "confidence": "read-clear",
+      "detail": "与 #1 同构，次级供 2、3 缸。"
+    },
+    {
+      "id": "plugs",
+      "label": "火花塞 ×4",
+      "sub": "1&4 一组 · 2&3 一组",
+      "role": "load",
+      "confidence": "read-clear",
+      "detail": "废火花系统：一次点火同时点燃两个缸（一个做工、一个排气行程），因此 1&4 缸永远同步失火、2&3 缸永远同步失火。"
+    },
+    {
+      "id": "ecm",
+      "label": "ECM",
+      "sub": "C01 控制点火",
+      "role": "ecu",
+      "pins": ["C01.6", "C01.53", "C01.5", "C01.40"],
+      "confidence": "read-clear",
+      "detail": "线圈#1 控制脚：非欧4 = C01 6，欧4 = C01 53。线圈#2 控制脚：非欧4 = C01 5，欧4 = C01 40。两路均为绿线。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ⑥",
+      "sub": "线圈初级回路",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "两个线圈的 2 脚汇合到同一搭铁点 ⑥。搭铁不良会导致点火能量不足、高速失火。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse", "to": "splice", "color": "黑/白", "via": "E325.5 → E371 C343 20", "note": "初级电源"},
+    {"from": "splice", "to": "coil1", "color": "黑/白", "via": "C101.3", "note": ""},
+    {"from": "splice", "to": "coil2", "color": "黑/白", "via": "C102.3", "note": ""},
+    {"from": "ecm", "to": "coil1", "color": "绿", "via": "C01 6(非欧4) / C01 53(欧4) → C101.1", "note": "点火控制"},
+    {"from": "ecm", "to": "coil2", "color": "绿", "via": "C01 5(非欧4) / C01 40(欧4) → C102.1", "note": "点火控制"},
+    {"from": "coil1", "to": "gnd", "color": "黑", "via": "C101.2", "note": ""},
+    {"from": "coil2", "to": "gnd", "color": "黑", "via": "C102.2", "note": ""},
+    {"from": "coil1", "to": "plugs", "color": "高压", "note": "次级供 1、4 缸"},
+    {"from": "coil2", "to": "plugs", "color": "高压", "note": "次级供 2、3 缸"}
+  ],
+  "diagnosis_hint": [
+    "1 缸和 4 缸同时失火（P0301+P0304）→ 基本可判定 C101 点火线圈坏，不用怀疑两个火花塞同时挂",
+    "2 缸和 3 缸同时失火（P0302+P0303）→ 判定 C102 点火线圈坏",
+    "单缸失火 → 优先火花塞与高压线，线圈可能性低（废火花系统里线圈坏了必是两缸同时）",
+    "四缸全不点火 → 查 15A IG COIL 保险丝、C312 压接点、ECM 控制信号，不要先换线圈",
+    "高速失火、低速正常 → 查搭铁点 ⑥ 与火花塞间隙，属点火能量不足",
+    "报 P0351/P0352 点火线圈初级电路故障 → 直接查对应绿线控制回路与 ECM 引脚"
+  ],
+  "notes": [
+    "这是本车最值钱的一条诊断逻辑：废火花系统决定了『失火必成对』，能一眼区分线圈故障和火花塞故障",
+    "C312 在充电系统与点火系统都出现，是否同一压接点需实车确认"
+  ]
+}

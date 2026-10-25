@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.1",
+  "id": "brand-model-year",
+  "make": "",
+  "make_cn": "",
+  "model": "",
+  "year": 0,
+  "engine": "",
+  "engine_displacement": "",
+  "transmission": "",
+  "market": "CN",
+  "manuals": [
+    {
+      "doc_id": "",
+      "title": "",
+      "role": "manual",
+      "path": "raw/",
+      "pages": 0
+    }
+  ],
+  "built_at": "",
+  "notes": ""
+}

@@ -1,0 +1,201 @@
+{
+  "id": "engine-control",
+  "system": "engine-ecm",
+  "name": "发动机控制系统（ECM 输入输出）",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "喷油器、CKP/CMP、电子节气门的连接器与 ECM 引脚均放大精读，编号无歧义。APP 传感器与部分信号线未逐脚精读，标 read-uncertain。点火线圈不在此页（见 03-点火系统）。",
+  "source_page": "sx4-2010::06-系统电路图-05-发动机和空调控制系统::p1, p2",
+  "scope_note": "本页把空调控制与发动机控制画在一起，此处只取发动机电控部分。空调部分另立系统。",
+  "nodes": [
+    {
+      "id": "ecm",
+      "label": "ECM",
+      "sub": "A-5 · 发动机控制单元",
+      "role": "ecu",
+      "pins": [
+        "C01"
+      ],
+      "confidence": "read-clear",
+      "detail": "图上 ECM 连接器出现 C01 与 C91 两种印法（字形相近），本数据统一记为 C01，实际以实车插头标识为准。"
+    },
+    {
+      "id": "ckp",
+      "label": "CKP 曲轴位置传感器",
+      "sub": "C31 · 3/1/2",
+      "role": "sensor",
+      "pins": [
+        "C31.2"
+      ],
+      "confidence": "read-clear",
+      "detail": "脚 2 = 粉红线 → ECM C01 21（信号）。脚 3 = 黑/红（电源），脚 1 = 黑（屏蔽/地）。**这是发动机最关键的传感器**：无 CKP 信号则 ECM 不喷油不点火，完全不着车，且转速表不动。"
+    },
+    {
+      "id": "cmp",
+      "label": "CMP 凸轮轴位置传感器",
+      "sub": "C32 · 1/3/2",
+      "role": "sensor",
+      "pins": [
+        "C32.2"
+      ],
+      "confidence": "read-clear",
+      "detail": "脚 2 = 红/白线 → ECM C01 20（信号）。脚 1 = 黑/红（电源），脚 3 = 黑（地）。用于判缸与正时修正。"
+    },
+    {
+      "id": "throttle",
+      "label": "电子节气门总成 C48",
+      "sub": "TP 传感器双路 + 执行器电机",
+      "role": "sensor",
+      "pins": [
+        "C48.1",
+        "C48.2",
+        "C48.5",
+        "C48.6",
+        "C48.4",
+        "C48.3"
+      ],
+      "confidence": "read-clear",
+      "detail": "无机械拉线（drive-by-wire）。脚 1 蓝 → ECM C01 45、脚 2 黄 → C01 44（执行器电机，ECM 直接 H 桥驱动）；脚 5 红 → C01 43、脚 6 绿 → C01 54（主 TP）；脚 4 白 → C01 40、脚 3 黑 → C01 42（副 TP）。双电位器冗余设计。"
+    },
+    {
+      "id": "app",
+      "label": "APP 油门踏板传感器",
+      "sub": "E191 · 双路",
+      "role": "sensor",
+      "pins": [
+        "E191"
+      ],
+      "confidence": "read-uncertain",
+      "detail": "油门踏板位置传感器，双路冗余。具体引脚与 ECM 对应关系未逐脚精读，需补。",
+      "uncertain": "APP 油门踏板的引脚与 ECM 对应关系未逐脚精读，需补"
+    },
+    {
+      "id": "inj",
+      "label": "喷油器 #1–#4",
+      "sub": "C91/C92/C93/C94",
+      "role": "load",
+      "pins": [
+        "C91.2",
+        "C92.2",
+        "C93.2",
+        "C94.2"
+      ],
+      "confidence": "read-clear",
+      "detail": "#1 C91 蓝黄 → C01 1；#2 C92 蓝白 → C01 2；#3 C93 蓝红 → C01 16；#4 C94 蓝橙 → C01 17。每个喷油器脚 2 接公共电源（黑线，来自主继电器），脚 1 由 ECM 控制搭铁喷油。"
+    },
+    {
+      "id": "main_relay",
+      "label": "主继电器",
+      "sub": "喷油器 / EVAP 公共电源",
+      "role": "relay",
+      "confidence": "read-clear",
+      "detail": "黑线总线为喷油器与 EVAP 碳罐控制阀提供公共电源。主继电器不吸合 → 四缸同时不喷油，表现为完全无法起动。"
+    },
+    {
+      "id": "evap",
+      "label": "EVAP 碳罐控制阀",
+      "sub": "接主继电器电源",
+      "role": "load",
+      "confidence": "read-clear",
+      "detail": "与喷油器共用电源总线，ECM 控制搭铁。故障码常见 P0443/P0444。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "ckp",
+      "to": "ecm",
+      "color": "粉红",
+      "via": "C31.2 → C01 21",
+      "note": "曲轴转速/位置信号"
+    },
+    {
+      "from": "cmp",
+      "to": "ecm",
+      "color": "红/白",
+      "via": "C32.2 → C01 20",
+      "note": "凸轮轴判缸信号"
+    },
+    {
+      "from": "throttle",
+      "to": "ecm",
+      "color": "红/绿/白/黑",
+      "via": "C01 43 / 54 / 40 / 42",
+      "note": "TP 传感器主副双路"
+    },
+    {
+      "from": "app",
+      "to": "ecm",
+      "color": "待补",
+      "via": "E191",
+      "note": "油门踏板需求"
+    },
+    {
+      "from": "ecm",
+      "to": "throttle",
+      "color": "蓝/黄",
+      "via": "C01 45 / 44 → C48.1 / 2",
+      "note": "节气门执行器驱动，双向"
+    },
+    {
+      "from": "ecm",
+      "to": "inj",
+      "color": "蓝黄/蓝白/蓝红/蓝橙",
+      "via": "C01 1 / 2 / 16 / 17",
+      "note": "逐缸喷油控制"
+    },
+    {
+      "from": "main_relay",
+      "to": "inj",
+      "color": "黑",
+      "note": "公共电源"
+    },
+    {
+      "from": "main_relay",
+      "to": "evap",
+      "color": "黑",
+      "note": "公共电源"
+    }
+  ],
+  "injection_map": {
+    "P0301": {
+      "cylinder": 1,
+      "injector": "C91",
+      "ecm_pin": "C01 1",
+      "color": "蓝/黄"
+    },
+    "P0302": {
+      "cylinder": 2,
+      "injector": "C92",
+      "ecm_pin": "C01 2",
+      "color": "蓝/白"
+    },
+    "P0303": {
+      "cylinder": 3,
+      "injector": "C93",
+      "ecm_pin": "C01 16",
+      "color": "蓝/红"
+    },
+    "P0304": {
+      "cylinder": 4,
+      "injector": "C94",
+      "ecm_pin": "C01 17",
+      "color": "蓝/橙"
+    }
+  },
+  "diagnosis_hint": [
+    "完全打不着、转速表不动、无任何点火喷油 → 首查 CKP（C31.2 粉红线 → ECM C01 21），这是最高优先级",
+    "能着车但正时乱、偶发回火 → 查 CMP（C32.2 红/白 → C01 20）",
+    "报 P0301~P0304 单缸失火 → 按 injection_map 直接定位该缸喷油器连接器与 ECM 引脚；但先换火花塞/点火线圈（在 03-点火系统），喷油器故障率低于点火",
+    "四缸同时失火 → 不是喷油器问题，查主继电器、公共电源黑线、CKP 信号",
+    "怠速抖动 + 加速无力 + 无故障码 → 优先查电子节气门积碳与 TP 传感器（C48），不是传感器坏了才报码",
+    "报 P2135 之类 TP 相关性故障 → 主副两路信号不符，查 C48 的 5/6 与 4/3 两组线束",
+    "报 P2101 节气门执行器 → 查 C48.1/C48.2（ECM 脚 45/44）与节气门体是否卡滞",
+    "油门踩下无响应、进 limp home → APP（E191）或电子节气门故障，此时车辆会限制功率"
+  ],
+  "notes": [
+    "点火线圈与火花塞不在本页，见 03-点火系统",
+    "本页同时含空调控制（鼓风机、压缩机离合器），另立空调系统数据",
+    "ECM 连接器在图中同时出现 C01 与 C91 印法，需实车确认；本数据统一用 C01"
+  ]
+}

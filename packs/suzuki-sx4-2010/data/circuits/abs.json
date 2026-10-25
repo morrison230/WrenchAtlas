@@ -1,0 +1,101 @@
+{
+  "id": "abs",
+  "system": "abs",
+  "name": "防抱死制动系统",
+  "type": "signal-flow",
+  "safety_critical": true,
+  "confidence": "read-clear",
+  "confidence_note": "F-2 图两个图区：上半为电源/模块/仪表，下半为四个轮速传感器回路。模块内部与液压单元未展开。",
+  "source_page": "sx4-2010::06-系统电路图-31-防抱死制动系统::p1",
+  "topology_type": "功能级",
+  "safety_warning": "ABS 涉及制动系统。制动管路拆装后必须排气，操作不当会导致制动力下降。涉及液压单元的作业请以原厂规程为准。",
+  "nodes": [
+    {
+      "id": "fuse_motor",
+      "label": "ABS MOTOR 30A",
+      "sub": "ABS 泵电机专用",
+      "role": "fuse",
+      "pins": ["ABS-MOTOR-30A"],
+      "confidence": "read-clear",
+      "detail": "ABS 泵电机的大电流保险丝。**与电磁阀保险丝是分开的两个**：电机 30A、电磁阀 25A。烧了电机不转，ABS 不工作但常规制动正常。"
+    },
+    {
+      "id": "fuse_sol",
+      "label": "ABS SOL 25A",
+      "sub": "电磁阀专用",
+      "role": "fuse",
+      "pins": ["ABS-SOL-25A"],
+      "confidence": "read-clear",
+      "detail": "电磁阀（Solenoid）保险丝。它烧了压力无法调节，ABS 功能失效。"
+    },
+    {
+      "id": "fuse_stop",
+      "label": "STOP 15A",
+      "sub": "制动灯开关信号",
+      "role": "fuse",
+      "pins": ["JB-STOP-15A"],
+      "confidence": "read-clear",
+      "detail": "制动灯保险丝。ABS 模块通过制动灯开关信号判断是否在制动。**这个保险丝烧了，ABS 和制动灯会同时出问题。**"
+    },
+    {
+      "id": "module",
+      "label": "ABS 控制模块",
+      "sub": "含液压单元与 ECU",
+      "role": "ecu",
+      "pins": ["E326 侧"],
+      "confidence": "read-clear",
+      "detail": "液压单元与电子控制集成在一起（HECU）。接收四轮速信号，控制电磁阀与泵电机。故障码存在这里。"
+    },
+    {
+      "id": "vss",
+      "label": "四个轮速传感器",
+      "sub": "前左 · 前右 · 后左 · 后右",
+      "role": "sensor",
+      "pins": ["FL", "FR", "RL", "RR"],
+      "confidence": "read-clear",
+      "detail": "每轮一只，各两根信号线。经 G252 等中间连接器汇到模块。**车速表信号也取自这里**（通常前左或前右）。"
+    },
+    {
+      "id": "meter",
+      "label": "组合仪表（ABS 灯）",
+      "sub": "经 CAN 收模块状态",
+      "role": "load",
+      "pins": ["CAN"],
+      "confidence": "read-clear",
+      "detail": "ABS 灯由模块通过 CAN 通知仪表点亮。灯亮不等于模块坏，绝大多数是传感器或线路。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "模块与传感器",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "模块大电流搭铁与传感器信号搭铁分开。模块搭铁不良会导致偶发灯亮。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_motor", "to": "module", "color": "粗线", "via": "泵电机供电", "note": "30A"},
+    {"from": "fuse_sol", "to": "module", "color": "红", "via": "电磁阀供电", "note": "25A"},
+    {"from": "fuse_stop", "to": "module", "color": "绿/白", "via": "制动灯开关 → 模块", "note": "制动信号"},
+    {"from": "vss", "to": "module", "color": "多色双绞", "via": "G252 中间连接器", "note": "四路轮速信号"},
+    {"from": "module", "to": "meter", "color": "CAN", "via": "CAN 总线", "note": "ABS 灯与故障通知"},
+    {"from": "module", "to": "gnd", "color": "黑", "note": "大电流搭铁"},
+    {"from": "vss", "to": "gnd", "color": "黑", "note": "信号地"}
+  ],
+  "diagnosis_hint": [
+    "ABS 灯常亮但刹车脚感正常 → **常规制动不受影响**，只是 ABS 功能失效。可以开，但要尽快修（雨雪天没有防抱死）",
+    "ABS 灯亮 + 车速表不动 → 优先查前轮速传感器，车速信号取自这里",
+    "ABS 灯亮 + 制动灯也不亮 → 先查 STOP 15A 保险丝（两者共用信号）",
+    "只在涉水/雨天/洗车后亮 → 传感器脏污或线束进水，清理后多半自愈",
+    "30A MOTOR 烧 → 泵电机短路；25A SOL 烧 → 电磁阀短路。**分别对应，别混**",
+    "低速刹车踏板弹脚、有咔咔声 → 这是 ABS 正常工作，不是故障",
+    "⚠ **不要用万用表电阻档判断轮速传感器好坏**：磁电式与霍尔式判据不同，电阻值也不能直接说明问题。正确做法是读数据流看波形或看四轮转速是否一致",
+    "换过轮速传感器后灯还亮 → 间隙不当（传感器与齿圈距离）或齿圈脏/缺齿"
+  ],
+  "notes": [
+    "ABS 泵电机（30A）与电磁阀（25A）是两条独立电源，诊断时要分开确认。",
+    "制动灯开关信号同时给 ABS 模块和制动灯，「灯亮」和「信号通」是两件事。",
+    "轮速传感器判断应靠数据流，不靠万用表。",
+    "涉及液压单元的拆装必须排气，否则制动力下降。"
+  ]
+}

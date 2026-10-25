@@ -1,0 +1,99 @@
+{
+  "id": "can-bus",
+  "system": "can",
+  "name": "CAN 总线",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-clear",
+  "confidence_note": "各模块的 CAN 引脚与双绞走向完整清晰，双套引脚（非欧4/欧4）均已读出。",
+  "source_page": "sx4-2010::06-系统电路图-09-CAN线路图::p1",
+  "variant_warning": "图中标注 ①非欧4 ②欧4 两套引脚号：ECM 侧 C01 为 12/42 与 13/54，E01 为 19/55 与 3/56。**按实车排放标准选取。**",
+  "topology_type": "can-bus-network",
+  "nodes": [
+    {
+      "id": "bcm",
+      "label": "BCM（网关）",
+      "sub": "G04 / E04 双路",
+      "role": "ecu",
+      "pins": ["G04.2", "G04.4", "E04.2", "E04.1", "G04.1", "G04.3"],
+      "confidence": "read-clear",
+      "detail": "CAN 主干节点。四路连接：仪表（G04 2/4）、DLC（G04 1/3）、以及向下通往 ECM 侧（E04 2/1）。"
+    },
+    {
+      "id": "ecm",
+      "label": "ECM",
+      "sub": "C01 / E01 / E08",
+      "role": "ecu",
+      "pins": ["C01.12", "C01.13", "E01.19", "E01.3", "E08.12", "E08.13"],
+      "confidence": "read-clear",
+      "detail": "发动机控制单元，CAN 上接 TCM、ABS 与 BCM。非欧4 与欧4 的引脚号不同（见 variant_warning）。"
+    },
+    {
+      "id": "tcm",
+      "label": "TCM 变速器控制",
+      "sub": "C06 7/17",
+      "role": "ecu",
+      "pins": ["C06.7", "C06.17"],
+      "confidence": "read-clear",
+      "detail": "经 C01 12/42（CAN−）与 13/54（CAN+）连 ECM。TCM 不通信时表现为换档异常与故障灯。"
+    },
+    {
+      "id": "abs",
+      "label": "ABS 控制模块",
+      "sub": "E08 12/1 · 13/2",
+      "role": "ecu",
+      "pins": ["E08.12", "E08.1", "E08.13", "E08.2"],
+      "confidence": "read-clear",
+      "detail": "经 E01 19/55（CAN−）与 3/56（CAN+）连 ECM。ABS 灯常亮常源于 CAN 通信失败而非 ABS 本身。"
+    },
+    {
+      "id": "meter",
+      "label": "组合仪表 G241",
+      "sub": "10 / 7",
+      "role": "load",
+      "pins": ["G241.10", "G241.7"],
+      "confidence": "read-clear",
+      "detail": "接在 BCM 侧（G04 2/4）。仪表是 CAN 状态最直观的观察窗：多个警告灯同时亮通常意味着总线问题。"
+    },
+    {
+      "id": "dlc",
+      "label": "DLC 诊断座 G211",
+      "sub": "14 / 6",
+      "role": "splice",
+      "pins": ["G211.14", "G211.6"],
+      "confidence": "read-clear",
+      "detail": "接在 BCM 侧（G04 1/3）。诊断仪插这里读全部模块的故障码。"
+    },
+    {
+      "id": "bus",
+      "label": "CAN 双绞线",
+      "sub": "CAN− 白 / CAN+ 红",
+      "role": "splice",
+      "confidence": "read-clear",
+      "detail": "两条线双绞传输差分信号。**CAN+ 与 CAN− 之间正常约有 60Ω 终端电阻、工作电压各约 2.5V**，短路或断路都会导致整段通信失效。"
+    }
+  ],
+  "edges": [
+    {"from": "bcm", "to": "meter", "color": "白/红", "via": "G04.2 / G04.4 → G241.10 / 7", "note": "CAN 双绞"},
+    {"from": "bcm", "to": "dlc", "color": "白/红", "via": "G04.1 / G04.3 → G211.14 / 6", "note": "诊断接入"},
+    {"from": "bcm", "to": "ecm", "color": "白/红", "via": "E04.2 / E04.1 → CAN 主干", "note": "主干"},
+    {"from": "ecm", "to": "tcm", "color": "白/红", "via": "C01.12/42 与 13/54 → C06.7/17", "note": ""},
+    {"from": "ecm", "to": "abs", "color": "白/红", "via": "E01.19/55 与 3/56 → E08.12/1 与 13/2", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "【核心判断】仪表上多个互不相关的警告灯同时亮（如 ABS + 发动机 + 挡位）→ 优先怀疑 CAN 总线，而不是每个系统同时坏",
+    "只有一个模块不通信、其他正常 → 该模块的供电或搭铁，不是总线问题",
+    "诊断仪连不上任何模块 → 查 DLC 的 16 号常电、4/5 号搭铁，再查 G211 的 CAN 两脚",
+    "【快速测法】万用表测 CAN+ 与 CAN− 之间电阻，正常约 60Ω（两个 120Ω 终端并联）。为零=短路，无穷大=断路",
+    "钥匙 ON 档测 CAN+ 对地约 2.5V、CAN− 约 2.5V；两线电压相同或为 0 说明总线故障",
+    "ABS 灯常亮但刹车正常 → 先查 CAN 通信与 ABS 模块供电，ABS 本身未必坏",
+    "换过某个模块后出现多个系统异常 → 该模块可能干扰总线或未正确匹配",
+    "偶发多系统报警、重启后恢复 → CAN 线接触不良或某模块间歇性故障，重点查插头与线束磨损点",
+    "拆装过线束或事故维修后出现 → 优先查 CAN 线是否被压伤、接反、双绞被破坏"
+  ],
+  "notes": [
+    "CAN 是本车所有电控系统的「神经系统」，它出问题时表现是「多个系统同时异常」——这是最重要的判断特征",
+    "CAN+ 红、CAN− 白，必须双绞；维修时若重新接线破坏了双绞，会引入干扰",
+    "图中引脚有非欧4/欧4 两套，选取前须确认排放标准"
+  ]
+}

@@ -1,0 +1,589 @@
+{
+  "schema_version": "0.1",
+  "note": "症状索引：把「用户说的话」映射到「哪个系统 + 第一刀往哪切」。所有分支均来自已有 circuits 数据的 diagnosis_hint，非新增推测。",
+  "symptoms": [
+    {
+      "id": "no-crank",
+      "label": "打不着火 · 起动机不转",
+      "aka": [
+        "拧钥匙没反应",
+        "起动机不转",
+        "打火没声音",
+        "打不着",
+        "不着车",
+        "打火没反应",
+        "拧钥匙没动静",
+        "启动不了"
+      ],
+      "first_question": "拧钥匙时，能听到『哒』一声吗？",
+      "branches": [
+        {
+          "when": "完全没声音，也没有『哒』",
+          "verdict": "控制回路断",
+          "check": "依次查：JB ST SIG 10A 保险丝 → 点火开关 ST 接点 → 起动机继电器线圈",
+          "circuits": [
+            "starting"
+          ]
+        },
+        {
+          "when": "有『哒』一声，但起动机不转",
+          "verdict": "控制回路正常，主回路有问题",
+          "check": "查：继电器触点、起动机电磁开关、ST 30A 熔丝、蓄电池到起动机的大电流线",
+          "circuits": [
+            "starting"
+          ]
+        },
+        {
+          "when": "连续『哒哒哒』，声音越来越弱",
+          "verdict": "蓄电池电量不足",
+          "check": "不是起动机坏。先充电或搭电，再查充电系统",
+          "circuits": [
+            "starting",
+            "charging"
+          ]
+        },
+        {
+          "when": "自动挡，D 档或 R 档拧钥匙没反应",
+          "verdict": "正常现象",
+          "check": "只有 P/N 档才能起动。挂 P 档再试",
+          "circuits": [
+            "starting"
+          ]
+        }
+      ],
+      "also_check": "如果起动机转但发动机不着，转「起动机转但不点火」"
+    },
+    {
+      "id": "crank-no-start",
+      "label": "起动机转，但发动机不着",
+      "aka": [
+        "打火有声但不着车",
+        "空转",
+        "有声音不着",
+        "干转不着",
+        "打火不启动",
+        "空转不着车"
+      ],
+      "first_question": "转速表指针动不动？",
+      "branches": [
+        {
+          "when": "转速表完全不动",
+          "verdict": "CKP 曲轴位置传感器无信号",
+          "check": "最高优先级：查 CKP（C31.2 粉红线 → ECM C01 21）。无 CKP 信号则 ECM 不喷油不点火",
+          "circuits": [
+            "engine-ecm"
+          ]
+        },
+        {
+          "when": "转速表正常摆动，但不着车",
+          "verdict": "在油或火",
+          "check": "查点火（15A IG COIL、点火线圈）与喷油（主继电器、四缸公共电源）",
+          "circuits": [
+            "ignition",
+            "engine-ecm"
+          ]
+        },
+        {
+          "when": "冷车好着、热车不好着",
+          "verdict": "多为起动机电磁开关或搭铁",
+          "check": "查起动机电磁开关与搭铁，不是蓄电池问题",
+          "circuits": [
+            "starting"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "misfire",
+      "label": "怠速抖动 / 单缸失火",
+      "aka": [
+        "抖",
+        "发动机抖",
+        "P0301",
+        "失火",
+        "冷车抖",
+        "热车抖",
+        "怠速不稳",
+        "抖车",
+        "发动机不稳",
+        "缺缸",
+        "喘"
+      ],
+      "first_question": "有故障码吗？是哪一个缸？",
+      "branches": [
+        {
+          "when": "报 P0301 或 P0304（1 缸或 4 缸）",
+          "verdict": "若两缸同时报 → 点火线圈 C101 坏",
+          "check": "废火花系统：C101 管 1&4 缸。两缸同时失火基本可判定线圈坏，不用怀疑两个火花塞同时挂",
+          "circuits": [
+            "ignition",
+            "engine-ecm"
+          ]
+        },
+        {
+          "when": "报 P0302 或 P0303（2 缸或 3 缸）",
+          "verdict": "若两缸同时报 → 点火线圈 C102 坏",
+          "check": "C102 管 2&3 缸",
+          "circuits": [
+            "ignition",
+            "engine-ecm"
+          ]
+        },
+        {
+          "when": "只有单缸失火",
+          "verdict": "优先火花塞",
+          "check": "废火花系统里线圈坏了必是两缸同时，所以单缸先换火花塞与高压线。喷油器故障率低于点火",
+          "circuits": [
+            "ignition",
+            "engine-ecm"
+          ]
+        },
+        {
+          "when": "四缸同时失火",
+          "verdict": "不是喷油器问题",
+          "check": "查主继电器、喷油器公共电源黑线、CKP 信号",
+          "circuits": [
+            "engine-ecm"
+          ]
+        },
+        {
+          "when": "怠速抖 + 加速无力 + 没有故障码",
+          "verdict": "先查电子节气门积碳",
+          "check": "查节气门 C48 与 TP 传感器。不是传感器坏了才报码，积碳先抖",
+          "circuits": [
+            "engine-ecm"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "no-charge",
+      "label": "不充电 / 电瓶灯亮",
+      "aka": [
+        "电瓶灯",
+        "充电灯亮",
+        "老是没电",
+        "充电灯",
+        "电瓶不充电",
+        "老是亏电",
+        "打不着电瓶"
+      ],
+      "first_question": "电瓶灯是一直亮，还是不亮也不充电？",
+      "branches": [
+        {
+          "when": "电瓶灯常亮，完全不充电",
+          "verdict": "主回路",
+          "check": "先查主保险丝 43·80A，再查发电机 B+ 粗线、皮带是否打滑断裂",
+          "circuits": [
+            "charging"
+          ]
+        },
+        {
+          "when": "电瓶灯不亮，但就是不充电",
+          "verdict": "励磁回路",
+          "check": "查 15A IG COIL 保险丝与励磁回路。C312 压接点常是接触不良点",
+          "circuits": [
+            "charging"
+          ]
+        },
+        {
+          "when": "换新电瓶很快又没电",
+          "verdict": "若充电正常，是漏电",
+          "check": "测静态电流。不属充电系统，别继续查发电机",
+          "circuits": [
+            "charging"
+          ]
+        },
+        {
+          "when": "冷车正常、热车不充电",
+          "verdict": "调节器热衰减",
+          "check": "发电机内部 IC 调节器，需换总成",
+          "circuits": [
+            "charging"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "headlamp-dark",
+      "label": "大灯不亮",
+      "aka": [
+        "灯不亮",
+        "大灯坏了",
+        "晚上看不见",
+        "大灯坏",
+        "晚上看不见路",
+        "近光不亮",
+        "远光不亮",
+        "一个灯亮一个不亮"
+      ],
+      "first_question": "左右两侧都不亮，还是只有一侧？",
+      "branches": [
+        {
+          "when": "左右都不亮",
+          "verdict": "不是灯泡问题",
+          "check": "查 DOME 15A（BCM 供电）与灯光开关 G144",
+          "circuits": [
+            "headlamp"
+          ]
+        },
+        {
+          "when": "只有一侧不亮",
+          "verdict": "该侧独立回路",
+          "check": "该侧保险丝（HL L 或 HL R）→ 该侧继电器（E151/E152）→ 灯泡，三步递进",
+          "circuits": [
+            "headlamp"
+          ]
+        },
+        {
+          "when": "只有近光或只有远光不亮",
+          "verdict": "双灯丝灯泡",
+          "check": "类型 I 为远近光一体灯泡，一根灯丝断了，换灯泡即可",
+          "circuits": [
+            "headlamp"
+          ]
+        },
+        {
+          "when": "大灯常亮关不掉",
+          "verdict": "继电器或 BCM",
+          "check": "触点粘连或 BCM 输出卡死，先拔继电器止亮",
+          "circuits": [
+            "headlamp"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "turn-fail",
+      "label": "转向灯不亮 / 闪得快",
+      "aka": [
+        "转向灯",
+        "双闪",
+        "打转向不闪",
+        "打转向不亮",
+        "双闪坏了",
+        "转向不工作",
+        "闪得快"
+      ],
+      "first_question": "双闪（危险警告灯）正常吗？",
+      "branches": [
+        {
+          "when": "转向灯不闪，但双闪正常",
+          "verdict": "转向开关问题",
+          "check": "查组合开关 G144 的转向档位触点，不是保险丝和灯泡",
+          "circuits": [
+            "turn-signal"
+          ]
+        },
+        {
+          "when": "双闪也不闪，且喇叭也不响",
+          "verdict": "HORN-HAZ 保险丝",
+          "check": "一个保险丝同时管喇叭和双闪，一步定位",
+          "circuits": [
+            "turn-signal",
+            "horn"
+          ]
+        },
+        {
+          "when": "闪得明显变快（哒哒哒很急）",
+          "verdict": "有一个转向灯泡烧了",
+          "check": "闪速由负载电流决定，少一个灯泡就变快。换灯泡即好，别查电路",
+          "circuits": [
+            "turn-signal"
+          ]
+        },
+        {
+          "when": "只有一侧不闪",
+          "verdict": "该侧开关触点或线路",
+          "check": "另一侧正常说明保险丝与闪光器没问题",
+          "circuits": [
+            "turn-signal"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stop-fail",
+      "label": "刹车灯不亮",
+      "aka": [
+        "刹车灯",
+        "踩刹车后面不亮",
+        "刹车灯坏",
+        "后面灯不亮"
+      ],
+      "first_question": "三个灯全不亮，还是只有一侧或高位灯？",
+      "branches": [
+        {
+          "when": "三个全不亮",
+          "verdict": "主回路",
+          "check": "STOP 15A 保险丝 → 制动灯开关 E181（最常见是顶不到位或触点烧蚀）",
+          "circuits": [
+            "stop-lamp"
+          ]
+        },
+        {
+          "when": "只有一侧不亮",
+          "verdict": "该侧灯泡或灯座",
+          "check": "不是线路问题",
+          "circuits": [
+            "stop-lamp"
+          ]
+        },
+        {
+          "when": "刹车灯常亮不停",
+          "verdict": "开关卡滞",
+          "check": "E181 调整过紧，会导致耗电并让 ECM 误判制动状态",
+          "circuits": [
+            "stop-lamp"
+          ]
+        },
+        {
+          "when": "刹车灯亮但油耗偏高、松油门不降速",
+          "verdict": "ECM 信号线",
+          "check": "查 ECM A-5 制动信号线（绿/白），ECM 认为你一直踩着刹车",
+          "circuits": [
+            "stop-lamp",
+            "engine-ecm"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ac-no-cool",
+      "label": "空调不制冷",
+      "aka": [
+        "空调不冷",
+        "不凉",
+        "没冷气",
+        "空调不凉",
+        "不制冷",
+        "空调没反应",
+        "吹热风"
+      ],
+      "first_question": "出风口有风吗？",
+      "branches": [
+        {
+          "when": "出风口有风，但不凉",
+          "verdict": "制冷侧",
+          "check": "查 A/C 20A → E229 继电器 → C141 压缩机离合器 → ECM 是否否决 → 最后才是制冷剂",
+          "circuits": [
+            "aircon"
+          ]
+        },
+        {
+          "when": "出风口根本没风",
+          "verdict": "鼓风机问题",
+          "check": "转「鼓风机不出风」，不是制冷系统的事",
+          "circuits": [
+            "heater"
+          ]
+        },
+        {
+          "when": "压缩机频繁吸合断开（几秒一次）",
+          "verdict": "压力异常",
+          "check": "制冷剂压力过低/过高或压力开关动作，先测压力再动电路",
+          "circuits": [
+            "aircon"
+          ]
+        },
+        {
+          "when": "夏天堵车越吹越热、跑起来正常",
+          "verdict": "冷凝风扇散热不足",
+          "check": "查 E230 冷凝风扇继电器与风扇电机",
+          "circuits": [
+            "aircon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blower-dead",
+      "label": "鼓风机不出风",
+      "aka": [
+        "没风",
+        "吹不出风",
+        "风机不转",
+        "不出风"
+      ],
+      "first_question": "是某一档没风，还是所有档都没风？",
+      "branches": [
+        {
+          "when": "只有最高档（HI）有风，其余档全无",
+          "verdict": "风机电阻烧断",
+          "check": "G65 的 1 号抽头（黑/白）直通不经过电阻，所以电阻全烧了最高档照样转。换电阻即可，不用换电机",
+          "circuits": [
+            "heater"
+          ]
+        },
+        {
+          "when": "所有档都没反应",
+          "verdict": "主回路",
+          "check": "BLW 30A 保险丝 → 暖风机继电器 → BCM 22 控制线",
+          "circuits": [
+            "heater"
+          ]
+        },
+        {
+          "when": "继电器不吸合，听不到咔嗒声",
+          "verdict": "控制回路",
+          "check": "查 IG2 SIG 10A 保险丝与 BCM 22 线路，不是继电器坏",
+          "circuits": [
+            "heater"
+          ]
+        },
+        {
+          "when": "各档都能转但风量明显偏小",
+          "verdict": "先查滤芯",
+          "check": "空调滤芯堵塞最常见，其次是电阻接插件接触不良、电机碳刷磨损",
+          "circuits": [
+            "heater"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "horn-dead",
+      "label": "喇叭不响",
+      "aka": [
+        "按喇叭没声",
+        "喇叭哑了",
+        "喇叭哑",
+        "喇叭没声",
+        "按不响"
+      ],
+      "first_question": "双闪（危险警告灯）正常吗？",
+      "branches": [
+        {
+          "when": "双闪也不亮",
+          "verdict": "HORN-HAZ 保险丝",
+          "check": "喇叭与双闪共用，一步定位",
+          "circuits": [
+            "horn",
+            "turn-signal"
+          ]
+        },
+        {
+          "when": "双闪正常，按喇叭听到继电器『咔』但不响",
+          "verdict": "触点或喇叭本体",
+          "check": "查继电器触点、喇叭 E281、搭铁 ②，不是按钮问题",
+          "circuits": [
+            "horn"
+          ]
+        },
+        {
+          "when": "按喇叭毫无反应，也没有继电器声",
+          "verdict": "按钮或螺旋电缆",
+          "check": "方向盘按钮 S61 与螺旋电缆（游丝）是最高发故障点",
+          "circuits": [
+            "horn"
+          ]
+        },
+        {
+          "when": "打方向时喇叭时响时不响",
+          "verdict": "螺旋电缆内部断线",
+          "check": "需更换游丝",
+          "circuits": [
+            "horn"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wiper-dead",
+      "label": "雨刮不动 / 停不到位",
+      "aka": [
+        "雨刮不转",
+        "雨刷不动",
+        "雨刮回不到位",
+        "雨刮坏了",
+        "雨刮不回位",
+        "雨刮停不住"
+      ],
+      "first_question": "喷水（清洗器）还工作吗？",
+      "branches": [
+        {
+          "when": "雨刮和喷水都不工作",
+          "verdict": "共用保险丝",
+          "check": "JB 30A WIP 保险丝，雨刮与清洗泵共用",
+          "circuits": [
+            "wiper-front"
+          ]
+        },
+        {
+          "when": "雨刮不动，但喷水正常",
+          "verdict": "开关或电机",
+          "check": "保险丝没问题，查开关总成（含 INT 间歇单元）与 E64 电机",
+          "circuits": [
+            "wiper-front"
+          ]
+        },
+        {
+          "when": "低速能动、高速不动",
+          "verdict": "HI 那一路",
+          "check": "查 E64.3 蓝红线与开关 HI 档位接点(+B/+2)",
+          "circuits": [
+            "wiper-front"
+          ]
+        },
+        {
+          "when": "停不到位、反复摆",
+          "verdict": "回位回路",
+          "check": "查 E64.1 蓝白线与 G334 搭铁",
+          "circuits": [
+            "wiper-front"
+          ]
+        },
+        {
+          "when": "动作慢、无力",
+          "verdict": "先怀疑搭铁",
+          "check": "G334 搭铁不良，不是电机坏",
+          "circuits": [
+            "wiper-front"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lamp-dim",
+      "label": "灯光偏暗 / 换灯后异常",
+      "aka": [
+        "灯暗",
+        "不够亮",
+        "LED 微亮",
+        "灯不亮堂",
+        "灯泡老坏"
+      ],
+      "first_question": "是所有灯都暗，还是个别灯？",
+      "branches": [
+        {
+          "when": "所有灯都明显偏暗",
+          "verdict": "搭铁或电压",
+          "check": "查搭铁点锈蚀与充电电压，不是灯泡老化",
+          "circuits": [
+            "headlamp",
+            "tail-lamp",
+            "charging"
+          ]
+        },
+        {
+          "when": "开灯不亮、踩刹车才亮",
+          "verdict": "双灯丝灯泡尾灯丝断",
+          "check": "尾灯与刹车灯共用双灯丝灯泡，换灯泡即可，最易误判为线路问题",
+          "circuits": [
+            "tail-lamp",
+            "stop-lamp"
+          ]
+        },
+        {
+          "when": "换 LED 后微亮、闪烁或报故障",
+          "verdict": "负载电流变化",
+          "check": "LED 电流小，BCM 或闪光器判定为灯泡失效，属改装副作用",
+          "circuits": [
+            "turn-signal",
+            "tail-lamp"
+          ]
+        }
+      ]
+    }
+  ]
+}

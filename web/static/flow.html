@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>流图 · WrenchAtlas</title>
+<style>
+  :root{
+    --bg:#15171b; --panel:#1d2026; --panel2:#242830; --line:#2f343d;
+    --txt:#e9e7e3; --dim:#9aa0aa; --dim2:#6f7681;
+    --blue:#378ADD; --blue-d:#0C447C; --blue-l:#B5D4F4;
+    --amber:#EF9F27; --amber-d:#633806; --amber-l:#FAC775;
+    --teal:#1D9E75; --teal-d:#085041; --teal-l:#9FE1CB;
+    --gray:#888780; --gray-d:#2C2C2A; --gray-l:#D3D1C7;
+    --purple:#7F77DD; --purple-d:#3C3489; --purple-l:#CECBF6;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+  header{position:sticky;top:0;z-index:20;background:rgba(29,32,38,.96);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+    padding:12px 14px;display:flex;align-items:center;gap:10px}
+  header a{color:var(--dim);text-decoration:none;font-size:20px;padding:4px 8px;border-radius:8px}
+  header h1{margin:0;font-size:15px;font-weight:600;flex:1}
+  header h1 em{font-style:normal;font-size:12px;color:var(--dim2);margin-left:8px;font-weight:400}
+  .tabs{display:flex;gap:8px;padding:12px 14px 0;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;background:var(--panel);border:1px solid var(--line);color:var(--dim);
+    border-radius:9px;padding:9px 14px;font-size:13px;cursor:pointer;white-space:nowrap}
+  .tab.on{background:#2b2418;border-color:var(--amber);color:var(--amber)}
+  .meta{padding:12px 14px 0;font-size:12px;color:var(--dim2);line-height:1.6}
+  .meta b{color:var(--dim);font-weight:400}
+  .rep{display:flex;gap:8px;margin:9px 0 2px;flex-wrap:wrap}
+  .rep a{font-size:11.5px;color:var(--accent);background:var(--accent-soft);
+    border:1px solid var(--accent);border-radius:7px;padding:5px 11px;
+    text-decoration:none;white-space:nowrap}
+  .rep a:hover{background:#4a3a20}
+  .badge{display:inline-block;font-size:11px;padding:2px 7px;border-radius:5px;
+    border:1px solid var(--line);color:var(--dim2);margin-left:6px;vertical-align:1px}
+  .badge.ok{border-color:var(--teal);color:var(--teal-l)}
+  .badge.warn{border-color:var(--amber);color:var(--amber-l)}
+  .canvas{padding:10px 0 20px;overflow-x:auto;overflow-y:hidden}
+  svg{display:block;min-width:520px;margin:0 auto}
+  .node{cursor:pointer}
+  .node rect{transition:filter .12s}
+  .node:hover rect{filter:brightness(1.35)}
+  .node.sel rect{stroke-width:2}
+  .panel{margin:0 12px 24px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.65}
+  .panel .pt{font-size:15px;font-weight:500;margin:0 0 2px}
+  .panel .ps{font-size:12px;color:var(--dim2);margin:0 0 10px}
+  .panel .row{margin:6px 0;color:var(--dim)}
+  .panel .row b{color:var(--txt);font-weight:400}
+  .panel .pins{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .pin{background:var(--panel2);border:1px solid var(--line);border-radius:6px;
+    padding:3px 8px;font-size:11.5px;color:var(--blue-l);font-family:ui-monospace,monospace}
+  .panel .acts{display:flex;gap:8px;margin-top:12px}
+  .panel button,.panel a.btn{background:var(--panel2);border:1px solid var(--line);
+    color:var(--txt);border-radius:8px;padding:8px 14px;font-size:12.5px;
+    text-decoration:none;cursor:pointer}
+  .panel a.btn:hover,.panel button:hover{border-color:var(--amber);color:var(--amber)}
+  .hint{padding:8px 14px 0;font-size:12px;color:var(--dim2)}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" data-pack>←</a>
+  <h1>诊断流图<em id="subtitle"></em></h1>
+  <a href="/search" data-pack style="font-size:13px;color:var(--dim2);text-decoration:none">搜索</a>
+</header>
+<div class="tabs" id="tabs"></div>
+<div class="meta" id="meta">加载中…</div>
+<p class="hint">点任一环节看详情 · 详情里可跳回原厂电路图</p>
+<div class="canvas"><svg id="svg"></svg></div>
+<div class="panel" id="panel" style="display:none"></div>
+
+<script src="/static/packbar.js"></script>
+<script>const ROLE_LAYER = {source:0, fuse:1, sensor:1, switch:2, relay:2, ecu:2, splice:2, load:3, ground:4};
+const ROLE_STYLE = {
+  source:  ['var(--blue-d)',   'var(--blue)',   'var(--blue-l)'],
+  fuse:    ['var(--amber-d)',  'var(--amber)',  'var(--amber-l)'],
+  sensor:  ['var(--teal-d)',   'var(--teal)',   'var(--teal-l)'],
+  switch:  ['var(--teal-d)',   'var(--teal)',   'var(--teal-l)'],
+  relay:   ['var(--teal-d)',   'var(--teal)',   'var(--teal-l)'],
+  ecu:     ['var(--purple-d)', 'var(--purple)', 'var(--purple-l)'],
+  splice:  ['var(--gray-d)',   'var(--gray)',   'var(--gray-l)'],
+  load:    ['var(--amber-d)',  'var(--amber)',  'var(--amber-l)'],
+  ground:  ['var(--gray-d)',   'var(--gray)',   'var(--gray-l)'],
+};
+const W = 680, PADX = 22, PADY = 22, GAPH = 14, BOXH = 58, ROWGAP = 62, SUBGAP = 14, MAXPERROW = 4;
+let DATA = [], CUR = 0, SEL = null, VERIFIED = {};
+
+function layout(c){
+  const groups = new Map();
+  for(const n of c.nodes){
+    const L = ROLE_LAYER[n.role] ?? 2;
+    if(!groups.has(L)) groups.set(L, []);
+    groups.get(L).push(n);
+  }
+  const levels = [...groups.keys()].sort((a,b)=>a-b);
+  const pos = {};
+  let y = PADY;
+
+  for(const L of levels){
+    const arr = groups.get(L);
+    const chunks = [];
+    for(let i = 0; i < arr.length; i += MAXPERROW) chunks.push(arr.slice(i, i + MAXPERROW));
+
+    chunks.forEach((chunk, sub) => {
+      const n = chunk.length;
+      const avail = W - PADX*2 - (n-1)*GAPH;
+      const bw = Math.max(96, Math.min(196, avail / n));
+      const totalW = n*bw + (n-1)*GAPH;
+      let x = (W - totalW) / 2;
+      const rowY = y + sub*(BOXH + SUBGAP);
+      for(const node of chunk){
+        pos[node.id] = {x, y: rowY, w: bw, h: BOXH, row: rowY};
+        x += bw + GAPH;
+      }
+    });
+
+    y += chunks.length*BOXH + (chunks.length-1)*SUBGAP + ROWGAP;
+  }
+  return {pos, H: y - ROWGAP + PADY};
+}
+
+function esc(s){ return String(s ?? '').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+
+function fit(text, maxPx, size){
+  const per = size * 0.62;
+  const max = Math.floor(maxPx / (size * 0.95));
+  let t = String(text);
+  if(t.length > max) t = t.slice(0, Math.max(2, max-1)) + '…';
+  return t;
+}
+
+function render(c){
+  const {pos, H} = layout(c);
+  const svg = document.getElementById('svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', H);
+  svg.style.minWidth = '520px';
+
+  let s = `<defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="#7a818c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker></defs>`;
+
+  for(const e of c.edges){
+    const a = pos[e.from], b = pos[e.to];
+    if(!a || !b) continue;
+    const ax = a.x + a.w/2, ay = a.y + a.h;
+    const bx = b.x + b.w/2, by = b.y;
+    let d;
+    if(a.row === b.row){
+      const y = a.y + a.h/2;
+      const x1 = a.x + a.w, x2 = b.x;
+      d = (x2 > x1) ? `M${x1} ${y} L${x2} ${y}`
+                    : `M${a.x} ${y} Q${a.x-26} ${y} ${a.x-26} ${y-18} Q${a.x-26} ${y-36} ${b.x+b.w/2} ${y-36}`;
+    } else if(b.row > a.row){
+      const midY = (ay + by) / 2;
+      d = `M${ax} ${ay} C${ax} ${midY} ${bx} ${midY} ${bx} ${by}`;
+    } else {
+      const midY = (ay + by) / 2;
+      d = `M${a.x} ${a.y + a.h/2} C${a.x-40} ${a.y + a.h/2} ${b.x-40} ${b.y - 18} ${b.x} ${b.y}`;
+    }
+    s += `<path d="${d}" fill="none" stroke="#7a818c" stroke-width="1.3" marker-end="url(#ar)" opacity="0.72"/>`;
+  }
+
+  for(const n of c.nodes){
+    const p = pos[n.id];
+    const st = ROLE_STYLE[n.role] || ROLE_STYLE.load;
+    const sel = SEL === n.id ? ' sel' : '';
+    const warn = n.confidence === 'read-uncertain';
+    const vf = !!(VERIFIED[c.id] && VERIFIED[c.id][n.id]);
+    const inner = p.w - 20;
+    const stroke = vf ? 'var(--teal)' : (warn ? 'var(--amber)' : st[1]);
+    const sw = vf ? 1.6 : (warn ? 1.4 : 0.6);
+    s += `<g class="node${sel}" data-id="${n.id}">
+      <rect x="${p.x}" y="${p.y}" width="${p.w}" height="${p.h}" rx="8"
+        fill="${st[0]}" stroke="${stroke}" stroke-width="${sw}"/>
+      <text x="${p.x + 10}" y="${p.y + 22}" font-size="13.5" font-weight="500" fill="${st[2]}"
+        font-family="system-ui,sans-serif">${esc(fit(n.label, inner, 13.5))}</text>
+      <text x="${p.x + 10}" y="${p.y + 41}" font-size="11" fill="${st[1]}"
+        font-family="system-ui,sans-serif">${esc(fit(n.sub || '', inner, 11))}</text>
+      ${warn && !vf ? `<circle cx="${p.x + p.w - 11}" cy="${p.y + 11}" r="4" fill="var(--amber)"/>` : ''}
+      ${vf ? `<path d="M${p.x + p.w - 17} ${p.y + 11} l3.5 3.5 l6 -7" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>` : ''}
+    </g>`;
+  }
+  svg.innerHTML = s;
+
+  svg.querySelectorAll('.node').forEach(g => {
+    g.onclick = () => select(g.dataset.id);
+  });
+}
+
+function select(id, force){
+  const c = DATA[CUR];
+  const n = c.nodes.find(x => x.id === id);
+  if(!n) return;
+  SEL = (!force && SEL === id) ? null : id;
+  render(c);
+  const panel = document.getElementById('panel');
+  if(!SEL){ panel.style.display = 'none'; return; }
+
+  const cf = n.confidence || 'read-clear';
+  const vf = VERIFIED[c.id] && VERIFIED[c.id][n.id];
+  const cfText = vf ? '已实车核对'
+                : cf === 'read-uncertain' ? '存疑 · 需核对'
+                : '原图清晰可读';
+  const cfCls = vf ? 'ok' : (cf === 'read-uncertain' ? 'warn' : '');
+
+  panel.style.display = 'block';
+  panel.innerHTML = `
+    <p class="pt">${esc(n.label)}<span class="badge ${cfCls}">${cfText}</span></p>
+    <p class="ps">${esc(n.sub || '')}</p>
+    ${(n.pins && n.pins.length) ? `<div class="pins">${n.pins.map(p=>`<span class="pin">${esc(p)}</span>`).join('')}</div>` : ''}
+    <div class="row"><b>说明：</b>${esc(n.detail || '')}</div>
+    ${n.uncertain ? `<div class="row" style="color:var(--amber-l)"><b>存疑：</b>${esc(n.uncertain)}</div>` : ''}
+    ${(n.shared_connectors && n.shared_connectors.length) ? `
+      <div class="row" style="color:var(--amber-l)">
+        <b>跨系统牵连：</b>${n.shared_connectors.map(s =>
+          `${esc(s.conn)} 同时出现在 <u>${esc(s.others.join('、'))}</u>`
+        ).join('；')}
+        <div style="font-size:12px;color:var(--dim2);margin-top:4px">
+          这个件出问题时，上述系统可能一起异常——诊断时先想这一层。
+        </div>
+      </div>` : ''}
+    ${vf ? `<div class="row" style="color:var(--teal-l)"><b>已核对：</b>${esc(vf.at)}${vf.note ? ' · ' + esc(vf.note) : ''}</div>` : ''}
+    <div class="acts">
+      ${c.source_image ? `<a class="btn" href="${WA.withPack('/viewer?p=' + encodeURIComponent(c.source_image))}">看原厂电路图 →</a>` : ''}
+      <button onclick="markVerify('${n.id}', ${vf ? 'false' : 'true'})">
+        ${vf ? '取消核对标记' : '标记为已实车核对'}
+      </button>
+      <button onclick="closePanel()">收起</button>
+    </div>`;
+  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+async function markVerify(nodeId, on){
+  const c = DATA[CUR];
+  try{
+    const r = await fetch(WA.withPack('/api/verify'), {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({circuit_id: c.id, node_id: nodeId, verified: on, note: ''})
+    });
+    const d = await r.json();
+    if(!d.ok) return;
+    if(on){
+      VERIFIED[c.id] = VERIFIED[c.id] || {};
+      const now = new Date();
+      const pad = x => String(x).padStart(2,'0');
+      VERIFIED[c.id][nodeId] = {
+        at: `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`
+      };
+    } else if(VERIFIED[c.id]){
+      delete VERIFIED[c.id][nodeId];
+    }
+    SEL = nodeId;
+    render(c);
+    select(nodeId, true);
+  }catch(e){
+    alert('标记失败：' + e.message);
+  }
+}
+
+function closePanel(){
+  SEL = null;
+  document.getElementById('panel').style.display = 'none';
+  render(DATA[CUR]);
+}
+
+function renderTabs(){
+  const t = document.getElementById('tabs');
+  t.innerHTML = DATA.map((c,i) =>
+    `<button class="tab ${i===CUR?'on':''}" data-i="${i}">${esc(c.name)}</button>`).join('');
+  t.querySelectorAll('.tab').forEach(b => b.onclick = () => {
+    CUR = +b.dataset.i; SEL = null;
+    document.getElementById('panel').style.display = 'none';
+    renderTabs(); show();
+  });
+}
+
+function show(){
+  const c = DATA[CUR];
+  document.getElementById('subtitle').textContent =
+    `${c.nodes.length} 环节 · ${c.edges.length} 连接`;
+  const cf = c.confidence || 'read-clear';
+  const cfText = cf === 'read-uncertain' ? '存疑' : (cf === 'vehicle-confirmed' ? '实车核对' : '原图判读');
+  const unc = c.nodes.filter(n => n.confidence === 'read-uncertain').length;
+  const vcount = Object.values(VERIFIED).reduce((a, o) => a + Object.keys(o).length, 0);
+  let html = `<b>来源：</b>${esc(c.source_label || c.source_page || '')}
+    <span class="badge ${cf==='read-uncertain'?'warn':''}">${cfText}</span>`;
+  if(unc) html += ` <span class="badge warn">${unc} 处存疑</span>`;
+  if(vcount) html += ` <span class="badge ok">全局 ${vcount} 处已实车核对</span>`;
+  if(c.variant_warning) html += `<div style="color:var(--amber-l);margin-top:6px"><b>注意：</b>${esc(c.variant_warning)}</div>`;
+  if(c.topology_type) html += `<div style="margin-top:4px">拓扑类型：<b>${esc(c.topology_type)}</b></div>`;
+  const key = encodeURIComponent(c.system || c.id || '');
+  html += `<div class="rep">
+    <a href="${WA.withPack('/report?sys=' + key)}" target="_blank">打印 / 存 PDF</a>
+    <a href="${WA.withPack('/api/report.txt?sys=' + key + '&download=1')}">下载 txt</a>
+  </div>`;
+  document.getElementById('meta').innerHTML = html;
+  render(c);
+}
+
+Promise.all([
+  fetch(WA.withPack('/api/circuits')).then(r => r.json()),
+  fetch(WA.withPack('/api/verified')).then(r => r.json()).catch(() => ({marks:{}}))
+]).then(([d, v]) => {
+  DATA = d.circuits || [];
+  VERIFIED = v.marks || {};
+  if(!DATA.length){ document.getElementById('meta').textContent = '还没有流图数据'; return; }
+  const want = new URLSearchParams(location.search).get('sys');
+  if(want){
+    const i = DATA.findIndex(c => c.system === want || c.id === want);
+    if(i >= 0) CUR = i;
+  }
+  renderTabs(); show();
+}).catch(e => {
+  document.getElementById('meta').textContent = '加载失败：' + e.message;
+});
+</script>
+</body>
+</html>

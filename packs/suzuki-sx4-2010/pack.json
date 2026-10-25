@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "id": "suzuki-sx4-2010",
+  "make": "Suzuki",
+  "make_cn": "长安铃木",
+  "model": "SX4",
+  "year": 2010,
+  "engine": "M18A",
+  "engine_displacement": "1.8",
+  "transmission": "",
+  "market": "CN",
+  "manuals": [
+    {
+      "doc_id": "sx4-2010",
+      "title": "2010 长安天语 SX4 电路图",
+      "role": "wiring",
+      "path": "raw/sx4-2010/",
+      "pages": 114,
+      "note": "彩色线路图，单页，质量最好。封面未标排量"
+    },
+    {
+      "doc_id": "sx4-2007",
+      "title": "2007 铃木天语 SX4 维修手册 + 电路图",
+      "role": "manual",
+      "path": "raw/sx4-2007/",
+      "pages": 1524,
+      "note": "正文手册对应 M16A(1.6)，引用规格须启用 source_engine 守卫"
+    }
+  ],
+  "built_at": "2026-10-24",
+  "notes": "本车 M18A(1.8)。正文手册为 2007 版 M16A，规格数据一律标 engine_mismatch；电路图 2010 版未标注排量，ECM 针脚相关数据须实车核对。"
+}

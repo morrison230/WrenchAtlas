@@ -1,0 +1,106 @@
+{
+  "id": "audio",
+  "system": "audio",
+  "name": "音响系统",
+  "type": "signal-flow",
+  "confidence": "read-clear",
+  "confidence_note": "C-1 图含基本音响与高级音响两种配置，电源、主机、四扬声器走向清晰。主机内部功放分路未展开。",
+  "source_page": "sx4-2010::06-系统电路图-33-音响系统::p1",
+  "topology_type": "功能级（本页含基本型与高级型两种配置）",
+  "nodes": [
+    {
+      "id": "fuse_dome",
+      "label": "JB ⑤ DOME 15A",
+      "sub": "常电 · 记忆",
+      "role": "fuse",
+      "pins": ["JB-5"],
+      "confidence": "read-clear",
+      "detail": "音响常电，维持电台预设、时钟、音效设置。断了会丢记忆。"
+    },
+    {
+      "id": "fuse_acc2",
+      "label": "JB ⑳ ACC2 15A",
+      "sub": "ACC 工作电源",
+      "role": "fuse",
+      "pins": ["JB-20"],
+      "confidence": "read-clear",
+      "detail": "音响工作电源，钥匙在 ACC 或 ON 才通电。**两个保险丝缺一不可**：只有常电不开机，只有 ACC 会丢记忆。"
+    },
+    {
+      "id": "jc",
+      "label": "中间连接器组",
+      "sub": "G302 · G307 · G308",
+      "role": "splice",
+      "pins": ["G302", "G307", "G308"],
+      "confidence": "read-clear",
+      "detail": "电源与信号在仪表台内的中间连接器。多路故障时优先怀疑这里。"
+    },
+    {
+      "id": "head",
+      "label": "音响主机",
+      "sub": "G348（基本）· G312（高级）",
+      "role": "ecu",
+      "pins": ["G348", "G312"],
+      "confidence": "read-clear",
+      "detail": "基本型为 G348，高级/导航型为 G312。内置功放直接驱动四路扬声器。"
+    },
+    {
+      "id": "spk",
+      "label": "四个扬声器",
+      "sub": "J214 · J217 · J218 · J219",
+      "role": "load",
+      "pins": ["J214", "J217", "J218", "J219"],
+      "confidence": "read-clear",
+      "detail": "左右前门与左右后门各一只。每只两根线（正负），主机直驱，无独立功放。"
+    },
+    {
+      "id": "antenna",
+      "label": "天线与放大器",
+      "sub": "高级型带独立放大器",
+      "role": "sensor",
+      "pins": ["G340", "G342"],
+      "confidence": "read-clear",
+      "detail": "后窗印刷天线 + 天线放大器。放大器需要供电，供电断了表现为「只能收强台」。"
+    },
+    {
+      "id": "mic",
+      "label": "麦克风 G325",
+      "sub": "免提通话",
+      "role": "sensor",
+      "pins": ["G325"],
+      "confidence": "read-clear",
+      "detail": "顶棚麦克风，高级型才有。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "车身",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "主机与各扬声器回路搭铁。主机搭铁不良会引入底噪。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_dome", "to": "jc", "color": "白", "via": "G271.7 → G302", "note": "常电记忆"},
+    {"from": "fuse_acc2", "to": "jc", "color": "灰", "via": "G271.11 → G307/G308", "note": "ACC 工作电"},
+    {"from": "jc", "to": "head", "color": "白、灰", "via": "→ G348 / G312", "note": "双电源入主机"},
+    {"from": "head", "to": "spk", "color": "BLU/RED/WHT/GRY/VIO", "via": "四路独立", "note": "主机直驱"},
+    {"from": "antenna", "to": "head", "color": "同轴/多色", "via": "G340/G342", "note": "收音信号"},
+    {"from": "mic", "to": "head", "color": "多色", "via": "G325", "note": "免提"},
+    {"from": "head", "to": "gnd", "color": "黑", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "音响完全不开机 → **两个保险丝都要查**：JB ⑤ DOME 15A（记忆）+ ⑳ ACC2 15A（工作）",
+    "能开机但每次熄火后电台/时钟复位 → 只有 DOME 15A 那路断了（记忆电丢失），ACC 是好的",
+    "收音只能收到强台、弱台全是噪声 → 天线放大器供电或后窗天线，不是主机",
+    "只有一只喇叭不响 → 该喇叭或该路两根线，主机坏的可能性低",
+    "左侧或右侧两只都不响 → 该侧公共线或主机该路输出",
+    "四只都不响但主机屏幕正常 → 主机内部功放或搭铁，先查主机搭铁",
+    "有底噪/电流声 → 主机搭铁不良或加装了干扰源（行车记录仪、充电器）"
+  ],
+  "notes": [
+    "本页含两种配置：上半为基本型（G348），下半为高级/导航型（G312）。",
+    "音响是常电 + ACC 双电源，诊断时两个保险丝必须分别确认。",
+    "扬声器由主机直接驱动，没有独立功放模块。"
+  ]
+}

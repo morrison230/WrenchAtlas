@@ -1,0 +1,139 @@
+{
+  "id": "keyless",
+  "system": "keyless",
+  "name": "无钥匙启动系统",
+  "type": "signal-flow",
+  "confidence": "read-clear",
+  "confidence_note": "整页结构、保险丝、五个天线、四个门的执行器与开关均可清晰判读。BCM 的 20 余个引脚编号在整页视图下过小，未逐脚核准，相关节点标 read-uncertain。",
+  "source_page": "sx4-2010::06-系统电路图-17-无钥匙启动系统::p1",
+  "topology_type": "功能级（BCM 引脚待逐脚核准）",
+  "nodes": [
+    {
+      "id": "fuse_dome",
+      "label": "JB DOME 15A",
+      "sub": "接线盒 No.37",
+      "role": "fuse",
+      "pins": ["JB-37"],
+      "confidence": "read-clear",
+      "detail": "无钥匙系统主电源之一，经 G271.5 出接线盒。"
+    },
+    {
+      "id": "fuse_acc2",
+      "label": "JB ACC2 15A",
+      "sub": "接线盒 No.26",
+      "role": "fuse",
+      "pins": ["JB-26"],
+      "confidence": "read-clear",
+      "detail": "ACC 电源，经 G272.4 出接线盒，供钥匙开关的 ACC 接点。"
+    },
+    {
+      "id": "fuse_back",
+      "label": "JB BACK 10A",
+      "sub": "接线盒 No.21",
+      "role": "fuse",
+      "pins": ["JB-21"],
+      "confidence": "read-clear",
+      "detail": "倒车/后备回路 10A，经 G272.5 出接线盒，同时也给天线系统供电。蓝色线。"
+    },
+    {
+      "id": "ign_sw",
+      "label": "钥匙开关 G146",
+      "sub": "4=钥匙提醒 / 5·6=ACC",
+      "role": "switch",
+      "pins": ["G146.4", "G146.5", "G146.6"],
+      "confidence": "read-clear",
+      "detail": "内部含钥匙提醒开关与点火开关。4 脚黑白线是钥匙插入提醒，5/6 脚红白线走 ACC。经 G307 J/C 到 BCM。"
+    },
+    {
+      "id": "antennas",
+      "label": "五个天线",
+      "sub": "两门 · 车内 · 行李舱 · 后窗门",
+      "role": "sensor",
+      "pins": ["J153", "J154", "L294", "L290", "L292"],
+      "confidence": "read-clear",
+      "detail": "门天线 J153(白/红)、J154(白/蓝)；车内天线 L294(白/黑)；行李舱天线 L290(绿)；后窗门天线 L292(白/棕)。每个天线负责一片区域的钥匙感应，经 J/C 汇到 BCM。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM（KLS Con. Unit）",
+      "sub": "无钥匙控制单元 · 引脚未逐脚核准",
+      "role": "ecu",
+      "pins": ["G16.14", "CAN", "多路输入输出"],
+      "confidence": "read-uncertain",
+      "detail": "图中央大模块，标注 KLS Con.Unit。上排可辨引脚含 14/34/20/29/30/10/11/15/1/2/23，下排含 18(CAN)/19/9/33/16/37。各脚功能未逐一核准。",
+      "uncertain": "BCM 各引脚的具体功能定义未逐脚判读，只知道线路走向。逐脚核对需按 4 倍放大分区读，暂未完成。"
+    },
+    {
+      "id": "act_driver",
+      "label": "驾驶侧执行器与请求开关",
+      "sub": "J31 状态开关 · J85 请求开关",
+      "role": "switch",
+      "pins": ["J31.3", "J31.5", "J31.1", "J85.6", "J85.2"],
+      "confidence": "read-clear",
+      "detail": "J31 是执行器状态开关（反馈锁止/解锁状态），J85 是门把手请求开关（按一下触发）。经 J215/L379 到 BCM。"
+    },
+    {
+      "id": "act_pass",
+      "label": "副驾侧执行器与请求开关",
+      "sub": "J32 状态开关 · J86 请求开关",
+      "role": "switch",
+      "pins": ["J32.3", "J32.5", "J32.1", "J86.6", "J86.2"],
+      "confidence": "read-clear",
+      "detail": "结构与驾驶侧对称，经 J216/L380 到 BCM。"
+    },
+    {
+      "id": "rear_locks",
+      "label": "后门锁与门控开关",
+      "sub": "J30 / J36 · O231 O232 M152 M82",
+      "role": "load",
+      "pins": ["J30", "J36", "O231", "O232", "M152", "M82"],
+      "confidence": "read-clear",
+      "detail": "后门锁执行器与门控开关。图中标注 5 门/4 门 两种配置，接线不同。"
+    },
+    {
+      "id": "can",
+      "label": "CAN 到仪表",
+      "sub": "用于状态显示与钥匙提醒",
+      "role": "ecu",
+      "pins": ["G241.10", "G241.7"],
+      "confidence": "read-clear",
+      "detail": "BCM 通过 CAN 把无钥匙状态送给组合仪表，用于防盗指示灯与提醒。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁",
+      "sub": "经 G309 J/C",
+      "role": "ground",
+      "pins": ["G309"],
+      "confidence": "read-clear",
+      "detail": "BCM 与各执行器共用搭铁，经 G309 中间连接器。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_dome", "to": "ign_sw", "color": "白", "via": "G271.5 → G308 → G146", "note": "钥匙提醒与点火开关供电"},
+    {"from": "fuse_acc2", "to": "ign_sw", "color": "红/白", "via": "G272.4 → G306", "note": "ACC 供电"},
+    {"from": "fuse_back", "to": "antennas", "color": "蓝", "via": "G272.5 → G306", "note": "天线供电"},
+    {"from": "ign_sw", "to": "bcm", "color": "黑/黄、白/红", "via": "G307 J/C → G16.14", "note": "钥匙状态入 BCM"},
+    {"from": "antennas", "to": "bcm", "color": "多色", "via": "各天线 → J/C → BCM", "note": "钥匙感应信号"},
+    {"from": "bcm", "to": "act_driver", "color": "灰/红、粉", "via": "J215 / L379", "note": ""},
+    {"from": "bcm", "to": "act_pass", "color": "棕、粉/红", "via": "J216 / L380", "note": ""},
+    {"from": "bcm", "to": "rear_locks", "color": "黑", "via": "O231 / O232 / M152 / M82", "note": "后门锁控制"},
+    {"from": "act_driver", "to": "gnd", "color": "黑", "via": "J215/L379 → 搭铁点", "note": ""},
+    {"from": "act_pass", "to": "gnd", "color": "黑", "via": "O231/L380 → 搭铁点", "note": ""},
+    {"from": "bcm", "to": "can", "color": "CAN 双绞", "via": "G241.10 / G241.7", "note": "状态送仪表"}
+  ],
+  "diagnosis_hint": [
+    "某一个门把手按下去没反应、其他门正常 → 先查该门的天线与请求开关，不要先怀疑钥匙电池",
+    "全部门都没反应 → 查 DOME 15A / ACC2 15A / BACK 10A 三个保险丝，以及 BCM 供电与搭铁",
+    "遥控能解锁不能上锁（或反过来）→ 查执行器状态开关（J31/J32），它负责反馈锁止状态",
+    "换了钥匙电池还是不认 → 天线或 BCM，不是钥匙问题。五个天线任一个失效只影响对应区域",
+    "只有行李舱无反应 → 行李舱天线 L290（绿线）或其连接",
+    "钥匙插在锁孔里提醒不响 → G146.4 黑白线（钥匙提醒开关），与无钥匙感应是两条独立回路",
+    "4 门与 5 门车型后门接线不同 → 判读后门故障前先确认是哪种车身"
+  ],
+  "notes": [
+    "本页只做功能级拓扑。BCM 上排可辨引脚 14/34/20/29/30/10/11/15/1/2/23，下排 18(CAN)/19/9/33/16/37，但具体功能未逐脚核准。",
+    "五个天线的分工是本系统最重要的诊断维度：局部失效 vs 全部失效，指向完全不同的原因。",
+    "图中标注了 5 门 / 4 门 两种配置，后门锁接线不同。"
+  ]
+}

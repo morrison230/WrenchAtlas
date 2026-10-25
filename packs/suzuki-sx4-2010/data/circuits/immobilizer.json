@@ -1,0 +1,118 @@
+{
+  "id": "immobilizer",
+  "system": "immobilizer",
+  "name": "发动机电子芯片防盗",
+  "type": "signal-flow",
+  "verified": false,
+  "confidence": "read-uncertain",
+  "confidence_note": "ICM 与 ECM 的通信线（黄线 E382 G334 14/7）、电源与搭铁路径清晰；但 ICM/ECM 各引脚的功能定义未逐一精读。",
+  "source_page": "sx4-2010::06-系统电路图-07-发动机电子芯片防盗系统::p1",
+  "nodes": [
+    {
+      "id": "fuse_igcoil",
+      "label": "JB 保险丝 15A",
+      "sub": "IG COIL · ⑳",
+      "role": "fuse",
+      "pins": ["IG-COIL-15A"],
+      "confidence": "read-clear",
+      "detail": "经 G272.6（黑/白线）给 ICM 供电。注意这个保险丝同时给点火线圈供电，所以它烧断会同时表现为不点火和防盗异常。"
+    },
+    {
+      "id": "fuse_dome",
+      "label": "JB 保险丝 15A",
+      "sub": "DOME · ㉗",
+      "role": "fuse",
+      "pins": ["DOME-15A"],
+      "confidence": "read-clear",
+      "detail": "常电，经 G271.5（红/白线）→ G308 给 ICM/ECM 提供记忆电源。断开会导致防盗匹配信息丢失。"
+    },
+    {
+      "id": "icm",
+      "label": "ICM 防盗控制模块 G17",
+      "sub": "8 / 1 / 3 / 4 脚",
+      "role": "ecu",
+      "pins": ["G17.8", "G17.1", "G17.3", "G17.4", "G17.2", "G17.5"],
+      "confidence": "read-clear",
+      "detail": "读钥匙芯片、与 ECM 通信验证。验证通过才让 ECM 允许喷油点火。2/5 脚（白线）连到 G343 L376 方向，用于与 BCM/仪表通信。",
+      "uncertain": "各引脚具体功能定义未逐一确认"
+    },
+    {
+      "id": "key",
+      "label": "钥匙芯片 / 识读线圈",
+      "sub": "点火锁芯内",
+      "role": "sensor",
+      "confidence": "read-clear",
+      "detail": "钥匙内的无源芯片，由点火锁芯里的线圈感应供电并读取 ID。**钥匙摔过、进水、配了非原厂钥匙，都会导致识读失败。**"
+    },
+    {
+      "id": "ecm",
+      "label": "ECM E01",
+      "sub": "13/53 · 26/19 · 29/52",
+      "role": "ecu",
+      "pins": ["E01.13", "E01.26", "E01.29"],
+      "confidence": "read-clear",
+      "detail": "接收 ICM 的验证结果。验证通过才允许喷油与点火；失败则切断油火，表现为「能打转但不着车」。"
+    },
+    {
+      "id": "comm",
+      "label": "ICM ↔ ECM 通信线",
+      "sub": "黄线 · E382 G334 14 / 7",
+      "role": "splice",
+      "pins": ["E382.G334.14", "E382.G334.7"],
+      "confidence": "read-clear",
+      "detail": "两个模块之间的专用通信线（黄线）。**这条线断了，症状和「钥匙不匹配」完全一样**，但换钥匙没用——这是最容易误判的地方。"
+    },
+    {
+      "id": "bcm",
+      "label": "BCM / 防盗指示灯",
+      "sub": "G04 A-5",
+      "role": "ecu",
+      "pins": ["G04.A-5"],
+      "confidence": "read-clear",
+      "detail": "仪表上的防盗指示灯（钥匙图标）。闪码或常亮是判断防盗系统状态的第一信号。"
+    },
+    {
+      "id": "dlc",
+      "label": "DLC 诊断接口",
+      "sub": "4/5/7/16 · CAN 6/14",
+      "role": "splice",
+      "pins": ["DLC.16", "DLC.6", "DLC.14"],
+      "confidence": "read-clear",
+      "detail": "OBD 诊断座。防盗系统的故障码需要在这里读，是排查的起点。"
+    },
+    {
+      "id": "gnd",
+      "label": "搭铁 ①④ / ⑤⑱⑲",
+      "sub": "ICM 与 ECM",
+      "role": "ground",
+      "confidence": "read-clear",
+      "detail": "ICM 与 ECM 各自的搭铁点。搭铁不良会造成通信不稳定、偶发性不着车。"
+    }
+  ],
+  "edges": [
+    {"from": "fuse_igcoil", "to": "icm", "color": "黑/白", "via": "G272.6 → G17.8", "note": "工作电源"},
+    {"from": "fuse_dome", "to": "icm", "color": "红/白", "via": "G271.5 → G308 → ICM", "note": "记忆电源"},
+    {"from": "key", "to": "icm", "color": "感应", "note": "芯片 ID 读取"},
+    {"from": "icm", "to": "ecm", "color": "黄", "via": "E382 G334 14 / 7", "note": "验证结果通信"},
+    {"from": "icm", "to": "bcm", "color": "白", "via": "G17.2/5 → G343 L376", "note": "状态/指示"},
+    {"from": "ecm", "to": "dlc", "color": "CAN", "via": "→ DLC 6/14", "note": ""},
+    {"from": "icm", "to": "gnd", "color": "—", "via": "→ ⑤⑱⑲", "note": ""},
+    {"from": "ecm", "to": "gnd", "color": "—", "via": "→ ①④", "note": ""}
+  ],
+  "diagnosis_hint": [
+    "【第一站读码】防盗问题先读 DLC 故障码，确认是「钥匙未授权」还是「通信故障」，两者处理方式完全不同",
+    "能打转但完全不着车、防盗灯闪 → 钥匙未被授权。先试备用钥匙，能着说明主钥匙芯片坏了",
+    "备用钥匙也着不了、防盗灯闪 → 不是钥匙问题，查 ICM 与 ECM 之间的黄线通信（E382 G334 14/7）",
+    "【最易误判】换了新钥匙、重新匹配仍不着 → 别再换钥匙，查通信线与 ICM 供电",
+    "防盗灯常亮、仪表其他功能异常 → 查 DOME 15A（记忆电源）与 BCM 指示灯线路",
+    "断开过蓄电池后不着车 → 部分车型需要重新同步，查是否丢了记忆电源",
+    "换了 ECM 后不着车 → 新 ECM 必须与 ICM 重新匹配，这是设计如此不是故障",
+    "偶发性不着车、过一会儿又能着 → 查搭铁（①④）与 ICM 插头接触，其次才是模块本身",
+    "钥匙摔过之后开始不着 → 芯片可能已损坏，用备用钥匙验证"
+  ],
+  "notes": [
+    "**防盗系统「电路故障」和「匹配问题」症状几乎一样**，区分靠故障码和备用钥匙对比，电路图只能指方向",
+    "ICM 与 ECM 的通信线断了，症状与钥匙不匹配完全相同，但换钥匙无效——这是本系统最大的坑",
+    "IG COIL 保险丝同时供点火线圈，烧断会同时表现为不点火与防盗异常"
+  ]
+}
