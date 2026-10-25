@@ -381,12 +381,24 @@ def api_symptoms(pack: str | None = Query(None)):
             except Exception:
                 pass
 
+    # 分支的「依据页」解析成可直接点开的图片
+    by_id = {p["id"]: p for p in pages_of(pack)}
+
     for s in d.get("symptoms", []):
         for b in s.get("branches", []):
             b["circuit_info"] = [
                 names.get(x, {"name": x, "id": x, "file": None})
                 for x in b.get("circuits", [])
             ]
+            basis = b.get("basis") or {}
+            links = []
+            for pid in basis.get("pages") or []:
+                pg = by_id.get(str(pid).split(",")[0].strip())
+                if pg:
+                    links.append({"image": pg["image"].split("/")[-1],
+                                  "label": f'p{pg["page"]} {pg["title"]}'})
+            if links:
+                basis["links"] = links
     return d
 
 

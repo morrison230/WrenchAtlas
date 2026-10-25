@@ -32,17 +32,21 @@
       "label": "JB ㉒ MTR 10A",
       "sub": "两类型相同 · 经 G271.6",
       "role": "fuse",
-      "pins": ["JB-22"],
+      "pins": [
+        "JB-22"
+      ],
       "source_page": "sx4-2010::06-系统电路图-18-组合仪表::p2",
       "confidence": "read-clear",
       "detail": "仪表主电源 10A（接线盒 22 号）。**两种类型都是 10A**，经 G271 的 6 脚转红线进仪表。断了仪表全黑。"
     },
     {
       "id": "fuse_dome",
-      "label": "JB ㉟ DOME 15A",
+      "label": "JB DOME 15A（37 号）",
       "sub": "两类型相同 · 经 G271.5 → G308.10",
       "role": "fuse",
-      "pins": ["JB-37"],
+      "pins": [
+        "JB-37"
+      ],
       "source_page": "sx4-2010::06-系统电路图-18-组合仪表::p2",
       "confidence": "read-clear",
       "detail": "背光与记忆电源 15A（接线盒 37 号）。经 G271 的 5 脚 → G308.10 → 5/8 进仪表。**两种类型走同一条路。**"
@@ -52,7 +56,10 @@
       "label": "接线盒 G271",
       "sub": "6=MTR · 5=DOME（两类型相同）",
       "role": "splice",
-      "pins": ["G271.6", "G271.5"],
+      "pins": [
+        "G271.6",
+        "G271.5"
+      ],
       "source_page": "sx4-2010::06-系统电路图-18-组合仪表::p2",
       "confidence": "read-clear",
       "detail": "接线盒内的合流点：6 脚出仪表主电，5 脚出背光与记忆电。两种类型引脚一致。"
@@ -63,7 +70,13 @@
       "sub": "G241 · 31=主电 32=背光 10/7=CAN 16=搭铁",
       "role": "load",
       "applies_to": "type-1",
-      "pins": ["G241.31", "G241.32", "G241.10", "G241.7", "G241.16"],
+      "pins": [
+        "G241.31",
+        "G241.32",
+        "G241.10",
+        "G241.7",
+        "G241.16"
+      ],
       "source_page": "sx4-2010::06-系统电路图-18-组合仪表::p1",
       "confidence": "read-clear",
       "detail": "类型 I 用 G241 连接器：31 红/白为主电，32 白/红为背光，10=白色 CAN Low、7=红色 CAN High，16 为搭铁（经 G309）。内部含 Low/High CAN 收发器、Voltage regulator、Micro controller、LCD、Stepper motor and LED output driver。"
@@ -74,7 +87,14 @@
       "sub": "G241 · 1=主电 21=背光 28/30=CAN 2/15=搭铁",
       "role": "load",
       "applies_to": "type-2",
-      "pins": ["G241.1", "G241.21", "G241.28", "G241.30", "G241.2", "G241.15"],
+      "pins": [
+        "G241.1",
+        "G241.21",
+        "G241.28",
+        "G241.30",
+        "G241.2",
+        "G241.15"
+      ],
       "source_page": "sx4-2010::06-系统电路图-18-组合仪表::p2",
       "confidence": "read-clear",
       "detail": "类型 II 同样用 G241，但引脚重新编排：1 为主电，21 为背光，28/30 为 CAN，2 与 15 为搭铁。内部同样是四表 + LCD + CAN + CPU，另外指示灯数量明显更多。"
@@ -94,7 +114,10 @@
       "sub": "10=Low(白) · 7=High(红)",
       "role": "ecu",
       "applies_to": "type-1",
-      "pins": ["G241.10", "G241.7"],
+      "pins": [
+        "G241.10",
+        "G241.7"
+      ],
       "source_page": "sx4-2010::06-系统电路图-18-组合仪表::p1",
       "confidence": "read-clear",
       "detail": "类型 I 的 CAN 双绞进仪表：10 脚白色为 CAN Low，7 脚红色为 CAN High。断了表现为指针全不动、多个警告灯同时亮。"
@@ -105,7 +128,10 @@
       "sub": "28 · 30",
       "role": "ecu",
       "applies_to": "type-2",
-      "pins": ["G241.28", "G241.30"],
+      "pins": [
+        "G241.28",
+        "G241.30"
+      ],
       "source_page": "sx4-2010::06-系统电路图-18-组合仪表::p2",
       "confidence": "read-clear",
       "detail": "类型 II 的 CAN 走 28/30 两脚，与类型 I 的 10/7 完全不同。查 CAN 故障前先确认是哪一套。"
@@ -139,19 +165,97 @@
     }
   ],
   "edges": [
-    {"from": "fuse_mtr", "to": "jb", "color": "红", "via": "G271.6", "note": "仪表主电"},
-    {"from": "fuse_dome", "to": "jb", "color": "白/红", "via": "G271.5", "note": "背光与记忆"},
-    {"from": "jb", "to": "meter_t1", "color": "红/白", "via": "G241.31", "note": "类型 I 主电入表"},
-    {"from": "jb", "to": "meter_t2", "color": "红/白", "via": "G241.1", "note": "类型 II 主电入表"},
-    {"from": "jb", "to": "illum", "color": "白/红", "via": "G308.10 → 5/8", "note": "背光供电"},
-    {"from": "can_t1", "to": "meter_t1", "color": "白(CAN-L) / 红(CAN-H)", "via": "G241.10 / G241.7", "note": "类型 I"},
-    {"from": "can_t2", "to": "meter_t2", "color": "CAN 双绞", "via": "G241.28 / G241.30", "note": "类型 II"},
-    {"from": "meter_t1", "to": "display", "color": "内部", "via": "Micro controller", "note": "类型 I"},
-    {"from": "meter_t2", "to": "display", "color": "内部", "via": "CPU", "note": "类型 II"},
-    {"from": "meter_t1", "to": "indicators", "color": "内部", "via": "LED output driver", "note": ""},
-    {"from": "meter_t2", "to": "indicators", "color": "内部", "via": "CPU → LED 驱动", "note": ""},
-    {"from": "meter_t1", "to": "gnd", "color": "黑", "via": "G241.16 → G309", "note": "类型 I"},
-    {"from": "meter_t2", "to": "gnd", "color": "黑", "via": "G241.2 / G241.15", "note": "类型 II"}
+    {
+      "from": "fuse_mtr",
+      "to": "jb",
+      "color": "红",
+      "via": "G271.6",
+      "note": "仪表主电"
+    },
+    {
+      "from": "fuse_dome",
+      "to": "jb",
+      "color": "白/红",
+      "via": "G271.5",
+      "note": "背光与记忆"
+    },
+    {
+      "from": "jb",
+      "to": "meter_t1",
+      "color": "红/白",
+      "via": "G241.31",
+      "note": "类型 I 主电入表"
+    },
+    {
+      "from": "jb",
+      "to": "meter_t2",
+      "color": "红/白",
+      "via": "G241.1",
+      "note": "类型 II 主电入表"
+    },
+    {
+      "from": "jb",
+      "to": "illum",
+      "color": "白/红",
+      "via": "G308.10 → 5/8",
+      "note": "背光供电"
+    },
+    {
+      "from": "can_t1",
+      "to": "meter_t1",
+      "color": "白(CAN-L) / 红(CAN-H)",
+      "via": "G241.10 / G241.7",
+      "note": "类型 I"
+    },
+    {
+      "from": "can_t2",
+      "to": "meter_t2",
+      "color": "CAN 双绞",
+      "via": "G241.28 / G241.30",
+      "note": "类型 II"
+    },
+    {
+      "from": "meter_t1",
+      "to": "display",
+      "color": "内部",
+      "via": "Micro controller",
+      "note": "类型 I"
+    },
+    {
+      "from": "meter_t2",
+      "to": "display",
+      "color": "内部",
+      "via": "CPU",
+      "note": "类型 II"
+    },
+    {
+      "from": "meter_t1",
+      "to": "indicators",
+      "color": "内部",
+      "via": "LED output driver",
+      "note": ""
+    },
+    {
+      "from": "meter_t2",
+      "to": "indicators",
+      "color": "内部",
+      "via": "CPU → LED 驱动",
+      "note": ""
+    },
+    {
+      "from": "meter_t1",
+      "to": "gnd",
+      "color": "黑",
+      "via": "G241.16 → G309",
+      "note": "类型 I"
+    },
+    {
+      "from": "meter_t2",
+      "to": "gnd",
+      "color": "黑",
+      "via": "G241.2 / G241.15",
+      "note": "类型 II"
+    }
   ],
   "diagnosis_hint": [
     "**两种类型的仪表引脚不同，量线前必须先确认是哪一种**。电源侧（MTR 10A、DOME 15A）两者一致，仪表侧（主电 31 vs 1、CAN 10/7 vs 28/30）完全不同",

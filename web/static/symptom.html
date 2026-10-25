@@ -36,6 +36,21 @@
   .detail{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:none}
   .branch.open .detail{display:block}
   .detail .row{font-size:13px;line-height:1.7;color:var(--dim);margin:6px 0}
+  .detail .row.applies{color:var(--dim2);font-size:12.5px}
+  .detail details.basis{margin:8px 0;font-size:12px}
+  .detail details.basis summary{cursor:pointer;color:var(--dim2);font-size:11.5px;
+    user-select:none;outline:none}
+  .detail details.basis .row{margin:4px 0 4px 10px;font-size:12px;line-height:1.65}
+  .detail details.basis .row.inferred{color:var(--amber-l)}
+  .vsteps{margin:10px 0;font-size:12.5px;line-height:1.7}
+  .vsteps > b{color:var(--fg)}
+  .vsteps ol{margin:5px 0 0 18px;padding:0}
+  .vsteps li{margin-bottom:8px}
+  .vdo{color:var(--fg)}
+  .vyes{color:var(--teal-l);font-size:12px;margin-top:2px}
+  .vno{color:var(--dim2);font-size:12px;margin-top:1px}
+  .detail .row.unknown{margin-top:8px;padding:7px 10px;border-radius:6px;
+    background:rgba(120,130,145,.09);font-size:12px;line-height:1.7}
   .detail .row b{color:var(--txt);font-weight:400}
   .jump{display:inline-block;margin:8px 8px 0 0;background:#241f14;border:1px solid var(--accent);
     color:var(--accent);border-radius:7px;padding:6px 11px;font-size:12px;text-decoration:none}
@@ -79,7 +94,25 @@ function render(){
           <p class="when">${esc(b.when)}</p>
           <p class="verdict">→ ${esc(b.verdict)}</p>
           <div class="detail">
-            <div class="row"><b>要查：</b>${esc(b.check)}</div>
+            ${b.applies_if ? `<div class="row applies"><b>适用条件：</b>${esc(b.applies_if)}</div>` : ''}
+            ${b.basis ? `<details class="basis">
+              <summary>依据（手册页 / 哪些是推断）</summary>
+              ${(b.basis.links||[]).map(l =>
+                `<a class="jump" href="${WA.withPack('/viewer?p=' + encodeURIComponent(l.image))}"
+                   target="_blank">${esc(l.label)}</a>`).join('')}
+              ${b.basis.from_manual ? `<div class="row"><b>图上明确：</b>${esc(b.basis.from_manual)}</div>` : ''}
+              ${b.basis.inferred ? `<div class="row inferred"><b>属推断：</b>${esc(b.basis.inferred)}</div>` : ''}
+              ${!(b.basis.links||[]).length && b.basis.from_manual
+                ? '' : (!b.basis.from_manual ? '<div class="row">（本条无手册依据）</div>' : '')}
+            </details>` : ''}
+            ${(b.verify||[]).length ? `<div class="vsteps"><b>怎么验证：</b>
+              <ol>${b.verify.map(v => `<li>
+                <div class="vdo">${esc(v.do)}</div>
+                ${v.yes ? `<div class="vyes">是／符合 → ${esc(v.yes)}</div>` : ''}
+                ${v.no ? `<div class="vno">否／不符合 → ${esc(v.no)}</div>` : ''}
+              </li>`).join('')}</ol>
+            </div>` : (b.check ? `<div class="row"><b>要查：</b>${esc(b.check)}</div>` : '')}
+            ${b.if_unknown ? `<div class="row unknown"><b>判断不了怎么办：</b>${esc(b.if_unknown)}</div>` : ''}
             ${(b.circuit_info||[]).map(c =>
               `<a class="jump" href="${WA.withPack('/flow?sys=' + encodeURIComponent(c.id||''))}">${esc(c.name)} →</a>`).join('')}
           </div>

@@ -6,6 +6,19 @@
   "verified": false,
   "confidence": "read-clear",
   "confidence_note": "单页电路，MT/AT 两条路径均清晰可读。倒车雷达为选装，仅作关联标注。",
+  "variants": [
+    {
+      "id": "MT",
+      "label": "手动挡",
+      "note": "倒车灯由变速器上的倒车灯开关直接接通"
+    },
+    {
+      "id": "AT",
+      "label": "自动挡",
+      "note": "倒车信号来自档位开关（TR 开关）或 TCM，不经机械倒车开关"
+    }
+  ],
+  "variant_warning": "AT 与 MT 的倒车灯触发方式不同：MT 靠变速器倒车开关，AT 靠档位开关/换档杆位置信号。查线前先确认变速箱类型。",
   "source_page": "sx4-2010::06-系统电路图-26-倒车灯::p1",
   "variant_note": "本图标「四门」。**MT 与 AT 走完全不同的开关**：MT 用倒车灯开关 C165，AT 用档位传感器 C166。",
   "topology_type": "mt-at-divergent",
@@ -15,7 +28,9 @@
       "label": "JB 保险丝 10A",
       "sub": "BACK",
       "role": "fuse",
-      "pins": ["BACK-10A"],
+      "pins": [
+        "BACK-10A"
+      ],
       "confidence": "read-clear",
       "detail": "倒车灯电源保险丝 10A。烧断则倒车灯与倒车雷达同时失效。"
     },
@@ -24,7 +39,10 @@
       "label": "倒车灯开关 C165",
       "sub": "仅 MT · 变速器上",
       "role": "switch",
-      "pins": ["C165.2", "C165.1"],
+      "pins": [
+        "C165.2",
+        "C165.1"
+      ],
       "confidence": "read-clear",
       "detail": "手动挡装在变速器上的机械开关，挂入倒挡时压合。OFF/ON 两位。2=红（来自 BACK 10A 经 E371 C343.13），1=红（输出）。",
       "applies_to": "MT"
@@ -34,7 +52,12 @@
       "label": "AT 档位传感器 C166",
       "sub": "仅 AT · P/R/N/D/2/L",
       "role": "switch",
-      "pins": ["C166.3", "C166.8", "C166.2", "C166.1"],
+      "pins": [
+        "C166.3",
+        "C166.8",
+        "C166.2",
+        "C166.1"
+      ],
       "confidence": "read-clear",
       "detail": "自动挡用档位传感器判定是否在 R 档。3/8 为倒车灯信号，2/1 通往 TCM。档位拉索或传感器调整不当会导致倒车灯不亮或错档点亮。",
       "applies_to": "AT"
@@ -44,7 +67,9 @@
       "label": "TCM 变速器控制模块",
       "sub": "A-6 · 仅 AT",
       "role": "ecu",
-      "pins": ["TCM.A-6"],
+      "pins": [
+        "TCM.A-6"
+      ],
       "confidence": "read-clear",
       "detail": "自动挡读取档位传感器信号用于换挡控制。此线异常可能伴随换挡冲击或锁档。",
       "applies_to": "AT"
@@ -54,7 +79,10 @@
       "label": "接线盒 E325 / L315",
       "sub": "11 / 3 脚",
       "role": "splice",
-      "pins": ["E325.11", "L315.3"],
+      "pins": [
+        "E325.11",
+        "L315.3"
+      ],
       "confidence": "read-clear",
       "detail": "倒车灯信号在此分电：一路去右倒车灯 L133，一路去倒车雷达（选装）。"
     },
@@ -63,7 +91,10 @@
       "label": "倒车灯 L133",
       "sub": "5 进 · 6 出（右）",
       "role": "load",
-      "pins": ["L133.5", "L133.6"],
+      "pins": [
+        "L133.5",
+        "L133.6"
+      ],
       "confidence": "read-clear",
       "detail": "右尾灯总成内倒车灯泡。5=红进，6=搭铁 20。"
     },
@@ -72,7 +103,12 @@
       "label": "倒车雷达",
       "sub": "选装 · IF EQPD",
       "role": "load",
-      "pins": ["L374", "G341", "G268", "L41"],
+      "pins": [
+        "L374",
+        "G341",
+        "G268",
+        "L41"
+      ],
       "confidence": "read-uncertain",
       "detail": "选装配置的倒车雷达系统，含控制器与探头。倒车灯信号经 L374 G341(7) 触发。",
       "uncertain": "雷达控制器内部与各探头针脚对应关系未逐脚细读"
@@ -87,15 +123,69 @@
     }
   ],
   "edges": [
-    {"from": "fuse", "to": "sw_mt", "color": "红", "via": "E325.14 → E371 C343.13 → C165.2", "note": "MT 路径"},
-    {"from": "fuse", "to": "sensor_at", "color": "红", "via": "E325.14 → C166.3/8", "note": "AT 路径"},
-    {"from": "sensor_at", "to": "tcm", "color": "红", "via": "C166.2/1 → TCM A-6", "note": "仅 AT"},
-    {"from": "sw_mt", "to": "splice", "color": "红", "via": "C165.1 → E325.11", "note": "MT 路径"},
-    {"from": "sensor_at", "to": "splice", "color": "红", "via": "→ E325.11", "note": "AT 路径"},
-    {"from": "splice", "to": "lamp", "color": "红", "via": "L315.3 → L133.5", "note": ""},
-    {"from": "splice", "to": "radar", "color": "红", "via": "→ L374 G341.7", "note": "选装"},
-    {"from": "lamp", "to": "gnd", "color": "黑", "via": "L133.6 → 20", "note": ""},
-    {"from": "radar", "to": "gnd", "color": "黑", "via": "→ ②④", "note": ""}
+    {
+      "from": "fuse",
+      "to": "sw_mt",
+      "color": "红",
+      "via": "E325.14 → E371 C343.13 → C165.2",
+      "note": "MT 路径"
+    },
+    {
+      "from": "fuse",
+      "to": "sensor_at",
+      "color": "红",
+      "via": "E325.14 → C166.3/8",
+      "note": "AT 路径"
+    },
+    {
+      "from": "sensor_at",
+      "to": "tcm",
+      "color": "红",
+      "via": "C166.2/1 → TCM A-6",
+      "note": "仅 AT"
+    },
+    {
+      "from": "sw_mt",
+      "to": "splice",
+      "color": "红",
+      "via": "C165.1 → E325.11",
+      "note": "MT 路径"
+    },
+    {
+      "from": "sensor_at",
+      "to": "splice",
+      "color": "红",
+      "via": "→ E325.11",
+      "note": "AT 路径"
+    },
+    {
+      "from": "splice",
+      "to": "lamp",
+      "color": "红",
+      "via": "L315.3 → L133.5",
+      "note": ""
+    },
+    {
+      "from": "splice",
+      "to": "radar",
+      "color": "红",
+      "via": "→ L374 G341.7",
+      "note": "选装"
+    },
+    {
+      "from": "lamp",
+      "to": "gnd",
+      "color": "黑",
+      "via": "L133.6 → 20",
+      "note": ""
+    },
+    {
+      "from": "radar",
+      "to": "gnd",
+      "color": "黑",
+      "via": "→ ②④",
+      "note": ""
+    }
   ],
   "diagnosis_hint": [
     "倒车灯不亮 + 倒车雷达也不响 → 先查 BACK 10A 保险丝，两者共用",
