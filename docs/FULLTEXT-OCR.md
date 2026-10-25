@@ -111,7 +111,7 @@ Windows OCR 的原始输出每个汉字之间插空格（`注 意 事 项`）。
 ## 怎么重跑
 
 ```bash
-PY="C:/Users/Morrison/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
+PY=python          # 确保 python 在 PATH；不在则写绝对路径
 
 # 试跑 10 页
 "$PY" builder/ocr.py --src "<手册目录>" --pack packs/x --doc-id x --limit 10

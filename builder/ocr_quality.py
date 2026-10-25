@@ -29,6 +29,14 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+# Windows 控制台默认 GBK，输出 ✓ 之类的符号会直接抛 UnicodeEncodeError。
+# 这里强制把 stdout/stderr 转成 UTF-8，让新人在任何终端都能跑。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except (AttributeError, OSError, ValueError):
+    pass
+
 CJK = r"\u4e00-\u9fff"
 RE_CJK = re.compile(f"[{CJK}]")
 ROOT = Path(__file__).resolve().parent.parent

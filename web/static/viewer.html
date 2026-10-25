@@ -219,6 +219,21 @@ base.onload = () => {
   fit();
 };
 base.src = WA.withPack("/media/pages/" + encodeURIComponent(PAGE));
+// 页图不在仓库里（版权原因），没生成过就会 404 —— 给人一句人话，别让他对着破图猜
+base.onerror = () => {
+  const vp = document.getElementById("viewport");
+  vp.innerHTML = `<div style="padding:40px 24px;max-width:520px;margin:0 auto;
+    font-size:13px;line-height:1.9;color:var(--dim)">
+    <p style="font-size:15px;color:var(--fg);margin-bottom:12px">这一页的图还没生成</p>
+    <p>页面索引在，但页图文件不在。仓库出于版权原因不含手册图片。</p>
+    <p style="margin-top:14px;color:var(--dim2)">生成方法（需要你自己合法持有的手册）：</p>
+    <pre style="background:#15171b;border:1px solid var(--line);border-radius:8px;
+      padding:12px;overflow-x:auto;font-size:12px">python builder/enhance.py \\
+  --src "你的手册目录" \\
+  --out packs/&lt;车型id&gt;/pages</pre>
+    <p style="margin-top:14px"><a href="/" style="color:var(--accent)">← 返回列表</a></p>
+    </div>`;
+};
 </script>
 </body>
 </html>

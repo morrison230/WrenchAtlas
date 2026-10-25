@@ -19,8 +19,8 @@
 ## 第 1 步：建包
 
 ```bash
-cd G:/Projects/WrenchAtlas
-PY="C:/Users/Morrison/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
+cd <项目根目录>
+PY=python          # 确保 python 在 PATH；不在则写绝对路径
 
 "$PY" builder/new_pack.py \
   --id toyota-corolla-2014 \

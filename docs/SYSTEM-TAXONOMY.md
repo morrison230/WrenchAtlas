@@ -120,8 +120,8 @@
 跑这条命令，会列出数据包里所有用到的 system 标识：
 
 ```bash
-cd G:/Projects/WrenchAtlas
-"C:/Users/Morrison/.workbuddy/binaries/python/envs/default/Scripts/python.exe" -c "
+cd <项目根目录>
+python -c "
 import json
 from pathlib import Path
 for pack in sorted(Path('packs').iterdir()):

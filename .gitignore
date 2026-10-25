@@ -10,6 +10,11 @@ packs/*/thumbs/
 # 里面还含 _sources.json（本机绝对路径），更不该外传。
 packs/*/data/ocr/
 
+# 实车核对记录：各人自己车的操作痕迹，本地积累，不共享。
+# 别人拿了这些勾没有任何意义 —— 他不知道是谁、在哪台车、用什么方法核的。
+packs/*/data/verified.json
+!packs/_template/data/verified.json
+
 # 临时渲染与实验产物
 _smoke/
 _samples/

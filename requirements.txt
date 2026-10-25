@@ -1,0 +1,20 @@
+# WrenchAtlas 运行依赖
+#
+#   pip install -r requirements.txt
+#
+# Python 3.10+（用到 match 语法与 `X | None` 类型标注）
+
+# ---- 网站 ----
+fastapi>=0.110
+uvicorn>=0.27
+pydantic>=2.5
+
+# ---- 手册处理 ----
+pymupdf>=1.24                  # PDF 渲染（builder/enhance.py、ocr.py、按需渲染原页）
+pillow>=10.0                   # 缩略图、图像增强
+numpy>=1.26                    # 线段分析
+opencv-python-headless>=4.9    # 连通域与骨架提取（builder/index.py 的追线功能）
+
+# ---- 全文 OCR ----
+# Windows 上不需要额外依赖：用系统内置的 Windows.Media.Ocr（含简体中文）。
+# 非 Windows 平台需要自己提供 OCR 后端，见 docs/FULLTEXT-OCR.md 的「换引擎」一节。

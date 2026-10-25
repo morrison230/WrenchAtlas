@@ -12,6 +12,15 @@ import json
 import re
 from collections import defaultdict
 from pathlib import Path
+import sys
+
+# Windows 控制台默认 GBK，输出 ✓ 之类的符号会直接抛 UnicodeEncodeError。
+# 这里强制把 stdout/stderr 转成 UTF-8，让新人在任何终端都能跑。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except (AttributeError, OSError, ValueError):
+    pass
 
 # 连接器号形态：字母1~2个 + 数字，允许中间有空格（如 "E382 G334 14" 里的两段）
 TOKEN = re.compile(r"\b([A-Z]{1,3})[\s-]?(\d{1,4})\b")

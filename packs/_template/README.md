@@ -3,8 +3,8 @@
 这是手动复制用的骨架。**更推荐用脚手架**，它会按你的车型把 pack.json 填好：
 
 ```bash
-cd G:/Projects/WrenchAtlas
-"C:/Users/Morrison/.workbuddy/binaries/python/envs/default/Scripts/python.exe" \
+cd <项目根目录>
+python \
   builder/new_pack.py --id toyota-corolla-2014 --make Toyota --model Corolla --year 2014 --engine 1ZR
 ```
 

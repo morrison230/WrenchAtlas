@@ -854,6 +854,24 @@ def main():
     for ip in local_ips():
         print(f"  手机:   http://{ip}:{args.port}   （同一 WiFi）")
     print("=" * 58)
+
+    # 缺数据时的明确提示 —— 不要让人对着 404 的图猜
+    dflt = pack_path(default)
+    n_idx = len(pages_of(default))
+    pdir = dflt / "pages"
+    n_img = len(list(pdir.glob("*.png"))) if pdir.exists() else 0
+    if n_idx and not n_img:
+        print("  [提示] 有页面索引但没有页图，网站里所有图片会打不开。")
+        print("         页图需自己从手册生成（版权原因仓库不提供）：")
+        print(f"         python builder/enhance.py --src <手册目录> --out {dflt.as_posix()}/pages")
+        print()
+    ocr_dir = dflt / "data" / "ocr"
+    n_ocr = len([f for f in ocr_dir.glob("*.json") if not f.name.startswith("_")]) if ocr_dir.exists() else 0
+    if not n_ocr:
+        print("  [提示] 没有全文索引，搜索只返回结构化结果（全文区为空）。")
+        print("         要搜整本手册：python builder/ocr.py --src <手册目录> "
+              f"--pack {dflt.as_posix()} --doc-id <id>")
+        print()
     print("  关闭此窗口即停止服务\n")
 
     if not args.no_browser:

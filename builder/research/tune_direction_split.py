@@ -5,8 +5,10 @@ import cv2
 from PIL import Image
 from pathlib import Path
 
-PAGES = Path(r"G:\Projects\WrenchAtlas\packs\suzuki-sx4-2010\pages")
-OUT = Path(r"C:\Users\Morrison\WorkBuddy\铃木天语\_trace_test")
+ROOT = Path(__file__).resolve().parent.parent.parent
+
+PAGES = ROOT / "packs" / "suzuki-sx4-2010" / "pages"
+OUT = ROOT / "_trace_test"
 CASES = [
     ("06-系统电路图__10-挡风玻璃雨刮器和清洗器__p001.png", "雨刮"),
     ("06-系统电路图__05-发动机和空调控制系统__p001.png", "发动机"),

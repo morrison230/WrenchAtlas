@@ -53,6 +53,8 @@
   a.card:hover{border-color:var(--accent);transform:translateY(-1px)}
   a.card:active{transform:scale(.985)}
   .thumb{aspect-ratio:4/3;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .thumb.noimg{background:repeating-linear-gradient(45deg,#1d1f24,#1d1f24 8px,#22252b 8px,#22252b 16px)}
+  .thumb.noimg::after{content:"图未生成";font-size:11px;color:var(--dim2)}
   .thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
   .meta{padding:8px 10px 10px}
   .meta b{display:block;font-size:12.5px;font-weight:500;line-height:1.35;
@@ -105,7 +107,8 @@ function render(){
     for(const p of pages){
       const file = p.image.split("/").pop();
       html += `<a class="card" href="${WA.withPack("/viewer?p=" + encodeURIComponent(file))}">
-        <div class="thumb"><img loading="lazy" src="/media/${p.thumb}" alt="${title}"></div>
+        <div class="thumb"><img loading="lazy" src="${WA.withPack('/media/' + p.thumb)}"
+          alt="${title}" onerror="this.parentNode.classList.add('noimg');this.remove()"></div>
         <div class="meta"><b>p${p.page} ${title}</b><i>${p.size[0]}×${p.size[1]}</i></div>
       </a>`;
     }

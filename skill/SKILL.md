@@ -11,8 +11,8 @@ description: 汽车电路诊断（WrenchAtlas 多车型数据包）。当用户�
 
 ```bash
 # 第一步永远是这条：看装了哪些车
-PY="C:/Users/Morrison/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
-"$PY" "C:/Users/Morrison/.workbuddy/skills/wrench-atlas/scripts/query.py" --list-packs
+PY=python          # 确保 python 在 PATH；不在则写绝对路径
+"$PY" "$Q" --list-packs
 ```
 
 **回答前必须先确认车型对得上**。用户问"卡罗拉打不着火"，而数据包里只有 SX4，正确回答是：
@@ -72,8 +72,8 @@ G:\Projects\WrenchAtlas\packs\<车型包>\
 **永远先查数据，不要凭记忆回答。** 跨年款、跨厂牌差异大，凭印象答等于编。
 
 ```bash
-PY="C:/Users/Morrison/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
-Q="C:/Users/Morrison/.workbuddy/skills/wrench-atlas/scripts/query.py"
+PY=python          # 确保 python 在 PATH；不在则写绝对路径
+Q="$HOME/.workbuddy/skills/wrench-atlas/scripts/query.py"
 
 # ① 症状问诊（最常用）—— 用户说人话，这里按第一刀分流
 "$PY" "$Q" "打不着火"

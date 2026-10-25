@@ -9,7 +9,7 @@ WrenchAtlas · 诊断数据检索
   python query.py "雨刮不动"
   python query.py P0301
   python query.py --system ignition
-  python query.py --pack G:/Projects/WrenchAtlas/packs/suzuki-sx4-2010 "起动机不转"
+  python query.py --pack suzuki-sx4-2010 "起动机不转"
 
 数据包位置优先级: --pack > 环境变量 WRENCHATLAS_PACK > 脚本相对路径 ../../packs/suzuki-sx4-2010
 """
@@ -20,14 +20,26 @@ import re
 import sys
 from pathlib import Path
 
+# Windows 控制台默认 GBK，输出 ✓ 之类的符号会直接抛 UnicodeEncodeError。
+# 这里强制把 stdout/stderr 转成 UTF-8，让新人在任何终端都能跑。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except (AttributeError, OSError, ValueError):
+    pass
+
 HERE = Path(__file__).resolve().parent
 
 # 数据包根目录候选（按顺序取第一个存在的）：
 #   1. 环境变量 WRENCHATLAS_PACKS
 #   2. 项目固定安装位置（skill 装到用户目录后仍能找到）
 #   3. 脚本相对位置（源码树内调用）
+# 数据包根目录按顺序尝试：
+#   1. 环境变量 WRENCHATLAS_PACKS（可指向任意位置）
+#   2. 源码树里的 packs/（脚本在 skill/scripts/ 下，上两级是项目根）
+#   3. 当前工作目录下的 packs/（从项目根运行脚本时）
 PACK_ROOTS = [
-    Path(r"G:/Projects/WrenchAtlas/packs"),
+    Path.cwd() / "packs",
     HERE.parent.parent / "packs",
 ]
 

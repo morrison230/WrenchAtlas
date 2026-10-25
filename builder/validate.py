@@ -13,6 +13,14 @@ import json
 import sys
 from pathlib import Path
 
+# Windows 控制台默认 GBK，输出 ✓ 之类的符号会直接抛 UnicodeEncodeError。
+# 这里强制把 stdout/stderr 转成 UTF-8，让新人在任何终端都能跑。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except (AttributeError, OSError, ValueError):
+    pass
+
 VALID_ROLE = {"source", "fuse", "sensor", "switch", "relay",
               "ecu", "splice", "load", "ground"}
 VALID_CONF = {"read-clear", "read-uncertain", "vehicle-confirmed"}

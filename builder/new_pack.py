@@ -17,6 +17,14 @@ import re
 import sys
 from pathlib import Path
 
+# Windows 控制台默认 GBK，输出 ✓ 之类的符号会直接抛 UnicodeEncodeError。
+# 这里强制把 stdout/stderr 转成 UTF-8，让新人在任何终端都能跑。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except (AttributeError, OSError, ValueError):
+    pass
+
 ROOT = Path(__file__).resolve().parent.parent
 
 ID_RE = re.compile(r"^[a-z0-9][a-z0-9-]{1,60}$")
@@ -146,7 +154,7 @@ README = """# {pack_id}
 ### 3. 跑工具链
 
 ```bash
-PY="C:/Users/Morrison/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
+PY=python          # 确保 python 在 PATH；不在则写绝对路径
 
 # 手册 PDF → 增强页图（放进 pages/）
 "$PY" builder/enhance.py --src "你的手册目录" --out "packs/{pack_id}/pages"
