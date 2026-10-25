@@ -37,6 +37,9 @@ import report  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 STATIC = Path(__file__).resolve().parent / "static"
 
+sys.path.insert(0, str(ROOT))
+from builder import obd_import  # noqa: E402
+
 CONF = {
     "packs": {},      # pack_id -> Path（启动时扫描 packs/*/pack.json）
     "default": "",    # 默认车型包 id
@@ -680,6 +683,48 @@ def _pick_circuit(circuits, key: str):
         if key in (c.get("system"), c.get("id"), c.get("name")):
             return c
     return None
+
+
+# ---------------------------------------------------------------- OBD 导入
+# 独立功能线第一阶段：导入 Android 采集 JSON 报告，按 ECU/CAN ID 解析展示。
+# 边界：标准 OBD（发动机/排放层）只读。不表述为「全车模块扫描」；
+# ABS/SRS/BCM/四驱等厂家专用模块不在范围内。
+# 报告可能含 VIN，落盘目录 packs/*/data/obd/ 已 gitignore。
+
+
+class ObdImportReq(BaseModel):
+    report: dict
+
+
+@app.post("/api/obd/import")
+def api_obd_import(req: ObdImportReq, pack: str | None = Query(None)):
+    try:
+        parsed = obd_import.parse_report(req.report)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(400, f"报告解析失败: {e}")
+    sid = obd_import.store_report(pack_path(pack), req.report)
+    return {"ok": True, "sid": sid, "ecus": list(parsed["ecus"].keys()),
+            "queries": len((req.report.get("queries") or []))}
+
+
+@app.get("/api/obd/sessions")
+def api_obd_sessions(pack: str | None = Query(None)):
+    return {"sessions": obd_import.list_sessions(pack_path(pack))}
+
+
+@app.get("/api/obd/sessions/{sid}")
+def api_obd_session(sid: str, pack: str | None = Query(None)):
+    parsed = obd_import.load_session(pack_path(pack), sid)
+    if parsed is None:
+        raise HTTPException(404, "session not found")
+    return parsed
+
+
+@app.get("/obd")
+def obd_page():
+    return FileResponse(STATIC / "obd.html")
 
 
 @app.get("/report")

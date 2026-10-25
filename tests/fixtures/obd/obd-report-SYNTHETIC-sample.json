@@ -1,0 +1,58 @@
+{
+ "_SYNTHETIC_NOTE": "【合成测试样本】这不是实车数据。按 wrenchatlas.obd_probe.v1 schema 与 2026-10-25 实车交接文档手工构造，用于测试 builder/obd_import.py 的 CAN ID 分桶与 ISO-TP 重组。实车报告以老莫手机导出的 obd-report-*.json 为准。",
+ "schema": "wrenchatlas.obd_probe.v1",
+ "app_version": "0.2.0",
+ "exported_at": "2026-10-25T23:01:20.000+08:00",
+ "phone": {"manufacturer": "Xiaomi", "model": "MI 4C", "android_release": "11", "sdk": 30},
+ "capture": {
+  "status": "complete",
+  "started_at": "2026-10-25T23:01:20.000+08:00",
+  "summary": "合成样本：模拟一次怠速采集（约 705-713 rpm、水温 78-79℃、STFT 0-2%、LTFT -2.3%、MAF 2.1 g/s）",
+  "advertised_mode01_pids": ["01", "03", "04", "05", "06", "07", "0C", "0D", "0F", "10", "11", "42"],
+  "skipped_due_to_time_budget": []
+ },
+ "device": {
+  "name": "OBDBLE",
+  "address": "AA:BB:CC:DD:EE:FF",
+  "type": 2,
+  "transport": "BLE GATT",
+  "rssi": -43,
+  "selected_write_uuid": "0000fff2-0000-1000-8000-00805f9b34fb",
+  "selected_write_service_uuid": "0000fff0-0000-1000-8000-00805f9b34fb",
+  "selected_notify_uuid": "0000fff1-0000-1000-8000-00805f9b34fb",
+  "selected_notify_service_uuid": "0000fff0-0000-1000-8000-00805f9b34fb",
+  "adapter_protocol_response": "AUTO,ISO 15765-4 (CAN 11/500)",
+  "adapter_voltage_response": "14.12V"
+ },
+ "gatt_services": [
+  {"uuid": "0000fff0-0000-1000-8000-00805f9b34fb", "characteristics": [
+   {"uuid": "0000fff1-0000-1000-8000-00805f9b34fb", "properties": ["Read", "Notify"], "properties_bits": 18, "descriptors": ["00002902-0000-1000-8000-00805f9b34fb"]},
+   {"uuid": "0000fff2-0000-1000-8000-00805f9b34fb", "properties": ["Write", "WriteNoResponse"], "properties_bits": 12, "descriptors": []}
+  ]}
+ ],
+ "readings": {"发动机转速": {"value": "713.00", "unit": "rpm", "request": "010C", "time": "2026-10-25T23:01:40.000+08:00"}},
+ "queries": [
+  {"time": "2026-10-25T23:01:22.000+08:00", "request": "ATI", "response": "\rELM327 v1.5\r\r\r>", "phase": "adapter_identification", "elapsed_ms": 120, "prompt_received": true},
+  {"time": "2026-10-25T23:01:23.000+08:00", "request": "ATDP", "response": "AUTO, ISO 15765-4 (CAN 11/500)\r\r>", "phase": "adapter_information", "elapsed_ms": 95, "prompt_received": true},
+  {"time": "2026-10-25T23:01:23.500+08:00", "request": "ATRV", "response": "14.12V\r\r>", "phase": "adapter_information", "elapsed_ms": 80, "prompt_received": true},
+  {"time": "2026-10-25T23:01:25.000+08:00", "request": "0100", "response": "0100\rSEARCHING...\r7E8\r064100BE3EB811\r\r7E9\r064100BE30A811\r\r\r>", "phase": "supported_pids", "elapsed_ms": 980, "prompt_received": true},
+  {"time": "2026-10-25T23:01:26.000+08:00", "request": "010C", "response": "010C\r7E8\r04410C0B3C\r\r7E9\r04410C0B41\r\r\r>", "phase": "supported_live_snapshot", "elapsed_ms": 140, "prompt_received": true},
+  {"time": "2026-10-25T23:01:26.500+08:00", "request": "0105", "response": "0105\r7E8\r03410576\r\r\r>", "phase": "supported_live_snapshot", "elapsed_ms": 110, "prompt_received": true},
+  {"time": "2026-10-25T23:01:27.000+08:00", "request": "0106", "response": "0106\r7E8\r03410682\r\r\r>", "phase": "supported_live_snapshot", "elapsed_ms": 105, "prompt_received": true},
+  {"time": "2026-10-25T23:01:27.500+08:00", "request": "0107", "response": "0107\r7E8\r0341077D\r\r\r>", "phase": "supported_live_snapshot", "elapsed_ms": 108, "prompt_received": true},
+  {"time": "2026-10-25T23:01:28.000+08:00", "request": "0110", "response": "0110\r7E8\r04411000D2\r\r\r>", "phase": "supported_live_snapshot", "elapsed_ms": 112, "prompt_received": true},
+  {"time": "2026-10-25T23:01:28.500+08:00", "request": "0111", "response": "0111\r7E8\r03411128\r\r\r>", "phase": "supported_live_snapshot", "elapsed_ms": 109, "prompt_received": true},
+  {"time": "2026-10-25T23:01:29.000+08:00", "request": "0142", "response": "0142\r7E8\r04414237DC\r\r7E9\r04414237D8\r\r\r>", "phase": "supported_live_snapshot", "elapsed_ms": 130, "prompt_received": true},
+  {"time": "2026-10-25T23:01:30.000+08:00", "request": "03", "response": "03\r7E8\r024300\r\r7E9\r024300\r\r\r>", "phase": "fault_codes", "elapsed_ms": 150, "prompt_received": true},
+  {"time": "2026-10-25T23:01:31.000+08:00", "request": "07", "response": "07\r7E8\r024700\r\r7E9\r024700\r\r\r>", "phase": "fault_codes", "elapsed_ms": 145, "prompt_received": true},
+  {"time": "2026-10-25T23:01:32.000+08:00", "request": "0A", "response": "0A\rNO DATA\r\r>", "phase": "fault_codes", "elapsed_ms": 2000, "prompt_received": true},
+  {"time": "2026-10-25T23:01:33.000+08:00", "request": "0900", "response": "0900\r7E8\r064900FEB7D001\r\r\r>", "phase": "vehicle_identification", "elapsed_ms": 160, "prompt_received": true},
+  {"time": "2026-10-25T23:01:34.000+08:00", "request": "0902", "response": "0902\rNO DATA\r\r>", "phase": "vehicle_identification", "elapsed_ms": 2000, "prompt_received": true},
+  {"time": "2026-10-25T23:01:35.000+08:00", "request": "0904", "response": "0904\r7E8\r1014490401303030\r7E9\r100A490401393939\r7E8\r2130303041313243\r7E9\r21303030303030\r7E8\r2244454630313233\r\r\r>", "phase": "vehicle_identification", "elapsed_ms": 320, "prompt_received": true},
+  {"time": "2026-10-25T23:01:36.000+08:00", "request": "0906", "response": "0906\r7E8\r1012490601AABBCCDD\r7E8\r21EEFF0011223344\r\r\r>", "phase": "vehicle_identification", "elapsed_ms": 280, "prompt_received": true},
+  {"time": "2026-10-25T23:01:37.000+08:00", "request": "090A", "response": "090A\rNO DATA\r\r>", "phase": "vehicle_identification", "elapsed_ms": 2000, "prompt_received": true},
+  {"time": "2026-10-25T23:01:38.000+08:00", "request": "020200", "response": "020200\rNO DATA\r\r>", "phase": "freeze_frame_0", "elapsed_ms": 2000, "prompt_received": true}
+ ],
+ "events": [{"time": "2026-10-25T23:01:20.000+08:00", "message": "合成样本"}],
+ "scope": "Synthetic fixture for importer testing. Mirrors wrenchatlas.obd_probe.v1 layout."
+}
