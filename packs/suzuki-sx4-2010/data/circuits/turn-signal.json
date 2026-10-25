@@ -3,137 +3,221 @@
   "system": "turn-signal",
   "name": "转向信号灯与危险警告灯",
   "type": "signal-flow",
-  "verified": false,
-  "confidence": "read-clear",
-  "confidence_note": "主回路、开关、灯泡分组均清晰。闪光器具体位置（集成在开关内还是独立）未完全确认。",
+  "confidence": "read-uncertain",
+  "confidence_note": "2026-10-25 回原图（p1 四门页）重建。保险丝标注、闪光继电器位置、开关引脚均已对图核实；未核实项：J/B 内部闪光继电器供电走向、J27/J28 二极管用途、搭铁点编号。",
+  "rebuild_note": "**本文件 2026-10-25 整体重建**。旧版三个保险丝节点（TURN 10A / HORN-HAZ 10A / METER 10A）在原图上均不存在，系早期判读错误——原图顶部只有 ㊴ HORN-HAZ 15A（+B）与 ㉒ MTR 10A（IG）两只保险丝。旧版开关引脚（21/24/20）、双闪开关编号（G279）也与图不符，已改为 G144 5/6/7 与 G153。",
   "source_page": "sx4-2010::06-系统电路图-24-转向信号灯和危险警告灯::p1",
-  "variant_note": "四门车型",
+  "source_pages": "sx4-2010::06-系统电路图-24-转向信号灯和危险警告灯::p1,p2",
+  "variant_note": "p1 = 四门，p2 = 五门。本数据按 p1（四门）建模；p2 已抽查，结构与 p1 一致（闪光继电器、G272、LP-L/LP-R 均同）。两门/五门细微差异未逐项核对。",
   "nodes": [
     {
-      "id": "fuse_turn",
-      "label": "JB 保险丝 10A",
-      "sub": "TURN · 转向灯专用",
+      "id": "fuse_horn_haz",
+      "label": "JB 保险丝 ㊴ · HORN-HAZ 15A",
+      "sub": "+B · 常电 · 喇叭与双闪共用",
       "role": "fuse",
-      "pins": ["TURN-10A"],
+      "pins": ["JB.4"],
       "confidence": "read-clear",
-      "detail": "转向灯与危险警告灯的主保险丝 10A。"
+      "detail": "从 J/B 4 脚出，经 G272.7（红/黄）→ G306 → G153.4 进危险警告开关。**与喇叭共用**（喇叭页 16-喇叭线路 p1 同样标注 HORN-HAZ 15A）——喇叭和双闪同时失效时优先查它。旧数据写 10A 是错的。"
     },
     {
-      "id": "fuse_haz",
-      "label": "JB 保险丝 10A",
-      "sub": "HORN-HAZ · **与喇叭共用**",
+      "id": "fuse_mtr",
+      "label": "JB 保险丝 ㉒ · MTR 10A",
+      "sub": "IG · 点火档电",
       "role": "fuse",
-      "pins": ["HORN-HAZ-10A"],
+      "pins": ["JB.1"],
       "confidence": "read-clear",
-      "detail": "标注 HORN-HAZ，**喇叭与危险警告灯共用**。按喇叭不响 + 双闪不亮同时出现，基本可锁定这个保险丝。"
+      "detail": "图上标注 MTR 10A（IG）。在本页的确切去向未画全——推测为闪光继电器/BCM 的点火档电源，**不要把它当成转向灯主电源**。与组合仪表页的 MTR 10A 同名。"
     },
     {
-      "id": "fuse_meter",
-      "label": "JB 保险丝 10A",
-      "sub": "METER · 仪表指示",
-      "role": "fuse",
-      "pins": ["METER-10A"],
+      "id": "flasher",
+      "label": "闪光继电器",
+      "sub": "集成在 J/B 内 · 出脚 8（HAZ）",
+      "role": "relay",
+      "pins": ["JB.flash.8"],
+      "confidence": "read-uncertain",
+      "detail": "图上与 BCM 同画在 J/B 虚线框内（图例 A = J/B 连接器 BCM）。引脚 8 出 HAZ 网 → G272.11（白）→ G153.2（危险警告开关）。左/右转向输出从 J/B 3 脚（LP-L）与 2 脚（LP-R）出去，经 L314 分别汇入左转网（绿/红）与右转网（蓝/黄）。",
+      "uncertain": "J/B 内部闪光继电器与 HORN-HAZ、MTR 10A 的接线原图未画出；旧数据写『独立闪光器，位置未确认』，现已确认画在 J/B 内，但内部供电走向仍无法判读"
+    },
+    {
+      "id": "hazard_sw",
+      "label": "危险警告（双闪）开关 G153",
+      "sub": "4 / 2 / 1 / 3 脚 · 含指示灯",
+      "role": "switch",
+      "pins": ["G153.4", "G153.2", "G153.1", "G153.3"],
       "confidence": "read-clear",
-      "detail": "仪表指示灯供电。转向灯在仪表上的箭头指示失效，可能只是这个保险丝或指示灯泡问题。"
+      "detail": "中控台双闪按钮（ON/OFF）。4 脚进常电（HORN-HAZ 15A，红/黄），2 脚接闪光继电器 HAZ（白），1 脚出（红/蓝，经 G306 → J/C 向下），3 脚出（黑/橙）。**旧数据写 G279 是错的**。"
     },
     {
       "id": "switch",
       "label": "转向灯开关 G144",
-      "sub": "组合开关 · 左/右/中",
+      "sub": "组合开关 · 矩阵 L/N/R × TL/TB/TR",
       "role": "switch",
-      "pins": ["G144.21", "G144.24", "G144.20"],
+      "pins": ["G144.5", "G144.6", "G144.7"],
       "confidence": "read-clear",
-      "detail": "方向盘左侧拨杆。左拨=左转、右拨=右转、中位=关。内部含接点矩阵，长期使用后触点氧化是常见故障。"
+      "detail": "方向盘左侧拨杆。5 脚（SW-L，蓝）、7 脚（SW-R，红/蓝）从 G272 19/1 进来，6 脚输出（蓝/橙）。矩阵分 TL/TB/TR 三列、L/N/R 三档。**旧数据写 21/24/20 脚是错的**。长期使用触点氧化是常见故障。"
     },
     {
-      "id": "hazard_sw",
-      "label": "危险警告（双闪）开关",
-      "sub": "G279 R1",
-      "role": "switch",
-      "pins": ["G279.R1"],
-      "confidence": "read-clear",
-      "detail": "中控台双闪按钮。按下后绕过转向开关，直接让四个转向灯同时闪。"
-    },
-    {
-      "id": "flasher",
-      "label": "闪光器",
-      "sub": "产生闪烁节奏",
+      "id": "bcm",
+      "label": "BCM（J/B 内）",
+      "sub": "A 连接器 · 12 / 14 / 22 脚",
       "role": "ecu",
-      "confidence": "read-uncertain",
-      "detail": "负责把直流变成「亮-灭」节奏。现代车多集成在 BCM 或组合开关内，部分车型为独立继电器。",
-      "uncertain": "本车闪光器是集成式还是独立件，图中未明确标注"
+      "pins": ["BCM.A.12", "BCM.A.14", "BCM.A.22"],
+      "confidence": "read-clear",
+      "detail": "BCM 与闪光继电器同在 J/B 内，本页用到 A 连接器 12/14/22 三个脚。旧数据写『20 脚控喇叭继电器』是喇叭页的内容，与本页无关。"
     },
     {
-      "id": "lamp_front",
-      "label": "前转向灯 E160（左/右）",
-      "sub": "各 2 脚",
+      "id": "lamp_front_l",
+      "label": "前转向信号灯（左）E160",
+      "sub": "2 进（绿/红） · 1 搭铁",
       "role": "load",
       "pins": ["E160.2", "E160.1"],
       "confidence": "read-clear",
-      "detail": "前保险杠两侧转向灯，左右各一个 E160。"
+      "detail": "左转网（绿/红）经 E323.5 分支到 E160.2。"
     },
     {
-      "id": "lamp_side",
-      "label": "侧转向灯 E166（左/右）",
-      "sub": "翼子板侧",
+      "id": "lamp_side_l",
+      "label": "侧转向信号灯（左）E166",
+      "sub": "2 进（绿/红） · 1 搭铁",
       "role": "load",
       "pins": ["E166.2", "E166.1"],
       "confidence": "read-clear",
-      "detail": "前翼子板上的侧转向灯。"
+      "detail": "带侧转向信号灯配置（图例 C）才有；不带侧灯的配置（图例 B）少这只灯。"
     },
     {
-      "id": "lamp_rear",
-      "label": "后转向灯 L133/L134",
-      "sub": "尾灯总成内",
+      "id": "lamp_front_r",
+      "label": "前转向信号灯（右）E159",
+      "sub": "2 进（蓝/黄） · 1 搭铁",
       "role": "load",
+      "pins": ["E159.2", "E159.1"],
       "confidence": "read-clear",
-      "detail": "尾灯组内的转向灯泡，左右各一。"
+      "detail": "右转网（蓝/黄）经 E323.6 分支到 E159.2。"
+    },
+    {
+      "id": "lamp_side_r",
+      "label": "侧转向信号灯（右）E165",
+      "sub": "2 进（蓝/黄） · 1 搭铁",
+      "role": "load",
+      "pins": ["E165.2", "E165.1"],
+      "confidence": "read-clear",
+      "detail": "同左 E166，仅带侧灯配置有。"
+    },
+    {
+      "id": "lamp_rear_l",
+      "label": "后转向信号灯（左）L134",
+      "sub": "6 进（绿/红） · 5 搭铁",
+      "role": "load",
+      "pins": ["L134.6", "L134.5"],
+      "confidence": "read-clear",
+      "detail": "尾灯总成内。左转网直接到 L134.6。"
+    },
+    {
+      "id": "lamp_rear_r",
+      "label": "后转向信号灯（右）L133",
+      "sub": "6 进（蓝/黄） · 5 搭铁",
+      "role": "load",
+      "pins": ["L133.6", "L133.5"],
+      "confidence": "read-clear",
+      "detail": "尾灯总成内。右转网直接到 L133.6。"
+    },
+    {
+      "id": "diode_l",
+      "label": "二极管 J27（左）",
+      "sub": "经 L379/J215 · 4→1",
+      "role": "load",
+      "pins": ["J27.4", "J27.1"],
+      "confidence": "read-uncertain",
+      "detail": "左转网经 L379.1 → J27.4，二极管出 1 脚后走黑线。图上旁边画有『转向灯』图标，推测与 BCM 的灯泡监测或仪表指示有关。",
+      "uncertain": "J27/J28 的具体用途（灯泡监测？仪表驱动？）原图未注明，此处为推测"
+    },
+    {
+      "id": "diode_r",
+      "label": "二极管 J28（右）",
+      "sub": "经 L380/J216 · 4→1",
+      "role": "load",
+      "pins": ["J28.4", "J28.1"],
+      "confidence": "read-uncertain",
+      "detail": "右转网经 L380.1 → J28.4，结构与左侧对称。",
+      "uncertain": "同 J27，用途为推测"
     },
     {
       "id": "meter",
-      "label": "仪表转向指示灯",
-      "sub": "G271 6 → ECM ③/⑤",
+      "label": "仪表转向指示灯（左/右）",
+      "sub": "G271 12 / 9 脚",
       "role": "load",
-      "pins": ["G271.6"],
+      "pins": ["G271.12", "G271.9"],
       "confidence": "read-clear",
-      "detail": "仪表上的左右箭头指示灯，与外部转向灯同步闪烁。"
+      "detail": "左转网（绿/红）→ G271.12 → 仪表『转向（左）』指示灯；右转网（蓝/黄）→ G271.9 → 仪表『转向（右）』指示灯（仪表侧连接器 C-2）。**旧数据写『G271.6 → ECM ③/⑤』是错的，本页没有 ECM**。"
+    },
+    {
+      "id": "e323",
+      "label": "连接器 E323",
+      "sub": "5（绿/红） / 6（蓝/黄）",
+      "role": "splice",
+      "pins": ["E323.5", "E323.6"],
+      "confidence": "read-clear",
+      "detail": "前部线束转接：左/右转网在这里分给前灯与侧灯。"
     },
     {
       "id": "gnd",
-      "label": "搭铁 ②④ / ②⑧",
-      "sub": "前后分组",
+      "label": "搭铁（各灯独立黑线）",
+      "sub": "页脚公共搭铁符号",
       "role": "ground",
-      "confidence": "read-clear",
-      "detail": "前后转向灯各自搭铁。单侧搭铁不良会造成该侧变暗或闪得不对称。"
+      "confidence": "read-uncertain",
+      "detail": "所有转向灯黑线汇到图底部的搭铁符号。**搭铁点具体编号在本页分辨率下读不出**，旧数据写的 ②④/②⑧ 无法复核，不再标注具体编号。",
+      "uncertain": "搭铁点编号未能从原图确认"
     }
   ],
   "edges": [
-    {"from": "fuse_turn", "to": "switch", "color": "—", "via": "→ G144", "note": "转向回路电源"},
-    {"from": "fuse_haz", "to": "hazard_sw", "color": "—", "via": "→ G279", "note": "双闪回路电源"},
-    {"from": "switch", "to": "flasher", "color": "—", "via": "→ 闪光控制", "note": ""},
-    {"from": "hazard_sw", "to": "flasher", "color": "—", "via": "→ 闪光控制", "note": "绕过转向开关"},
-    {"from": "flasher", "to": "lamp_front", "color": "—", "via": "→ E160 左/右", "note": ""},
-    {"from": "flasher", "to": "lamp_side", "color": "—", "via": "→ E166 左/右", "note": ""},
-    {"from": "flasher", "to": "lamp_rear", "color": "—", "via": "→ L133/L134", "note": ""},
-    {"from": "fuse_meter", "to": "meter", "color": "—", "via": "→ G271.6 → ECM", "note": "仪表指示"},
-    {"from": "lamp_front", "to": "gnd", "color": "黑", "via": "→ ②⑧", "note": ""},
-    {"from": "lamp_rear", "to": "gnd", "color": "黑", "via": "→ ②④", "note": ""}
+    {"from": "fuse_horn_haz", "to": "hazard_sw", "color": "红/黄", "via": "JB.4 → G272.7 → G306 D → J/C → G153.4", "note": "常电进双闪开关"},
+    {"from": "flasher", "to": "hazard_sw", "color": "白", "via": "J/B flash.8 → G272.11 → G153.2", "note": "HAZ 网"},
+    {"from": "hazard_sw", "to": "switch", "color": "红/蓝→蓝(存疑)", "via": "G153.1 → G306 C → J/C → … → G272.19 → G144.5 / G272.1 → G144.7", "note": "双闪与转向共用闪光器的衔接，具体走线未逐段核对", "applies_to": ["four-door"]},
+    {"from": "switch", "to": "flasher", "color": "蓝/橙(存疑)", "via": "G144.6 → 向下汇入", "note": "开关与闪光器之间的回路方向未完全判读"},
+    {"from": "flasher", "to": "e323", "color": "绿/红 + 蓝/黄", "via": "J/B 3 (LP-L) → L314.1 → 绿/红；J/B 2 (LP-R) → L314.10 → 蓝/黄；经 E323.5/6 分支", "note": "左/右转向网"},
+    {"from": "e323", "to": "lamp_front_l", "color": "绿/红", "via": "E323.5 → E160.2", "note": ""},
+    {"from": "e323", "to": "lamp_side_l", "color": "绿/红", "via": "E323.5 → E166.2", "note": ""},
+    {"from": "e323", "to": "lamp_front_r", "color": "蓝/黄", "via": "E323.6 → E159.2", "note": ""},
+    {"from": "e323", "to": "lamp_side_r", "color": "蓝/黄", "via": "E323.6 → E165.2", "note": ""},
+    {"from": "e323", "to": "lamp_rear_l", "color": "绿/红", "via": "绿/红网 → L134.6", "note": ""},
+    {"from": "e323", "to": "lamp_rear_r", "color": "蓝/黄", "via": "蓝/黄网 → L133.6", "note": ""},
+    {"from": "e323", "to": "meter", "color": "绿/红 + 蓝/黄", "via": "绿/红 → G271.12（左）；蓝/黄 → G271.9（右）", "note": "仪表指示"},
+    {"from": "e323", "to": "diode_l", "color": "绿/红", "via": "绿/红 → L379.1 → J27.4", "note": ""},
+    {"from": "e323", "to": "diode_r", "color": "蓝/黄", "via": "蓝/黄 → L380.1 → J28.4", "note": ""},
+    {"from": "fuse_mtr", "to": "flasher", "color": "（J/B 内部，未画出）", "via": "推测", "note": "MTR 10A 的去向推测，见节点说明", "applies_to": ["four-door"]},
+    {"from": "lamp_front_l", "to": "gnd", "color": "黑", "via": "E160.1 → 搭铁", "note": ""},
+    {"from": "lamp_side_l", "to": "gnd", "color": "黑", "via": "E166.1 → 搭铁", "note": ""},
+    {"from": "lamp_front_r", "to": "gnd", "color": "黑", "via": "E159.1 → 搭铁", "note": ""},
+    {"from": "lamp_side_r", "to": "gnd", "color": "黑", "via": "E165.1 → 搭铁", "note": ""},
+    {"from": "lamp_rear_l", "to": "gnd", "color": "黑", "via": "L134.5 → 搭铁", "note": ""},
+    {"from": "lamp_rear_r", "to": "gnd", "color": "黑", "via": "L133.5 → 搭铁", "note": ""}
   ],
+  "variants": [
+    {
+      "id": "four-door",
+      "label": "四门车型（p1）"
+    },
+    {
+      "id": "five-door",
+      "label": "五门车型（p2）"
+    }
+  ],
+  "applies_to": "four-door",
+  "variant_warning": "本数据按 **p1 四门页** 建模；五门页（p2）结构与四门一致（已抽查保险丝与闪光继电器标注相同），但灯位与连接器未逐项核对。排查逻辑两门通用，具体针脚以实车为准。",
   "diagnosis_hint": [
-    "【交叉验证】按喇叭不响 + 双闪不亮同时出现 → 几乎可以确定是 HORN-HAZ 保险丝，一步到位",
-    "转向灯不闪，但双闪正常 → 问题在转向开关 G144，不在保险丝和灯泡",
-    "双闪也不闪、喇叭正常 → 查 TURN 10A 保险丝与闪光器",
-    "【最实用】闪烁频率明显变快（哒哒哒很急）→ 有一个转向灯泡烧了。转向灯是靠负载电流决定闪速的，少一个灯泡就会变快。换灯泡即好，别查电路",
+    "【交叉验证】按喇叭不响 + 双闪不亮同时出现 → 几乎可以确定是 HORN-HAZ 15A 保险丝（喇叭与双闪共用），一步到位",
+    "转向灯不闪，但双闪正常 → 问题在转向灯开关 G144 一侧，保险丝与共用闪光器基本可排除（双闪正常证明 HORN-HAZ 与闪光继电器是好的）",
+    "双闪也不闪、喇叭正常 → HORN-HAZ 大概率没事，查闪光继电器与双闪开关 G153",
+    "【最实用】闪烁频率明显变快（哒哒哒很急）→ 有一个转向灯泡烧了。闪速由负载电流决定，少一个灯泡就变快。换灯泡即好，别查电路",
     "闪烁频率变慢或不闪、灯泡都亮 → 闪光器老化，或换了大功率/LED 灯泡导致负载不匹配",
-    "只有一侧不闪 → 该侧转向开关触点或线路，另一侧正常说明保险丝和闪光器没问题",
+    "只有一侧不闪 → 该侧开关触点或线路，另一侧正常说明共用部分没问题",
     "某一个灯不亮其他都闪 → 就是那个灯泡（或该灯搭铁）",
-    "外部转向灯正常、仪表箭头不亮 → 查 METER 10A 与仪表指示灯泡/线路",
-    "双闪能开但关不掉 → 双闪开关 G279 卡滞",
-    "换 LED 转向灯后快闪或不闪 → LED 电流太小，闪光器判定为「灯泡坏」，需加负载电阻或换 LED 专用闪光器"
+    "外部转向灯正常、仪表箭头不亮 → 查 G271.12/9 到仪表 C-2 的线与指示灯本身",
+    "双闪能开但关不掉 → 双闪开关 G153 卡滞",
+    "换 LED 转向灯后快闪或不闪 → LED 电流太小，闪光器判定为『灯泡坏』，需加负载电阻或换 LED 专用闪光器"
   ],
   "notes": [
-    "**HORN-HAZ 保险丝是喇叭与双闪共用**，这是跨系统交叉验证的典范，两个症状一起出现时能一步定位",
-    "闪烁快慢由负载电流决定，所以「闪得快 = 有灯泡坏」是原理推导的结果，不是玄学",
-    "本车转向灯按「前 E160 + 侧 E166 + 后 L133/L134」三处分布"
+    "HORN-HAZ 15A 是「喇叭 + 危险警告」共用保险丝——喇叭页与转向页两处原图标注一致（15A），旧数据的 10A 已纠正",
+    "本页原图上**没有** TURN 10A 与 METER 10A 保险丝，旧数据为误判，已从节点中删除",
+    "转向灯按「前 E160/E159 + 侧 E166/E165（带侧灯配置）+ 后 L134/L133」分布；左转网绿/红，右转网蓝/黄",
+    "闪光继电器画在 J/B 内部（与 BCM 同框），左/右输出经 J/B 3/2 脚（LP-L/LP-R）出去——旧数据『闪光器位置未确认』已部分解决，内部供电走向仍未画出"
   ]
 }
