@@ -27,6 +27,11 @@ VALID_CONF = {"read-clear", "read-uncertain", "vehicle-confirmed"}
 REQUIRED = ["id", "system", "name", "type", "confidence", "source_page",
             "nodes", "edges"]
 
+# 症状分支的「四要素」。缺任何一个，这条分支就不能宣称有据可查：
+# 没有 applies_if 会让人拿错配置的数据去修车；没有 basis 就是拍脑袋；
+# 没有 verify 就退化成「换个件试试」；没有 if_unknown 就没有退路。
+SYM_FOUR = ["applies_if", "basis", "verify", "if_unknown"]
+
 
 def calc_layout_rows(nodes):
     """复刻前端分层逻辑，检查是否有某层挤爆。"""
@@ -37,6 +42,78 @@ def calc_layout_rows(nodes):
     for n in nodes:
         g.setdefault(LAYER.get(n.get("role"), 2), []).append(n)
     return {L: len(v) for L, v in sorted(g.items())}
+
+
+def validate_symptoms(pack, circuit_ids, pages, errors, warns):
+    """校验 data/symptoms.json。
+
+    这里抓的是**引用级错误**——指向不存在的电路、指向解析不了的页码。
+    这类错误在网页上表现为「点进去是空页」或「相关系统一片空白」，
+    靠肉眼翻 JSON 很难发现，必须机器查。
+    """
+    sf = pack / "data" / "symptoms.json"
+    if not sf.exists():
+        warns.append("没有 data/symptoms.json（无症状索引）")
+        return 0, 0, 0
+
+    try:
+        sym = json.loads(sf.read_text("utf-8"))
+    except Exception as e:
+        errors.append(f"[symptoms] JSON 解析失败: {e}")
+        return 0, 0, 0
+
+    items = sym.get("symptoms", [])
+    n_total = n_full = 0
+    seen_sid = set()
+
+    for s in items:
+        sid = s.get("id")
+        if not sid:
+            errors.append("[symptoms] 有症状缺少 id")
+            sid = "?"
+        if sid in seen_sid:
+            errors.append(f"[symptoms] 症状 id 重复: {sid}")
+        seen_sid.add(sid)
+        if not s.get("label"):
+            errors.append(f"[symptoms] {sid} 缺 label")
+
+        for b in s.get("branches", []):
+            n_total += 1
+            when = str(b.get("when", ""))[:18]
+            tag = f"[symptoms] {sid} / {when}"
+
+            # 1) 引用的电路必须真实存在
+            refs = b.get("circuits") or []
+            if not refs:
+                warns.append(f"{tag} 没有关联任何电路")
+            for cid in refs:
+                if cid not in circuit_ids:
+                    errors.append(
+                        f"{tag} 引用了不存在的电路 id: {cid}"
+                        f"（可用: {', '.join(sorted(circuit_ids))}）")
+
+            # 2) basis.pages 必须能在 pages.json 里解析出来
+            basis = b.get("basis") or {}
+            for p in basis.get("pages") or []:
+                if p not in pages:
+                    errors.append(f"{tag} 的 basis.pages 无法解析: {p}")
+            if basis and not basis.get("from_manual"):
+                warns.append(f"{tag} 写了 basis 但缺 from_manual")
+
+            # 3) 四要素完整性：不齐的按警告报，允许分批推进，但必须看得见
+            missing = [k for k in SYM_FOUR if not b.get(k)]
+            if not missing:
+                n_full += 1
+                v = b.get("verify") or []
+                if len(v) < 2:
+                    warns.append(f"{tag} verify 只有 {len(v)} 步，不足以定位")
+            elif len(missing) == len(SYM_FOUR):
+                pass  # 完全没改写过的老格式，最后统一汇总
+            else:
+                warns.append(f"{tag} 四要素缺: {', '.join(missing)}")
+
+    n_old = n_total - n_full
+    return n_total, n_full, n_old
 
 
 def _pick_pack(arg):
@@ -85,6 +162,7 @@ def main():
     print(f"流图数据: {len(files)} 个\n")
 
     tot_nodes = tot_edges = tot_hints = tot_unc = 0
+    all_ids = set()
 
     for f in files:
         tag = f.stem
@@ -93,6 +171,9 @@ def main():
         except Exception as e:
             errors.append(f"[{tag}] JSON 解析失败: {e}")
             continue
+
+        if c.get("id"):
+            all_ids.add(c["id"])
 
         for k in REQUIRED:
             if k not in c:
@@ -185,6 +266,10 @@ def main():
               f"{nh:>2} 提示" + (f" · {nu} 存疑" if nu else ""))
 
     print(f"\n合计: {tot_nodes} 环节 / {tot_edges} 连接 / {tot_hints} 条诊断提示 / {tot_unc} 处存疑")
+
+    n_total, n_full, n_old = validate_symptoms(pack, all_ids, pages, errors, warns)
+    if n_total:
+        print(f"症状索引: {n_total} 个分支 · 已四要素化 {n_full} · 待校核 {n_old}")
 
     if warns:
         print(f"\n⚠ 警告 {len(warns)} 条:")

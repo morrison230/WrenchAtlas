@@ -197,7 +197,7 @@
      ],
      "if_unknown": "没有诊断仪：先做最便宜的检查——CKP 插头是否插到底、传感器头部是否有铁屑油泥（拆下擦净），装回再试。仍不行则需要诊断仪读数据流，不建议盲目换件。",
      "circuits": [
-      "engine-ecm",
+      "engine-control",
       "meter"
      ]
     },
@@ -233,7 +233,7 @@
      "if_unknown": "没有油压表：先听油泵是否在钥匙 ON 时短暂运转（2 秒嗡声），无声则查油泵保险丝与继电器。不能拆火花塞：至少检查 15A IG COIL 保险丝和主继电器。",
      "circuits": [
       "ignition",
-      "engine-ecm"
+      "engine-control"
      ]
     },
     {
@@ -264,7 +264,7 @@
      ],
      "if_unknown": "没有诊断仪时这类故障很难自行判断，**不建议盲目换件**（水温传感器、碳罐、点火线圈都不便宜）。可先做一个便宜验证：热车难着时打开油箱盖再试（若明显改善，指向油箱通风/碳罐）。仍无法判断建议找专业诊断。",
      "circuits": [
-      "engine-ecm",
+      "engine-control",
       "ignition"
      ]
     }
@@ -316,7 +316,7 @@
      "if_unknown": "不会对调线圈：至少先量两只线圈的电阻做对比——注意**电阻正常不代表线圈没坏**（匝间短路测不出来）。没有万用表：可先把 C101 与 C102 的高压线互换试（若能着车且失火转移，指向线圈）。**不要一次换两只线圈**，那样即使好了也不知道是哪只坏。",
      "circuits": [
       "ignition",
-      "engine-ecm"
+      "engine-control"
      ]
     },
     {
@@ -351,7 +351,7 @@
      "if_unknown": "同第一条。补充：如果两只线圈都对调过、故障始终不转移，问题更可能在 ECM 的驱动端或线束，此时换线圈是白花钱。",
      "circuits": [
       "ignition",
-      "engine-ecm"
+      "engine-control"
      ]
     },
     {
@@ -385,7 +385,7 @@
      "if_unknown": "只能做最基础的检查时：先看该缸火花塞状态（积碳/油污/电极烧蚀），并按需换新——火花塞是最便宜且最常见的单缸失火原因。**不建议直接换点火线圈**，因为单缸失火与线圈损坏的因果关系弱。",
      "circuits": [
       "ignition",
-      "engine-ecm"
+      "engine-control"
      ]
     },
     {
@@ -419,7 +419,7 @@
      ],
      "if_unknown": "没有诊断仪：先查最便宜的三样——主继电器（可拔下看触点）、IG COIL 保险丝、进气歧管有无明显漏气/脱管。近期刚加过油的，优先怀疑油品。",
      "circuits": [
-      "engine-ecm",
+      "engine-control",
       "ignition"
      ]
     },
@@ -453,7 +453,7 @@
      ],
      "if_unknown": "没有诊断仪：先做清洗节气门（成本低、可逆），洗后若怠速明显平稳即可确认方向。**不要先换 TP 传感器**。另外注意：怠速抖也可能来自发动机机脚胶老化，这类抖动与负荷无关，清洗无效。",
      "circuits": [
-      "engine-ecm"
+      "engine-control"
      ]
     }
    ],
@@ -646,7 +646,7 @@
      "check": "查 ECM A-5 制动信号线（绿/白），ECM 认为你一直踩着刹车",
      "circuits": [
       "stop-lamp",
-      "engine-ecm"
+      "engine-control"
      ]
     }
    ]
@@ -678,7 +678,7 @@
      "verdict": "鼓风机问题",
      "check": "转「鼓风机不出风」，不是制冷系统的事",
      "circuits": [
-      "heater"
+      "heater-blower"
      ]
     },
     {
@@ -715,7 +715,7 @@
      "verdict": "风机电阻烧断",
      "check": "G65 的 1 号抽头（黑/白）直通不经过电阻，所以电阻全烧了最高档照样转。换电阻即可，不用换电机",
      "circuits": [
-      "heater"
+      "heater-blower"
      ]
     },
     {
@@ -723,7 +723,7 @@
      "verdict": "主回路",
      "check": "BLW 30A 保险丝 → 暖风机继电器 → BCM 22 控制线",
      "circuits": [
-      "heater"
+      "heater-blower"
      ]
     },
     {
@@ -731,7 +731,7 @@
      "verdict": "控制回路",
      "check": "查 IG2 SIG 10A 保险丝与 BCM 22 线路，不是继电器坏",
      "circuits": [
-      "heater"
+      "heater-blower"
      ]
     },
     {
@@ -739,7 +739,7 @@
      "verdict": "先查滤芯",
      "check": "空调滤芯堵塞最常见，其次是电阻接插件接触不良、电机碳刷磨损",
      "circuits": [
-      "heater"
+      "heater-blower"
      ]
     }
    ]
