@@ -377,7 +377,14 @@ def api_symptoms(pack: str | None = Query(None)):
         for cf in cdir.glob("*.json"):
             try:
                 c = json.loads(cf.read_text("utf-8"))
-                names[c["system"]] = {"name": c["name"], "id": c["id"], "file": cf.name}
+                # 引用规则统一为 **circuit id**（= 症状 circuits 字段的值 =
+                # 文件名 stem）。旧数据曾按 system 引用，用 setdefault 留别名，
+                # 但 id 永远优先——否则 id≠system 的 6 个电路（engine-control、
+                # heater-blower、can-bus、body-lock、fog-front、fog-rear）
+                # 在症状页会显示成英文 id 且 file=null。
+                entry = {"name": c["name"], "id": c["id"], "file": cf.name}
+                names[c["id"]] = entry
+                names.setdefault(c.get("system"), entry)
             except Exception:
                 pass
 

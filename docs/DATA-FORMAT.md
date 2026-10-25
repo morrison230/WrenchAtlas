@@ -345,6 +345,17 @@ packs/<pack-id>/
 | `verify` | 下一步查什么，结果分别说明什么 | **不许只写"查 XX"，要写查完怎么判断** |
 | `if_unknown` | 不知道、测不了、现象不符时怎么办 | 不许留空——真实用户经常没有诊断仪 |
 
+### `circuits` 字段的引用规则：一律用 circuit id
+
+分支的 `circuits: ["engine-control"]` 填的是 **circuit id**（= `circuits/*.json`
+里 `id` 字段 = 文件名 stem），**不是 `system` 字段**。两者在 6 个电路里不一致
+（engine-control↔engine-ecm、heater-blower↔heater、can-bus↔can、
+body-lock↔body-electrical、fog-front↔fog-lamp-front、fog-rear↔fog-lamp-rear），
+混用会让症状页显示英文 id 且链接指向空页（2026-10-25 抽查实锤）。
+
+全站解析规则已统一：`/api/symptoms`、flow 页、report 页均按 **id 优先**解析，
+`system` 仅作旧数据别名兼容。`validate.py` 校验 `circuits` 引用必须命中真实 id。
+
 ### `basis` 的规矩
 
 - `pages`：真实的 page id，能点开看原图。**没有依据就写空数组，不要编**
