@@ -8,6 +8,16 @@
   "confidence_note": "各模块的 CAN 引脚与双绞走向完整清晰，双套引脚（非欧4/欧4）均已读出。",
   "source_page": "sx4-2010::06-系统电路图-09-CAN线路图::p1",
   "variant_warning": "图中标注 ①非欧4 ②欧4 两套引脚号：ECM 侧 C01 为 12/42 与 13/54，E01 为 19/55 与 3/56。**按实车排放标准选取。**",
+  "variants": [
+    {
+      "id": "non-euro4",
+      "label": "① 非欧4 —— ECM 侧用 C01（12/42、13/54）"
+    },
+    {
+      "id": "euro4",
+      "label": "② 欧4 —— ECM 侧用 E01（19/55、3/56）"
+    }
+  ],
   "topology_type": "can-bus-network",
   "nodes": [
     {
