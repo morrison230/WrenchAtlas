@@ -53,3 +53,7 @@ desktop.ini
 *.sqlite
 *.sqlite3
 .cache/
+
+# 本机 Python 解释器路径（每台机器不同，不入库）
+# start.bat 会读它来找到装了依赖的那个 Python
+.python-path
