@@ -1,7 +1,7 @@
 # WrenchAtlas 设计文档
 
 > 版本 v0.2 · 2026-10-24 · 状态：设计已确认，可进入 M1
-> 项目路径：`G:\Projects\WrenchAtlas`
+> 项目路径：本文档用 `<项目根>` 指代你 clone 下来的目录
 
 ---
 
@@ -213,7 +213,7 @@
 ## 5. 目录结构
 
 ```
-G:\Projects\WrenchAtlas\
+<项目根>\
 ├── README.md                  开源门面 + 免责声明
 ├── docs\
 │   ├── DESIGN.md              本文档

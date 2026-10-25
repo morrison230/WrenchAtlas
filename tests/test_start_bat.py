@@ -4,9 +4,11 @@ import json
 import subprocess
 import time
 import urllib.request
+from pathlib import Path
 
-BAT = r"G:\Projects\WrenchAtlas\start.bat"
-CWD = r"G:\Projects\WrenchAtlas"
+ROOT = Path(__file__).resolve().parent.parent
+BAT = str(ROOT / "start.bat")
+CWD = str(ROOT)
 
 p = subprocess.Popen(["cmd", "/c", BAT], cwd=CWD,
                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

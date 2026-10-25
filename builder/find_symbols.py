@@ -14,7 +14,17 @@ try:
 except (AttributeError, OSError, ValueError):
     pass
 
-d = Path(r"G:\Projects\WrenchAtlas\packs\suzuki-sx4-2010\pages")
+ROOT = Path(__file__).resolve().parent.parent
+
+# 用法: python builder/find_symbols.py [页图文件名] [页图目录]
+# 不给目录时默认用第一个车型包的 pages/（可用 --pack 或环境变量覆盖）
+if len(sys.argv) > 2:
+    d = Path(sys.argv[2])
+else:
+    packs = [x for x in (ROOT / "packs").iterdir()
+             if x.is_dir() and not x.name.startswith("_") and (x / "pack.json").exists()]
+    d = (max(packs, key=lambda x: len(list((x / "pages").glob("*.png")))
+             if (x / "pages").exists() else 0) / "pages") if packs else ROOT / "packs"
 name = sys.argv[1] if len(sys.argv) > 1 else "06-系统电路图__05-发动机和空调控制系统__p001.png"
 
 arr = np.array(Image.open(d / name).convert("RGB"))

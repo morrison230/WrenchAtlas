@@ -57,7 +57,7 @@ PY=python          # 确保 python 在 PATH；不在则写绝对路径
 ## 数据在哪
 
 ```
-G:\Projects\WrenchAtlas\packs\<车型包>\
+<项目根>/packs/<车型包>/
 ├── pack.json                 车型元信息（厂牌/年份/发动机/变体）
 ├── system-map.json           手册标题 → 标准系统标识
 ├── data\circuits\*.json      诊断流图（结构化拓扑 + 诊断提示）
