@@ -32,6 +32,13 @@ REQUIRED = ["id", "system", "name", "type", "confidence", "source_page",
 # 没有 verify 就退化成「换个件试试」；没有 if_unknown 就没有退路。
 SYM_FOUR = ["applies_if", "basis", "verify", "if_unknown"]
 
+# 电路图是线路图，**不含诊断文字**。所以 from_manual 里一旦出现
+# 「手册条目」这类措辞，几乎必然把项目自己的 diagnosis_hint 误标成了原厂依据
+# （2026-10-25 抽查实锤：充电系 3 条把本项目提示写成「手册诊断条目明确写」）。
+# 这里做措辞级拦截；语义级（页码能开≠那页支持这句话）仍靠人工。
+SUSPECT_PHRASE = ["手册条目", "手册诊断条目", "手册原文", "手册明确写",
+                  "手册表述", "原厂明确写"]
+
 
 def calc_layout_rows(nodes):
     """复刻前端分层逻辑，检查是否有某层挤爆。"""
@@ -50,20 +57,27 @@ def validate_symptoms(pack, circuit_ids, pages, errors, warns):
     这里抓的是**引用级错误**——指向不存在的电路、指向解析不了的页码。
     这类错误在网页上表现为「点进去是空页」或「相关系统一片空白」，
     靠肉眼翻 JSON 很难发现，必须机器查。
+
+    计数分三层，**不能混为一谈**（2026-10-25 抽查教训）：
+      · 格式完整 —— 四要素齐全，机器可判
+      · 内容已复核 —— basis.audit.source_checked 有值，表明判断文字已对照
+        原图/来源核过，谁核的、怎么核的写在 audit 里
+      · 待实车验证 —— basis.audit.vehicle_checked 不为 true
+    没写 audit 的分支一律计入「待内容复核」，不允许拿格式计数冒充内容审核。
     """
     sf = pack / "data" / "symptoms.json"
     if not sf.exists():
         warns.append("没有 data/symptoms.json（无症状索引）")
-        return 0, 0, 0
+        return {}
 
     try:
         sym = json.loads(sf.read_text("utf-8"))
     except Exception as e:
         errors.append(f"[symptoms] JSON 解析失败: {e}")
-        return 0, 0, 0
+        return {}
 
     items = sym.get("symptoms", [])
-    n_total = n_full = 0
+    n_total = n_full = n_src = n_vehicle = 0
     seen_sid = set()
 
     for s in items:
@@ -100,6 +114,16 @@ def validate_symptoms(pack, circuit_ids, pages, errors, warns):
             if basis and not basis.get("from_manual"):
                 warns.append(f"{tag} 写了 basis 但缺 from_manual")
 
+            # 2b) 误标措辞拦截：from_manual 只该描述图上画了什么
+            fm = basis.get("from_manual") or ""
+            for ph in SUSPECT_PHRASE:
+                if ph in fm:
+                    warns.append(
+                        f"{tag} 的 from_manual 出现「{ph}」——电路图不含诊断文字，"
+                        f"这类措辞多半是把项目 diagnosis_hint 误标成原厂依据，"
+                        f"应移到 inferred 并注明来源")
+                    break
+
             # 3) 四要素完整性：不齐的按警告报，允许分批推进，但必须看得见
             missing = [k for k in SYM_FOUR if not b.get(k)]
             if not missing:
@@ -112,8 +136,16 @@ def validate_symptoms(pack, circuit_ids, pages, errors, warns):
             else:
                 warns.append(f"{tag} 四要素缺: {', '.join(missing)}")
 
-    n_old = n_total - n_full
-    return n_total, n_full, n_old
+            # 4) 内容复核状态（audit）——与格式完整性是两回事
+            audit = basis.get("audit") or {}
+            if audit.get("source_checked"):
+                n_src += 1
+            if audit.get("vehicle_checked") is True:
+                n_vehicle += 1
+
+    return {"total": n_total, "full": n_full,
+            "source_checked": n_src, "vehicle_checked": n_vehicle,
+            "pending_review": n_total - n_src}
 
 
 def _pick_pack(arg):
@@ -267,9 +299,13 @@ def main():
 
     print(f"\n合计: {tot_nodes} 环节 / {tot_edges} 连接 / {tot_hints} 条诊断提示 / {tot_unc} 处存疑")
 
-    n_total, n_full, n_old = validate_symptoms(pack, all_ids, pages, errors, warns)
-    if n_total:
-        print(f"症状索引: {n_total} 个分支 · 已四要素化 {n_full} · 待校核 {n_old}")
+    sym_stats = validate_symptoms(pack, all_ids, pages, errors, warns) or {}
+    if sym_stats.get("total"):
+        print(f"症状索引: {sym_stats['total']} 个分支")
+        print(f"  格式完整（四要素齐全）: {sym_stats['full']} / {sym_stats['total']}")
+        print(f"  内容已复核（对照原图/来源核过判断文字）: {sym_stats['source_checked']} / {sym_stats['total']}")
+        print(f"  待内容复核（未写 audit.source_checked）: {sym_stats['pending_review']}")
+        print(f"  待实车验证（audit.vehicle_checked 非 true）: {sym_stats['total'] - sym_stats['vehicle_checked']}")
 
     if warns:
         print(f"\n⚠ 警告 {len(warns)} 条:")
@@ -291,6 +327,12 @@ def main():
     print("    · 诊断结论写错了 —— 同上")
     print()
     print("  判读正确性只能对照原图逐项核对。两者是两件事，别用这个绿勾代替内容审核。")
+    print()
+    print("  症状分支的三层计数也是同样道理，别混着说：")
+    print("    · 格式完整 = 四要素字段齐了（机器可判）")
+    print("    · 内容已复核 = basis.audit.source_checked 有值，判断文字对照过原图/来源")
+    print("    · 待实车验证 = 没有 basis.audit.vehicle_checked=true（默认全部待验证）")
+    print("  「格式完整 48/48」**不等于**「内容已复核 48/48」，对外表述时别省略这个区别。")
 
 
 if __name__ == "__main__":
